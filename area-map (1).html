@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Area map · Learning Design Landscape</title>
+<meta name="description" content="A compact interactive map of the contributions within one area of a learning-design practice." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root{--paper:#ffffff;--ink:#43525a;--ink-strong:#303e44;--stone:#8a959b;
+    --accent:#475f6a;--hair:#e2e6e8;--hair-soft:#eef1f2;--panel:#f7f8f9;
+    --ease:cubic-bezier(.22,.61,.36,1);}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{font-family:"Asap",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);
+    background:var(--paper);-webkit-font-smoothing:antialiased;line-height:1.55;}
+
+  .embed{display:flex;flex-direction:column;height:100%;min-height:400px;padding:0;}
+
+  .bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:0 0 9px;}
+  .areamark{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.15em;
+    text-transform:uppercase;font-weight:600;color:var(--ink-strong);}
+  .areamark .sw{width:9px;height:9px;border-radius:100px;flex-shrink:0;}
+  .barspace{flex:1 1 auto;}
+  .linkbtn{font-family:inherit;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;
+    color:var(--stone);background:none;border:none;cursor:pointer;padding:4px 2px;text-decoration:none;
+    transition:color .2s var(--ease);}
+  .linkbtn:hover,.linkbtn:focus-visible{color:var(--ink-strong);}
+
+  .stage{flex:1 1 auto;display:grid;grid-template-columns:1fr 252px;gap:1px;background:var(--hair);
+    border:1px solid var(--hair);border-radius:6px;overflow:hidden;min-height:0;}
+  .canvas-wrap{position:relative;background:var(--paper);min-height:0;touch-action:none;}
+  canvas{display:block;width:100%;height:100%;cursor:grab;outline:none;}
+  canvas.grabbing{cursor:grabbing;}
+  canvas.pointing{cursor:pointer;}
+  canvas:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}
+
+  .tt{position:absolute;pointer-events:none;z-index:5;background:var(--ink-strong);color:#fff;
+    border-radius:4px;padding:5px 8px;max-width:190px;opacity:0;transform:translateY(2px);
+    transition:opacity .14s var(--ease);}
+  .tt.show{opacity:1;}
+  .tt .k{font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:2px;}
+  .tt .n{font-size:12px;line-height:1.3;}
+
+  .panel{background:var(--panel);padding:16px 16px 20px;overflow-y:auto;min-height:0;}
+  .p-tag{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin:0 0 6px;}
+  .p-title{font-size:16px;font-weight:500;color:var(--ink-strong);line-height:1.2;margin:0 0 3px;letter-spacing:-.01em;}
+  .p-sub{font-size:11.5px;color:var(--stone);margin:0 0 4px;}
+  .p-status{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent);margin:0 0 11px;}
+  .p-body{font-size:12.5px;color:var(--ink);margin:0;}
+  .p-ground{font-size:11.5px;color:var(--stone);margin:10px 0 0;}
+  .p-ground span{color:var(--ink-strong);font-weight:600;}
+  .p-note{font-size:11.5px;color:var(--stone);font-style:italic;margin:9px 0 0;}
+  .p-cta{display:inline-block;margin:14px 0 0;font-size:11px;letter-spacing:.05em;font-weight:600;
+    color:var(--accent);text-decoration:none;border-bottom:1px solid var(--hair);padding-bottom:2px;
+    transition:border-color .2s var(--ease);}
+  .p-cta:hover,.p-cta:focus-visible{border-color:var(--accent);}
+  .p-soon{display:inline-block;margin:14px 0 0;font-size:11px;letter-spacing:.05em;font-weight:600;
+    color:var(--stone);border-bottom:1px solid var(--hair-soft);padding-bottom:2px;}
+  .p-label{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);font-weight:600;
+    margin:16px 0 7px;padding-top:12px;border-top:1px solid var(--hair);}
+  .p-src{list-style:none;margin:0;padding:0;}
+  .p-src li{font-size:10.5px;line-height:1.45;margin-bottom:7px;color:var(--ink);}
+  .p-src a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--hair);text-underline-offset:2px;}
+  .p-src a:hover{text-decoration-color:var(--accent);}
+  .p-conns{display:flex;flex-wrap:wrap;gap:5px;}
+  .chip{font-family:inherit;font-size:10px;letter-spacing:.02em;color:var(--ink);background:var(--paper);
+    border:1px solid var(--hair);border-radius:100px;padding:4px 9px;cursor:pointer;text-decoration:none;
+    display:inline-block;transition:all .2s var(--ease);}
+  .chip:hover,.chip:focus-visible{border-color:var(--stone);color:var(--ink-strong);}
+  .chip .cd{display:inline-block;width:6px;height:6px;border-radius:100px;margin-right:5px;vertical-align:middle;
+    background:var(--sw,var(--stone));transform:translateY(-1px);}
+  .p-rel{display:flex;flex-direction:column;gap:1px;}
+  .rel{display:flex;align-items:stretch;gap:8px;font-family:inherit;text-align:left;width:100%;
+    background:none;border:none;padding:5px 2px;cursor:pointer;border-radius:3px;transition:background .18s var(--ease);}
+  .rel:hover,.rel:focus-visible{background:var(--paper);}
+  .rel-bar{flex:0 0 3px;border-radius:3px;background:var(--rc,var(--stone));align-self:stretch;opacity:.85;}
+  .rel-txt{display:flex;flex-direction:column;gap:1px;min-width:0;}
+  .rel-name{font-size:11.5px;color:var(--ink-strong);font-weight:500;line-height:1.25;}
+  .rel-basis{font-size:10px;color:var(--stone);line-height:1.3;}
+
+  .foot{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding:9px 2px 0;}
+  .foot .li{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--stone);}
+  .foot .sz{border-radius:100px;background:var(--stone);flex-shrink:0;}
+
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0);white-space:nowrap;border:0;}
+  .sr-only a:focus{position:static;width:auto;height:auto;clip:auto;}
+
+  @media (max-width:720px){
+    .stage{grid-template-columns:1fr;grid-template-rows:minmax(230px,1fr) minmax(150px,0.85fr);}
+    .panel{border-top:1px solid var(--hair);}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="embed">
+  <div class="bar">
+    <span class="areamark"><span class="sw" id="area-sw"></span><span id="area-label"></span></span>
+    <span class="barspace"></span>
+    <button class="linkbtn" id="reset" type="button">Reset view</button>
+    <a class="linkbtn" id="fullmap" href="https://accessiblelearninglabs.github.io/learning-design-specialization/landscape.html" target="_blank" rel="noopener">Full landscape &#8599;</a>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-wrap" id="cwrap">
+      <canvas id="map" tabindex="0" role="img"></canvas>
+      <div class="tt" id="tt"><div class="k" id="tt-k"></div><div class="n" id="tt-n"></div></div>
+    </div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <div class="foot" aria-hidden="true">
+    <span class="li"><span class="sz" style="width:14px;height:14px"></span>More developed</span>
+    <span class="li"><span class="sz" style="width:8px;height:8px"></span>Earlier in development</span>
+    <span class="li" id="foot-hint">Select a circle to read it &#183; drag to move &#183; &#8984;/Ctrl + scroll to zoom</span>
+  </div>
+
+  <div class="sr-only" id="textalt"></div>
+</div>
+
+<script>
+/* ============================================================
+   AREA MAP — a compact, single-area view of the Learning Design
+   Landscape, built for embedding in an area page via <iframe>.
+
+   Choose the area with a query string:
+     area-map.html?area=lxd     Learning Experience Design
+     area-map.html?area=lsd     Learning Systems Design
+     area-map.html?area=kmb     Knowledge Mobilization
+     area-map.html?area=udl     Universal Design for Learning
+     area-map.html?area=access  Accessibility
+
+   The data below is identical to landscape.html. When a
+   contribution changes there, copy the data block across.
+   ============================================================ */
+
+const CATS = {
+  core:   {label:"Learning Design Specialization", color:"#303e44"},
+  lxd:    {label:"Learning Experience Design",      color:"#4c6b66"},
+  udl:    {label:"Universal Design for Learning",   color:"#635f7a"},
+  kmb:    {label:"Knowledge Mobilization",          color:"#47607a"},
+  lsd:    {label:"Learning Systems Design",         color:"#6d6550"},
+  access: {label:"Accessibility",                   color:"#8a6a60"},
+};
+// core is centred and always shown; the five below form the wedges, filters and legend
+const CAT_ORDER = ["lxd","udl","kmb","lsd","access"];
+// Alphabetical order for reader-facing surfaces (tabs, legend, list, area links).
+// The map's spatial layout keeps CAT_ORDER; only the display lists are alphabetised.
+const CAT_ORDER_DISPLAY = ["access","kmb","lxd","lsd","udl"];
+
+const LINKS = {
+  lxd:    "https://www.andrearobin.com/learning-experience-design",
+  udl:    "https://www.andrearobin.com/universal-design-for-learning-udl",
+  kmb:    "https://www.andrearobin.com/knowledge-mobilization",
+  lsd:    "https://www.andrearobin.com/learning-systems-design",
+  access: "https://www.accessiblelearninglabs.com/services",
+  acc_review:  "https://www.accessiblelearninglabs.com/accessibility-review",
+  acc_curric:  "https://www.accessiblelearninglabs.com/course-and-curriculum-design",
+  acc_facil:   "https://www.accessiblelearninglabs.com/facilitation-and-capacity-building",
+};
+const STATUS = {
+  built:   "Published resource",
+  partial: "In development · evidence in hand",
+  service: "Offered as a service",
+  dev:     "In development",
+};
+
+/* Specific live subpage per contribution. A node listed here is a PUBLISHED
+   resource and shows "View the live page"; any node NOT listed here is treated
+   as in development and shows "Live page coming soon". The central node is
+   handled separately (no call to action). */
+const PAGES = {
+  // Area nodes (each links to its area page)
+  area_access:"https://www.accessiblelearninglabs.com/services",
+  area_kmb:"https://www.andrearobin.com/knowledge-mobilization",
+  area_lxd:"https://www.andrearobin.com/learning-experience-design",
+  area_lsd:"https://www.andrearobin.com/learning-systems-design",
+  area_udl:"https://www.andrearobin.com/universal-design-for-learning-udl",
+  // Accessibility (Accessible Learning Labs)
+  ac1:"https://www.accessiblelearninglabs.com/accessibility-review",
+  ac2:"https://www.accessiblelearninglabs.com/course-and-curriculum-design",
+  ac3:"https://www.accessiblelearninglabs.com/facilitation-and-capacity-building",
+  // Knowledge Mobilization
+  km1:"https://www.andrearobin.com/research-to-practice-learning-systems",
+  km2:"https://www.andrearobin.com/kmb-evaluation-design-framework",
+  km3:"https://www.andrearobin.com/implementation-science-for-learning-design-practitioners",
+  // Learning Experience Design
+  lx3:"https://www.andrearobin.com/experiential-learning-infrastructure-design",
+  lx4:"https://www.andrearobin.com/learning-community-design-and-facilitation",
+  lx10:"https://www.andrearobin.com/learning-design",
+  // Learning Systems Design
+  sd1:"https://www.andrearobin.com/needs-analysis-for-organizational-transformation",
+  sd2:"https://www.andrearobin.com/change-management-through-learning-design",
+  sd_org:"https://www.andrearobin.com/organizational-learning-design",
+  sd_eval:"https://www.andrearobin.com/learning-evaluation-framework-design",
+  sd_curric:"https://www.andrearobin.com/curriculum-mapping-design",
+  // Universal Design for Learning
+  ud1:"https://www.andrearobin.com/designing-for-learner-variability-at-scale",
+  ud2:"https://www.andrearobin.com/from-accommodation-to-proactive-inclusive-design",
+  ud4:"https://www.andrearobin.com/closing-the-knowing-doing-gap",
+  ud7:"https://www.andrearobin.com/eliminating-construct-irrelevant-barriers-in-assessment",
+};
+
+/* Independently verifiable sources for the theory and knowledge underpinning
+   this work. Peer-reviewed and institutional sources link directly; books and
+   reports are cited in full so they can be found in any library catalogue.
+   Each is cited by number on the contributions it grounds. */
+const SOURCES = {
+  kolb:{cat:"Learning theory", t:"Kolb, D. A. (1984). Experiential Learning: Experience as the Source of Learning and Development. Prentice Hall (2nd ed., Pearson, 2015)."},
+  ryandeci:{cat:"Motivation", t:"Ryan, R. M., & Deci, E. L. (2000). \u201cSelf-Determination Theory and the Facilitation of Intrinsic Motivation, Social Development, and Well-Being.\u201d American Psychologist, 55(1), 68\u201378.", u:"https://doi.org/10.1037/0003-066X.55.1.68"},
+  sweller:{cat:"Learning sciences", t:"Sweller, J. (1988). \u201cCognitive Load During Problem Solving: Effects on Learning.\u201d Cognitive Science, 12(2), 257\u2013285. See also Sweller, Ayres & Kalyuga, Cognitive Load Theory (Springer, 2011)."},
+  mayer:{cat:"Learning sciences", t:"Mayer, R. E. (2009). Multimedia Learning (2nd ed.). Cambridge University Press."},
+  bjork:{cat:"Learning sciences", t:"Bjork, R. A., & Bjork, E. L. (2011). \u201cMaking Things Hard on Yourself, but in a Good Way: Creating Desirable Difficulties to Enhance Learning.\u201d In Psychology and the Real World. Worth Publishers."},
+  roediger:{cat:"Learning sciences", t:"Roediger, H. L., & Karpicke, J. D. (2006). \u201cTest-Enhanced Learning: Taking Memory Tests Improves Long-Term Retention.\u201d Psychological Science, 17(3), 249\u2013255."},
+  hpl:{cat:"Learning sciences", t:"Bransford, J. D., Brown, A. L., & Cocking, R. R. (Eds.). (2000). How People Learn: Brain, Mind, Experience, and School (Expanded ed.). National Academy Press.", u:"https://nap.nationalacademies.org/catalog/9853/how-people-learn-brain-mind-experience-and-school"},
+  immordino:{cat:"Neuroscience of learning", t:"Immordino-Yang, M. H., & Damasio, A. (2007). \u201cWe Feel, Therefore We Learn: The Relevance of Affective and Social Neuroscience to Education.\u201d Mind, Brain, and Education, 1(1), 3\u201310."},
+  vygotsky:{cat:"Learning theory", t:"Vygotsky, L. S. (1978). Mind in Society: The Development of Higher Psychological Processes. Harvard University Press."},
+  wenger:{cat:"Social learning", t:"Wenger, E. (1998). Communities of Practice: Learning, Meaning, and Identity. Cambridge University Press."},
+  lavewenger:{cat:"Social learning", t:"Lave, J., & Wenger, E. (1991). Situated Learning: Legitimate Peripheral Participation. Cambridge University Press."},
+  flavell:{cat:"Metacognition", t:"Flavell, J. H. (1979). \u201cMetacognition and Cognitive Monitoring: A New Area of Cognitive\u2013Developmental Inquiry.\u201d American Psychologist, 34(10), 906\u2013911."},
+  schon:{cat:"Reflective practice", t:"Sch\u00f6n, D. A. (1983). The Reflective Practitioner: How Professionals Think in Action. Basic Books."},
+  knowles:{cat:"Adult learning", t:"Knowles, M. S., Holton, E. F., & Swanson, R. A. (2015). The Adult Learner (8th ed.). Routledge."},
+  norman:{cat:"Human-centred design", t:"Norman, D. A. (2013). The Design of Everyday Things (Revised and Expanded ed.). Basic Books."},
+  wigginsmctighe:{cat:"Instructional design", t:"Wiggins, G., & McTighe, J. (2005). Understanding by Design (Expanded 2nd ed.). ASCD."},
+  messick:{cat:"Assessment", t:"Messick, S. (1995). \u201cValidity of Psychological Assessment: Validation of Inferences from Persons\u2019 Responses and Performances as Scientific Inquiry into Score Meaning.\u201d American Psychologist, 50(9), 741\u2013749."},
+  hattie:{cat:"Assessment", t:"Hattie, J., & Timperley, H. (2007). \u201cThe Power of Feedback.\u201d Review of Educational Research, 77(1), 81\u2013112."},
+  brooke:{cat:"Usability", t:"Brooke, J. (1996). \u201cSUS: A \u2018Quick and Dirty\u2019 Usability Scale.\u201d In P. W. Jordan et al. (Eds.), Usability Evaluation in Industry. Taylor & Francis."},
+  kirkpatrick:{cat:"Evaluation", t:"Kirkpatrick, D. L., & Kirkpatrick, J. D. (2006). Evaluating Training Programs: The Four Levels (3rd ed.). Berrett-Koehler."},
+  rossett:{cat:"Needs analysis", t:"Rossett, A. (1987). Training Needs Assessment. Educational Technology Publications."},
+  rosemeyer:{cat:"Universal Design for Learning", t:"Rose, D. H., & Meyer, A. (2002). Teaching Every Student in the Digital Age: Universal Design for Learning. ASCD."},
+  meyerrosegordon:{cat:"Universal Design for Learning", t:"Meyer, A., Rose, D. H., & Gordon, D. (2014). Universal Design for Learning: Theory and Practice. CAST Professional Publishing."},
+  castudl:{cat:"Universal Design for Learning", t:"CAST (2024). Universal Design for Learning Guidelines, version 3.0.", u:"https://udlguidelines.cast.org"},
+  wcag:{cat:"Accessibility standards", t:"W3C (2023). Web Content Accessibility Guidelines (WCAG) 2.2. W3C Recommendation.", u:"https://www.w3.org/TR/WCAG22/"},
+  ladsonbillings:{cat:"Culturally relevant pedagogy", t:"Ladson-Billings, G. (1995). \u201cToward a Theory of Culturally Relevant Pedagogy.\u201d American Educational Research Journal, 32(3), 465\u2013491."},
+  grahamk2a:{cat:"Knowledge mobilization", t:"Graham, I. D., Logan, J., Harrison, M. B., Straus, S. E., Tetroe, J., Caswell, W., & Robinson, N. (2006). \u201cLost in Knowledge Translation: Time for a Map?\u201d Journal of Continuing Education in the Health Professions, 26(1), 13\u201324."},
+  cfir:{cat:"Implementation science", t:"Damschroder, L. J., et al. (2009). \u201cFostering Implementation of Health Services Research Findings into Practice: A Consolidated Framework for Advancing Implementation Science (CFIR).\u201d Implementation Science, 4:50.", u:"https://implementationscience.biomedcentral.com/articles/10.1186/1748-5908-4-50"},
+  epis:{cat:"Implementation science", t:"Aarons, G. A., Hurlburt, M., & Horwitz, S. M. (2011). \u201cAdvancing a Conceptual Model of Evidence-Based Practice Implementation in Public Service Sectors (EPIS).\u201d Administration and Policy in Mental Health, 38(1), 4\u201323."},
+  parihs:{cat:"Implementation science", t:"Kitson, A., Harvey, G., & McCormack, B. (1998). \u201cEnabling the Implementation of Evidence Based Practice: A Conceptual Framework (PARIHS).\u201d Quality in Health Care, 7(3), 149\u2013158."},
+  nutley:{cat:"Evidence use", t:"Nutley, S. M., Walter, I., & Davies, H. T. O. (2007). Using Evidence: How Research Can Inform Public Services. Policy Press."},
+  pfeffersutton:{cat:"Knowing\u2013doing gap", t:"Pfeffer, J., & Sutton, R. I. (2000). The Knowing-Doing Gap: How Smart Companies Turn Knowledge into Action. Harvard Business School Press."},
+  senge:{cat:"Organizational learning", t:"Senge, P. M. (1990). The Fifth Discipline: The Art and Practice of the Learning Organization. Doubleday."},
+  kotter:{cat:"Change management", t:"Kotter, J. P. (1996). Leading Change. Harvard Business School Press."},
+  snowden:{cat:"Complexity", t:"Snowden, D. J., & Boone, M. E. (2007). \u201cA Leader\u2019s Framework for Decision Making.\u201d Harvard Business Review, 85(11), 68\u201376."},
+  mertens:{cat:"Equity evaluation", t:"Mertens, D. M. (2009). Transformative Research and Evaluation. Guilford Press."},
+  fnigc:{cat:"Indigenous data governance", t:"The First Nations Information Governance Centre. The First Nations Principles of OCAP\u00ae (Ownership, Control, Access, Possession).", u:"https://fnigc.ca/ocap-training/"},
+  twoeyed:{cat:"Indigenous knowledge", t:"Bartlett, C., Marshall, M., & Marshall, A. (2012). \u201cTwo-Eyed Seeing and Other Lessons Learned within a Co-Learning Journey of Bringing Together Indigenous and Mainstream Knowledges and Ways of Knowing.\u201d Journal of Environmental Studies and Sciences, 2(4), 331\u2013340."},
+  whocsdh:{cat:"Social determinants", t:"WHO Commission on Social Determinants of Health (2008). Closing the Gap in a Generation: Health Equity Through Action on the Social Determinants of Health. World Health Organization."},
+  fancourt:{cat:"Creative health", t:"Fancourt, D., & Finn, S. (2019). What Is the Evidence on the Role of the Arts in Improving Health and Well-Being? WHO Regional Office for Europe, Health Evidence Network synthesis report 67."},
+};
+
+/* Which sources ground each contribution (cited by number on the node). */
+const SRC_BY_ID = {
+  c0:["hpl","kolb","ryandeci","immordino"],
+  lx10:["kolb","hpl"], lx1:["ryandeci"], lx2:["sweller","mayer"],
+  lx3:["kolb","bjork","roediger"], lx4:["wenger","vygotsky","lavewenger"],
+  lx5:["flavell","schon","hpl"], lx6:["norman"], lx7:["wigginsmctighe","hattie"],
+  lx8:["wigginsmctighe"], lx9:["brooke","norman"],
+  ud1:["rosemeyer","castudl"], ud2:["meyerrosegordon","castudl"], ud3:["castudl","ryandeci"],
+  ud4:["pfeffersutton","hpl"], ud5:["castudl"], ud6:["wcag","castudl"],
+  ud7:["messick","castudl"], ud8:["ladsonbillings"], ud9:["castudl","mayer"], ud10:["kirkpatrick","castudl"],
+  km1:["grahamk2a"], km2:["grahamk2a","kirkpatrick"], km3:["cfir","epis","parihs"],
+  km4:["nutley","grahamk2a"], km5:["grahamk2a","wenger"], km6:["nutley"],
+  km7:["knowles"], km9:["fnigc","twoeyed"], km10:["grahamk2a"],
+  sd4:["senge"], sd1:["rossett"], sd2:["kotter","senge"], sd3:["mertens"],
+  sd5:["lavewenger"], sd6:["norman"], sd8:["fancourt","whocsdh"], sd9:["snowden"],
+  ac1:["wcag","castudl"], ac2:["castudl","wigginsmctighe"], ac3:["knowles","wenger"],
+  // area nodes
+  area_lxd:["kolb","hpl"], area_udl:["rosemeyer","castudl"], area_kmb:["grahamk2a"],
+  area_lsd:["senge"], area_access:["wcag","castudl"],
+  // new resources
+  km_cop:["wenger","grahamk2a"],
+  sd_org:["senge"], sd_eval:["kirkpatrick"], sd_curric:["wigginsmctighe"],
+};
+
+const NODES = [
+  /* ── CENTRE ── */
+  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped by area",
+   body:"A single practice that designs how people and organizations learn, expressed across four connected areas of expertise and a dedicated accessibility service line — each with its own node and its own page. Every contribution below sits in its home area and links to the others it draws on, because the areas are not separate skills but one body of work seen from different perspectives.",
+   ground:"Adult learning · learning sciences · human-centred design",link:"lxd",status:"dev",
+   connects:["area_lxd","area_udl","area_kmb","area_lsd","area_access"]},
+
+  /* ── AREA NODES (each links to its own area page) ── */
+  {id:"area_lxd",cat:"lxd",depth:4,name:"Learning Experience Design",sub:"Area · the learner's lived experience",
+   body:"The design of learning as it is actually experienced — how a learner moves through it, engages with it, and makes it their own. This area gathers the contributions that shape the experience itself, from motivation through practice, reflection, and the journey that holds them together.",
+   ground:"Experiential learning; human-centred design",link:"lxd",
+   connects:["c0","lx10","lx3","lx4"]},
+  {id:"area_udl",cat:"udl",depth:4,name:"Universal Design for Learning",sub:"Area · designing for the full range of learners",
+   body:"Designing proactively for the full, predictable range of human variability, so learning fits diverse learners from the outset rather than being retrofitted. This area gathers the contributions that reduce barriers and widen access without lowering rigour.",
+   ground:"Universal Design for Learning (CAST)",link:"udl",
+   connects:["c0","ud1","ud2","ud7"]},
+  {id:"area_kmb",cat:"kmb",depth:4,name:"Knowledge Mobilization",sub:"Area · moving evidence into practice",
+   body:"The design of how research and evidence reach the people who can use them, and change what they do. This area gathers the contributions that turn knowledge into usable, evaluated, and sustained practice across sectors.",
+   ground:"Knowledge mobilization; implementation science",link:"kmb",
+   connects:["c0","km1","km2","km3"]},
+  {id:"area_lsd",cat:"lsd",depth:4,name:"Learning Systems Design",sub:"Area · learning across a whole organization",
+   body:"The design of learning as an organizational system — its analysis, infrastructure, evaluation, and change — rather than as isolated programs. This area gathers the contributions that situate learning inside institutions and help them move.",
+   ground:"Systems thinking; organizational learning",link:"lsd",
+   connects:["c0","sd_org","sd_eval","sd1","lx3","lx4"]},
+  {id:"area_access",cat:"access",depth:4,name:"Accessibility",sub:"Area · Accessible Learning Labs",
+   body:"A dedicated service line, offered through Accessible Learning Labs, that reviews and designs learning environments for genuine accessibility — holding standards, inclusive design, and systems knowledge together rather than treating access as a final checklist.",
+   ground:"WCAG; UDL; inclusive design",link:"access",
+   connects:["c0","ac1","ac2","ac3"]},
+
+  /* ── LEARNING EXPERIENCE DESIGN ── */
+  {id:"lx10",cat:"lxd",depth:3,name:"Learning Experience Architecture",sub:"The five-phase rhythm — Why · See · Try · Share · Reflect",
+   body:"The end-to-end arc a learner moves through, designed as one coherent journey rather than a sequence of modules. It is the organizing spine of the experience work, and the frame every other contribution in this area extends.",
+   ground:"Experiential learning (Kolb); the Why→See→Try→Share→Reflect rhythm",link:"lxd",status:"built",
+   connects:["c0","lx1","lx3","lx5"]},
+  {id:"lx1",cat:"lxd",depth:3,name:"Designing for Motivation & Relevance",sub:"Why adult learners engage — or quietly disengage",
+   body:"Anchoring learning to a learner's real circumstances and existing expertise before content is introduced, so relevance and autonomy carry the motivational work. It addresses the most common reason programs fall short: attention and completion that quietly decline.",
+   ground:"Self-Determination Theory (Ryan & Deci)",link:"lxd",status:"dev",connects:["lx10","ud3"]},
+  {id:"lx2",cat:"lxd",depth:3,name:"Managing Cognitive Load",sub:"Learning that working memory can hold",
+   body:"Chunking, sequencing, worked examples, and multimedia principles that keep dense material within the limits of attention and memory. It matters most where content is genuinely complex, as in research and health settings.",
+   ground:"Cognitive Load Theory (Sweller); Multimedia Learning (Mayer)",link:"lxd",status:"dev",connects:["lx10","ud5"]},
+  {id:"lx3",cat:"lxd",depth:4,name:"Experiential Learning Infrastructure",sub:"Learning by doing, built to last",
+   body:"The conditions and structures that let adult learners practise, make consequential mistakes, and build capability through experience rather than exposure. It treats error as a designed source of feedback, not a failure of instruction.",
+   ground:"Experiential learning (Kolb); retrieval practice & desirable difficulties (Bjork)",link:"lxd",status:"built",connects:["lx10","lx5","ac3"]},
+  {id:"lx4",cat:"lxd",depth:4,name:"Learning Community Design & Facilitation",sub:"Peer learning and communities of practice",
+   body:"Designing the social layer of learning — structured peer exchange, collaborative sense-making, and communities of practice that let expertise circulate rather than sit in silos. It is also the capability that sustains evidence use in knowledge mobilization.",
+   ground:"Zone of proximal development (Vygotsky); communities of practice (Wenger)",link:"lxd",status:"built",connects:["lx10","km5","km1","ac3"]},
+  {id:"lx5",cat:"lxd",depth:3,name:"Designing for Reflection & Transfer",sub:"Making learning adapt to new situations",
+   body:"Reflection and metacognition designed in, so learners can make what they have learned their own and re-deploy it in situations the designer could not anticipate. It is the experience-level form of closing the distance between knowing and doing.",
+   ground:"Metacognition (Flavell); reflective practice (Schön); Bransford et al.",link:"lxd",status:"dev",connects:["lx10","ud4","lx3"]},
+  {id:"lx6",cat:"lxd",depth:3,name:"Learner Research: Human-Centred Design",sub:"Understanding learners before designing for them",
+   body:"UX research applied to learning — interviews, empathy mapping, personas, journey mapping, and synthesis — so programs are grounded in who learners actually are rather than who they are assumed to be. At organizational scale, the same inquiry becomes needs analysis.",
+   ground:"Human-centred design; UX research methods",link:"lxd",status:"partial",connects:["lx10","sd1","ud1"]},
+  {id:"lx7",cat:"lxd",depth:3,name:"Assessment & Feedback as Experience",sub:"Feedback that drives learning, not anxiety",
+   body:"Designing assessment and feedback as part of the learning itself — authentic tasks, timely formative feedback, and productive challenge — rather than as a terminal measurement. It works alongside barrier removal, but is a distinct concern.",
+   ground:"Authentic assessment (Wiggins & McTighe); feedback research",link:"lxd",status:"dev",connects:["lx10","ud7","ac1"]},
+  {id:"lx8",cat:"lxd",depth:3,name:"Backward Design in Practice",sub:"Aligning outcomes, assessment, and activity",
+   body:"Holding a single learning experience coherent by starting from the intended outcome, then the evidence of it, then the activity — so nothing in the experience is arbitrary. It answers a recurring need in program and accreditation contexts.",
+   ground:"Backward design (Wiggins & McTighe)",link:"lxd",status:"dev",connects:["lx10","ac2","sd6"]},
+  {id:"lx9",cat:"lxd",depth:3,name:"Testing & Iterating the Experience",sub:"Usability methods for learning",
+   body:"Treating a learning experience as something to be tested with real learners and improved — usability testing, beta cycles, and quality assurance — before and after it is delivered. It is the formative counterpart to downstream impact evaluation.",
+   ground:"Usability testing; System Usability Scale",link:"lxd",status:"partial",connects:["lx10","ud10","km2"]},
+
+  /* ── UNIVERSAL DESIGN FOR LEARNING ── */
+  {id:"ud1",cat:"udl",depth:3,name:"Designing for Learner Variability at Scale",sub:"The thesis the other UDL work inherits",
+   body:"Designing from the outset for the full, predictable range of human variability, so the environment fits diverse learners rather than a mythical average one. It is the worldview that grounds every other contribution in this area.",
+   ground:"Universal Design for Learning (CAST; Rose & Meyer)",link:"udl",status:"built",connects:["c0","ud2","lx6"]},
+  {id:"ud2",cat:"udl",depth:3,name:"From Accommodation to Proactive Inclusive Design",sub:"The field's defining reframe",
+   body:"Shifting from retrofitting access for individuals after the fact to designing inclusively from the start, so fewer barriers are ever built in. It states the paradigm shift the field rests on, plainly.",
+   ground:"Universal Design for Learning; inclusive design principles",link:"udl",status:"built",connects:["ud1","ac1"]},
+  {id:"ud3",cat:"udl",depth:2,name:"Engaging Voluntary & Cautious Adult Learners",sub:"The engagement principle in practice",
+   body:"Designing multiple pathways into motivation for learners who arrive with very different reasons for being there, including those who would rather not be. Where engagement is not solved, little downstream can land.",
+   ground:"UDL engagement principle; adult learning",link:"udl",status:"dev",connects:["ud1","lx1"]},
+  {id:"ud4",cat:"udl",depth:3,name:"Closing the Knowing–Doing Gap",sub:"From understanding to changed practice",
+   body:"Designing for the distance between what learners understand and what they actually do — the transfer problem seen through an inclusive lens. It shares its machinery with reflection at the experience level and with change at the systems level.",
+   ground:"Transfer research; Universal Design for Learning",link:"udl",status:"built",connects:["ud1","lx5","sd2"]},
+  {id:"ud5",cat:"udl",depth:2,name:"Onboarding Across Wide Experience Ranges",sub:"Multiple entry points and pathways",
+   body:"Designing entry so newcomers and experienced practitioners can each begin where they are, without boring the one or losing the other. It is a representation-principle problem common to every sector.",
+   ground:"UDL representation principle",link:"udl",status:"dev",connects:["ud1","lx2"]},
+  {id:"ud6",cat:"udl",depth:2,name:"Making Accessibility More Than Compliance",sub:"Access as design quality, not a checklist",
+   body:"Treating accessibility as a dimension of good design rather than a minimum legal standard met at the end. It is the conceptual bridge from inclusive learning design to the dedicated accessibility service line.",
+   ground:"WCAG; UDL; inclusive design",link:"udl",status:"dev",connects:["ud1","ac1","ac2"]},
+  {id:"ud7",cat:"udl",depth:3,name:"Eliminating Construct-Irrelevant Barriers in Assessment",sub:"Measuring capability, not obstacles",
+   body:"Removing features of an assessment that get in the way of demonstrating mastery without being part of what is measured, so results reflect capability rather than incidental barriers. It works alongside assessment designed as experience.",
+   ground:"Construct validity; UDL action & expression",link:"udl",status:"built",connects:["ud1","lx7","ac1"]},
+  {id:"ud8",cat:"udl",depth:3,name:"Equity-Centered Learning Design",sub:"The social and cultural layer over everything",
+   body:"Attending to power, culture, and whose knowledge is treated as legitimate across the whole design, rather than as a separate module. It connects directly to equity evaluation and to equity-centred knowledge mobilization.",
+   ground:"Equity-centred and culturally responsive design",link:"udl",status:"dev",connects:["ud1","sd3","km9"]},
+  {id:"ud9",cat:"udl",depth:2,name:"Scaling Personalization Without Scaling Cost",sub:"The production economics of flexibility",
+   body:"Making multiple means of engagement, representation, and expression economically feasible at scale, increasingly with AI-assisted production. It is the meta-capability that makes the rest affordable to deliver.",
+   ground:"Learning technology; AI-assisted design",link:"udl",status:"dev",connects:["ud1","km10"]},
+  {id:"ud10",cat:"udl",depth:3,name:"Evaluating Whether Design Reduced Barriers",sub:"Closing the UDL cycle with evidence",
+   body:"Measuring whether an inclusive design actually lowered barriers, rather than assuming that it did — ending on rigor rather than aspiration. It belongs to the shared evaluation family that runs across the practice.",
+   ground:"Evaluation design; Universal Design for Learning",link:"udl",status:"dev",connects:["ud1","lx9","sd3"]},
+
+  /* ── KNOWLEDGE MOBILIZATION ── */
+  {id:"km1",cat:"kmb",depth:3,name:"Research-to-Practice Learning Systems",sub:"The master framework for moving evidence",
+   body:"The conceptual architecture for how research and evidence reach the people who can use them, and change what they do. It is the centrepiece the other knowledge-mobilization contributions instantiate in specific contexts.",
+   ground:"Knowledge mobilization; implementation frameworks",link:"kmb",status:"built",connects:["c0","km2","lx4","ud4"]},
+  {id:"km2",cat:"kmb",depth:3,name:"KMb Evaluation Design",sub:"Did the evidence change practice?",
+   body:"Measurement built for knowledge mobilization specifically — indicators of uptake and changed practice, not only satisfaction or reach. It is referenced by every other contribution in this area, and shared with the wider evaluation family.",
+   ground:"KMb indicators; evaluation design",link:"kmb",status:"built",connects:["km1","ud10","sd3","lx9"]},
+  {id:"km3",cat:"kmb",depth:3,name:"Implementation Science Learning Design",sub:"Translating implementation frameworks into design",
+   body:"Turning established implementation-science frameworks into concrete design decisions, giving change and needs work a theoretical backbone. It is a shared language among senior practitioners in health and the public sector.",
+   ground:"CFIR; EPIS; PARIHS",link:"kmb",status:"dev",connects:["km1","sd2","sd1"]},
+  {id:"km4",cat:"kmb",depth:2,name:"Evidence Brief & Knowledge Product Design",sub:"Research outputs practitioners actually use",
+   body:"Designing the artifacts that carry evidence — briefs, summaries, and tools — so they are usable by the people they are meant for. It is concrete, demonstrable, and widely hired for.",
+   ground:"Knowledge translation; information design",link:"kmb",status:"dev",connects:["km1","lx8"]},
+  {id:"km5",cat:"kmb",depth:3,name:"Co-Production & Participatory Design",sub:"Designing with knowledge users, not for them",
+   body:"Involving the people who will use knowledge in designing how it moves — the integrated approach many research funders now expect. It draws directly on community design and facilitation.",
+   ground:"Integrated knowledge translation; participatory design",link:"kmb",status:"dev",connects:["km1","lx4"]},
+  {id:"km6",cat:"kmb",depth:2,name:"Policy & Public-Sector Knowledge Design",sub:"Rapid evidence to policy",
+   body:"Designing evidence for the realities of policy process and the people who work within it, so research can inform decisions on the timelines government actually runs on.",
+   ground:"Evidence-informed policy; knowledge mobilization",link:"kmb",status:"dev",connects:["km1","sd1","sd2"]},
+  {id:"km7",cat:"kmb",depth:2,name:"Researcher Capacity Building",sub:"Helping researchers mobilize their own knowledge",
+   body:"Building researchers' capability to carry their own work into practice — the skillset behind the emerging research-impact roles in universities and research institutes.",
+   ground:"Capacity building; adult learning",link:"kmb",status:"dev",connects:["km1","lx3"]},
+  {id:"km9",cat:"kmb",depth:3,name:"Indigenous & Equity-Centred KMb",sub:"Power-aware, community-led knowledge movement",
+   body:"Mobilizing knowledge in ways that respect data sovereignty, plural ways of knowing, and the communities knowledge comes from. It is developed in relationship and with care, not as token coverage.",
+   ground:"OCAP®; Two-Eyed Seeing; equity-centred design",note:"This contribution is developed in consultation and relationship, not authored in isolation.",link:"kmb",status:"dev",connects:["km1","ud8"]},
+  {id:"km10",cat:"kmb",depth:2,name:"Digital & AI-Enabled KMb",sub:"AI-assisted access to evidence",
+   body:"Using digital and AI tools to widen access to evidence and support its use, grounded in real knowledge-mobilization practice rather than novelty. It shares its production questions with scalable personalization.",
+   ground:"Learning technology; responsible AI",link:"kmb",status:"dev",connects:["km1","ud9"]},
+  {id:"km_cop",cat:"kmb",depth:2,name:"Communities of Practice Design for KMb",sub:"Peer structures that sustain evidence use",
+   body:"Designing the peer-learning structures — communities of practice — that keep evidence in use over time rather than letting it fade after a single push. It is the knowledge-mobilization application of community design and facilitation.",
+   ground:"Communities of practice (Wenger)",link:"kmb",status:"dev",connects:["area_kmb","km1","lx4"]},
+
+  /* ── LEARNING SYSTEMS DESIGN ── */
+  {id:"sd4",cat:"lsd",depth:3,name:"Learning Design at the Systems Level",sub:"How learning functions across a whole organization",
+   body:"Designing learning as an organizational system — governance, infrastructure, and sustainment — rather than as a set of isolated programs. It is the capstone that situates every other contribution inside the institution.",
+   ground:"Systems thinking; organizational learning",link:"lsd",status:"built",connects:["c0","sd1","sd2"]},
+  {id:"sd1",cat:"lsd",depth:3,name:"Needs Analysis for Organizational Transformation",sub:"Diagnosing the problem before proposing a solution",
+   body:"Entering an organization by asking the right diagnostic questions first — where intentions and outcomes have drifted apart — so design addresses the real problem. It is the organizational scale of learner research.",
+   ground:"Needs analysis; gap analysis",link:"lsd",status:"built",connects:["sd4","lx6","km3","km6"]},
+  {id:"sd2",cat:"lsd",depth:3,name:"Change Management Through Learning Design",sub:"Moving organizations, not just running courses",
+   body:"Designing learning as the mechanism of organizational change, for institutions navigating transformation with limited capacity to manage it well. It is a frequent, legible need in higher education and the public sector.",
+   ground:"Change management; implementation",link:"lsd",status:"built",connects:["sd4","ud4","km3"]},
+  {id:"sd3",cat:"lsd",depth:3,name:"Equity Evaluation Framework Design",sub:"Measuring equity, not only designing for it",
+   body:"Frameworks that measure whether a design advanced equity, extending evaluation into territory organizations are increasingly accountable for. It belongs to the shared evaluation family across the practice.",
+   ground:"Equity evaluation; measurement",link:"lsd",status:"dev",connects:["sd4","ud8","ud10","km2"]},
+  {id:"sd5",cat:"lsd",depth:2,name:"Scenario-Based Learning Design for Complex Practice",sub:"Designing for judgment under real conditions",
+   body:"Designing learning around realistic scenarios so practitioners build judgment for complex, ambiguous situations. It is widely applicable across professional practice in every target sector.",
+   ground:"Situated learning; case-based design",link:"lsd",status:"dev",connects:["sd4","lx3"]},
+  {id:"sd6",cat:"lsd",depth:2,name:"Storyboarding for Learning Design",sub:"Making the design visible before it is built",
+   body:"A craft method for planning and communicating a learning experience before production, so decisions are deliberate and shared. It shows how the work is done, not only what it concludes.",
+   ground:"Storyboarding; design process",link:"lsd",status:"dev",connects:["sd4","lx8"]},
+  {id:"sd8",cat:"lsd",depth:2,name:"Wellness-Integrated Learning Environment Design",sub:"Designing for the conditions learning depends on",
+   body:"Designing learning environments that account for the human conditions — including wellbeing and the social determinants of participation — that shape whether learning can happen at all.",
+   ground:"Wellbeing; social determinants of learning",link:"lsd",status:"dev",connects:["sd4","ud8"]},
+  {id:"sd9",cat:"lsd",depth:2,name:"Learning Design for Emergent Learning",sub:"Structure for learning that cannot be fully pre-planned",
+   body:"Designing for contexts where outcomes genuinely cannot be specified in advance, providing structure for learning that emerges through the work itself. It is the most exploratory contribution in the systems line.",
+   ground:"Complexity; emergent design",link:"lsd",status:"dev",connects:["sd4","lx5"]},
+  {id:"sd_org",cat:"lsd",depth:3,name:"Organizational Learning Design",sub:"Learning as an organizational capability",
+   body:"Designing the structures, roles, and routines through which an organization learns as a whole — so capability is built into how the institution works, not left to individual programs.",
+   ground:"Organizational learning (Senge)",link:"lsd",status:"built",connects:["area_lsd","sd4","sd1"]},
+  {id:"sd_eval",cat:"lsd",depth:3,name:"Learning Evaluation Framework Design",sub:"Knowing whether learning worked",
+   body:"Designing frameworks that measure whether learning achieved what it set out to — outcomes and impact, not only satisfaction — so decisions rest on evidence. It belongs to the shared evaluation family across the practice.",
+   ground:"Evaluation design (Kirkpatrick)",link:"lsd",status:"built",connects:["area_lsd","sd3","km2","ud10"]},
+  {id:"sd_curric",cat:"lsd",depth:3,name:"Curriculum Mapping Design",sub:"Coherence across a whole program",
+   body:"Mapping outcomes, assessments, and experiences across an entire curriculum so a program holds together as a coherent whole rather than a set of disconnected courses. It is the program-scale companion to backward design.",
+   ground:"Curriculum alignment; backward design",link:"lsd",status:"built",connects:["area_lsd","lx8","sd6"]},
+
+  /* ── ACCESSIBILITY SERVICES ── */
+  {id:"ac1",cat:"access",depth:3,name:"Accessibility Review",sub:"Service · Accessible Learning Labs",
+   body:"A rigorous review of learning environments that holds four interconnected bodies of knowledge in view at once, producing findings a surface-level compliance check cannot. It is offered as a specific, scoped service.",
+   ground:"WCAG; UDL; disability studies; systems knowledge",link:"acc_review",status:"service",connects:["c0","ud6","lx7","ac2"]},
+  {id:"ac2",cat:"access",depth:3,name:"Inclusive Course & Curriculum Design",sub:"Service · Accessible Learning Labs",
+   body:"Inclusive design of courses and curricula for faculty, designers, and curriculum committees — integrating design frameworks, pedagogy, and the systems knowledge that makes change endure. It is offered as a specific service.",
+   ground:"UDL; backward design; assessment equity; systems knowledge",link:"acc_curric",status:"service",connects:["ac1","ud6","lx8"]},
+  {id:"ac3",cat:"access",depth:3,name:"Inclusive Facilitation & Capacity Building",sub:"Service · Accessible Learning Labs",
+   body:"Facilitation understood as a professional stance shaped by how power, identity, and legitimate knowledge are held — and the building of others' capacity to facilitate inclusively. It is offered as a specific service.",
+   ground:"Power-aware facilitation; adult learning; equity",link:"acc_facil",status:"service",connects:["ac1","lx4","lx3"]},
+];
+
+/* ============================================================
+   Build reference-facing UI (list + area links + legend + filters)
+   ============================================================ */
+const nodeMap = {};
+NODES.forEach(n => nodeMap[n.id] = n);
+
+// attach source keys to each node, then number sources by first appearance
+NODES.forEach(n => { n.src = SRC_BY_ID[n.id] || []; });
+
+/* Cross-cutting themes each contribution touches — the second dimension of
+   relatedness alongside shared theory. Two contributions in different areas
+   that share themes (e.g. evaluation, equity, community) are genuinely alike. */
+const TAG_LABELS = {
+  motivation:"Motivation", cognition:"Cognition", experiential:"Experiential",
+  community:"Community", reflection:"Reflection", research:"Learner research",
+  assessment:"Assessment", alignment:"Alignment", evaluation:"Evaluation",
+  iteration:"Iteration", variability:"Variability", access:"Access", equity:"Equity",
+  transfer:"Transfer", scale:"Scale", implementation:"Implementation", policy:"Policy",
+  capacity:"Capacity", systems:"Systems", change:"Change", complexity:"Complexity",
+  wellbeing:"Wellbeing", indigenous:"Indigenous knowledge", journey:"Journey",
+};
+const TAGS_BY_ID = {
+  c0:["journey","systems"],
+  lx10:["journey","experiential"], lx1:["motivation"], lx2:["cognition"],
+  lx3:["experiential","transfer"], lx4:["community"], lx5:["reflection","transfer"],
+  lx6:["research"], lx7:["assessment"], lx8:["alignment","assessment"], lx9:["iteration","evaluation"],
+  ud1:["variability","scale"], ud2:["access","variability"], ud3:["motivation","variability"],
+  ud4:["transfer"], ud5:["variability","access"], ud6:["access"], ud7:["assessment","access"],
+  ud8:["equity"], ud9:["scale","iteration"], ud10:["evaluation","access"],
+  km1:["implementation","systems"], km2:["evaluation"], km3:["implementation"],
+  km4:["research","implementation"], km5:["community","research"], km6:["policy","implementation"],
+  km7:["capacity","research"], km9:["indigenous","equity"], km10:["scale","iteration"],
+  sd4:["systems"], sd1:["research","systems"], sd2:["change","systems"], sd3:["evaluation","equity"],
+  sd5:["experiential","capacity"], sd6:["journey","alignment"], sd8:["wellbeing","equity"], sd9:["complexity","systems"],
+  ac1:["access","evaluation"], ac2:["access","alignment"], ac3:["community","capacity","access"],
+  // area nodes
+  area_lxd:["journey","experiential","motivation"], area_udl:["variability","access","equity"],
+  area_kmb:["implementation","research","systems"], area_lsd:["systems","change","evaluation"],
+  area_access:["access"],
+  // new resources
+  km_cop:["community","implementation"],
+  sd_org:["systems","capacity"], sd_eval:["evaluation","systems"], sd_curric:["alignment","systems"],
+};
+NODES.forEach(n => { n.tags = TAGS_BY_ID[n.id] || []; });
+
+/* Similarity: shared theory (sources) + shared themes (tags) + an explicit
+   editorial link + a small same-area affinity. Drives both the affinity
+   layout and the "most related" ranking. */
+function jaccard(A,B){
+  if(!A.length || !B.length) return 0;
+  const s = new Set(A); let inter=0;
+  B.forEach(x => { if(s.has(x)) inter++; });
+  return inter/(A.length + B.length - inter);
+}
+function shared(A,B){ const s=new Set(A); return B.filter(x=>s.has(x)); }
+function similarity(a,b){
+  const ss = jaccard(a.src, b.src);
+  const st = jaccard(a.tags, b.tags);
+  const con = (a.connects.includes(b.id) || b.connects.includes(a.id)) ? 1 : 0;
+  const area = a.cat===b.cat ? 1 : 0;
+  return 0.42*ss + 0.30*st + 0.20*con + 0.08*area;
+}
+
+const usedKeys = [];
+["core"].concat(CAT_ORDER).forEach(c => {
+  NODES.filter(n => n.cat===c).forEach(n => n.src.forEach(k => { if(!usedKeys.includes(k)) usedKeys.push(k); }));
+});
+const srcNum = {};
+usedKeys.forEach((k,i) => srcNum[k] = i+1);
+
+/* ============================================================
+   Cross-listed contributions.
+
+   A few resources belong to two areas: their home area, where they
+   are coloured and counted, and a second area whose own set of
+   knowledge resources includes them. They are drawn in their home
+   colour so the shared lineage stays visible.
+   ============================================================ */
+const ALSO_IN = {
+  lsd: ["lx3","lx4","lx6"],   // Experiential infrastructure · Learning community · Learner research
+};
+
+/* ============================================================
+   Which area is this instance showing?
+   ============================================================ */
+const AREA = (function(){
+  const q = (new URLSearchParams(location.search).get("area")
+             || location.hash.replace("#","") || "lxd").toLowerCase().trim();
+  const alias = {ux:"lxd","learning-experience-design":"lxd","systems":"lsd",
+                 "learning-systems-design":"lsd","knowledge-mobilization":"kmb",
+                 "universal-design-for-learning":"udl","accessibility":"access"};
+  const key = alias[q] || q;
+  return (CATS[key] && key !== "core") ? key : "lxd";
+})();
+
+function boot(){
+  const areaNode = nodeMap["area_"+AREA];
+  const own = NODES.filter(n => n.cat===AREA && n.id!==areaNode.id);
+  const guests = (ALSO_IN[AREA]||[]).map(id => nodeMap[id]).filter(Boolean);
+  const items = own.concat(guests);
+  const shown = [areaNode].concat(items);
+  const isGuest = id => guests.some(g => g.id===id);
+  const shownIds = new Set(shown.map(n => n.id));
+  const colour = CATS[AREA].color;
+
+  document.title = CATS[AREA].label + " · Learning Design Landscape";
+  document.getElementById("area-label").textContent = CATS[AREA].label;
+  document.getElementById("area-sw").style.background = colour;
+  document.getElementById("fullmap").href =
+    "https://accessiblelearninglabs.github.io/learning-design-specialization/landscape.html";
+
+  // if any resource here is cross-listed, say so in the footer
+  (function guestLegend(){
+    const ids = ALSO_IN[AREA] || [];
+    if(!ids.length) return;
+    const homes = [];
+    ids.forEach(id => { const n = nodeMap[id];
+      if(n && homes.indexOf(n.cat) === -1) homes.push(n.cat); });
+    homes.forEach(cat => {
+      const el = document.createElement("span");
+      el.className = "li";
+      el.innerHTML = '<span class="sz" style="width:10px;height:10px;background:'+
+        CATS[cat].color+'"></span>Also a '+CATS[cat].label+' resource';
+      document.querySelector(".foot").insertBefore(el, document.getElementById("foot-hint"));
+    });
+  })();
+
+  /* ── text alternative: a real, linked list for screen readers ── */
+  (function textAlt(){
+    const box = document.getElementById("textalt");
+    let html = '<h2>'+CATS[AREA].label+' — contributions in this area</h2><ul>';
+    items.forEach(n => {
+      const page = PAGES[n.id] || null;
+      html += '<li>'+(page ? '<a href="'+page+'" target="_blank" rel="noopener">'+n.name+'</a>' : n.name)+
+              ' — '+n.body+' '+(page ? '(Published resource.)' : '(In development; live page coming soon.)')+'</li>';
+    });
+    html += '</ul>';
+    box.innerHTML = html;
+    document.getElementById("map").setAttribute("aria-label",
+      "Map of the "+items.length+" contributions in "+CATS[AREA].label+
+      ". Interactive: use the arrow keys to move between contributions and Enter to read one. "+
+      "A text list of every contribution follows.");
+  })();
+
+  /* ============================================================
+     Layout — the area sits at the centre, its contributions ring it
+     ============================================================ */
+  areaNode.px = 0; areaNode.py = 0;
+  const N = items.length;
+  items.forEach((n,i) => {
+    const a = -Math.PI/2 + i*(Math.PI*2/N);
+    const r = 112 + (i%2 ? 34 : 0);
+    n.px = Math.cos(a)*r; n.py = Math.sin(a)*r; n.ang = a;
+  });
+  const depthR = {1:5,2:6.5,3:8.5,4:12,5:15};
+  const MAXR = Math.max.apply(null, shown.map(n => Math.hypot(n.px,n.py))) || 1;
+
+  /* ============================================================
+     Canvas engine
+     ============================================================ */
+  const wrap = document.getElementById("cwrap");
+  const canvas = document.getElementById("map");
+  const ctx = canvas.getContext("2d");
+  const tt = document.getElementById("tt");
+
+  let selected = areaNode.id, hovered = null, inited = false;
+  let fitZoom=1, zoom=1, targetZoom=1;
+  let panX=0, panY=0, targetPanX=0, targetPanY=0;
+  let W=0,H=0,DPR=1;
+
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    W = wrap.clientWidth; H = wrap.clientHeight;
+    canvas.width = Math.max(1,W*DPR); canvas.height = Math.max(1,H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    // leave room for the radial labels either side, and for two-line labels top and bottom
+    const zx = (W*0.5 - 150)/MAXR, zy = (H*0.5 - 52)/MAXR;
+    fitZoom = Math.max(0.34, Math.min(1.25, Math.min(zx,zy)));
+    if(!inited){ zoom = targetZoom = fitZoom; inited = true; }
+  }
+  window.addEventListener("resize", resize);
+
+  function roomForLabels(){ return W >= 560 && H >= 300; }
+  function project(n){ return {sx: W/2 + (n.px+panX)*zoom, sy: H/2 + (n.py+panY)*zoom}; }
+  function nodeRadius(n){ return Math.max(2, depthR[n.depth]*zoom); }
+
+  function hexA(hex,a){ const c=hx(hex); return "rgba("+c[0]+","+c[1]+","+c[2]+","+a.toFixed(3)+")"; }
+  function shade(hex,d){ const c=hx(hex); return "#"+c.map(v=>clamp(v+d).toString(16).padStart(2,"0")).join(""); }
+  function hx(hex){ hex=hex.replace("#",""); return [0,2,4].map(i=>parseInt(hex.substr(i,2),16)); }
+  function clamp(v){ return Math.max(0,Math.min(255,v)); }
+
+  /* wrap a name onto at most two lines for the radial labels */
+  const wrapCache = {};
+  function wrapLabel(name){
+    if(wrapCache[name]) return wrapCache[name];
+    const words = name.split(" ");
+    let l1 = "", l2 = "";
+    words.forEach(w => {
+      if(!l2 && (l1+" "+w).trim().length <= 19) l1 = (l1+" "+w).trim();
+      else l2 = (l2+" "+w).trim();
+    });
+    if(l2.length > 22) l2 = l2.slice(0,21).trim()+"\u2026";
+    const out = l2 ? [l1,l2] : [l1];
+    wrapCache[name] = out; return out;
+  }
+
+  let lastPts = [];
+  /* Radial labels, with a vertical de-collision pass on each side. Contributions
+     keep their side of the ring; labels slide vertically only as far as they must
+     to stop overlapping, then are clamped inside the frame. */
+  const labelAlpha = {};
+  function labelBoxes(pMap){
+    const sides = {L:[], R:[]};
+    items.forEach(n => {
+      const p = pMap[n.id], r = nodeRadius(n), lines = wrapLabel(n.name);
+      const side = Math.cos(n.ang) >= 0 ? "R" : "L";
+      sides[side].push({n, side, lines,
+        x: side==="R" ? p.sx + r + 7 : p.sx - r - 7,
+        cy0: p.sy, cy: p.sy, h: lines.length*12});
+    });
+    const GAP = 4;
+    ["L","R"].forEach(k => {
+      const g = sides[k].sort((a,b) => a.cy0 - b.cy0);
+      // push down through the list
+      for(let i=1;i<g.length;i++){
+        const min = g[i-1].cy + g[i-1].h/2 + GAP + g[i].h/2;
+        if(g[i].cy < min) g[i].cy = min;
+      }
+      // then pull back up so nothing leaves the frame
+      for(let i=g.length-1;i>=0;i--){
+        const max = (i===g.length-1) ? H - 8 - g[i].h/2
+                                     : g[i+1].cy - g[i+1].h/2 - GAP - g[i].h/2;
+        if(g[i].cy > max) g[i].cy = max;
+      }
+      for(let i=0;i<g.length;i++){
+        const min = (i===0) ? 8 + g[i].h/2
+                            : g[i-1].cy + g[i-1].h/2 + GAP + g[i].h/2;
+        if(g[i].cy < min) g[i].cy = min;
+      }
+    });
+    return sides.L.concat(sides.R);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const pMap = {}; shown.forEach(n => pMap[n.id] = project(n));
+    const focus = selected || hovered;
+
+    // spokes from the area to each contribution
+    const cp = pMap[areaNode.id];
+    ctx.lineWidth = 1;
+    items.forEach(n => {
+      const p = pMap[n.id];
+      const touch = focus && (focus===n.id || focus===areaNode.id);
+      ctx.strokeStyle = "rgba(48,62,68,"+(touch ? 0.34 : (focus ? 0.07 : 0.14))+")";
+      ctx.beginPath(); ctx.moveTo(cp.sx,cp.sy); ctx.lineTo(p.sx,p.sy); ctx.stroke();
+    });
+
+    // editorial links between contributions inside this area
+    const seen = new Set();
+    items.forEach(n => {
+      (n.connects||[]).forEach(cid => {
+        if(!shownIds.has(cid) || cid===areaNode.id) return;
+        const key = [n.id,cid].sort().join("-");
+        if(seen.has(key)) return; seen.add(key);
+        const a = pMap[n.id], b = pMap[cid];
+        const touch = focus && (focus===n.id || focus===cid);
+        ctx.lineWidth = touch ? 1.4 : 1;
+        ctx.strokeStyle = hexA(colour, touch ? 0.55 : (focus ? 0.12 : 0.3));
+        ctx.beginPath(); ctx.moveTo(a.sx,a.sy); ctx.lineTo(b.sx,b.sy); ctx.stroke();
+      });
+    });
+
+    // nodes and their labels
+    shown.forEach(n => {
+      const p = pMap[n.id], r = nodeRadius(n);
+      const isArea = n.id===areaNode.id;
+      const col = isArea ? "#303e44" : CATS[n.cat].color;
+      let alpha = 0.95;
+      if(selected){
+        if(n.id===selected) alpha = 1;
+        else if(isArea || (nodeMap[selected].connects||[]).includes(n.id) ||
+                (n.connects||[]).includes(selected)) alpha = 0.9;
+        else alpha = 0.4;
+      } else if(hovered){ alpha = (n.id===hovered) ? 1 : 0.55; }
+
+      const g = ctx.createRadialGradient(p.sx,p.sy,0,p.sx,p.sy,r*2.1);
+      g.addColorStop(0, hexA(col, 0.16*alpha));
+      g.addColorStop(1, hexA(col, 0));
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(p.sx,p.sy,r*2.1,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = hexA(col, alpha);
+      ctx.beginPath(); ctx.arc(p.sx,p.sy,r,0,Math.PI*2); ctx.fill();
+      ctx.lineWidth = (n.id===selected||n.id===hovered) ? 1.6 : 1;
+      ctx.strokeStyle = hexA(shade(col,-22), alpha);
+      ctx.beginPath(); ctx.arc(p.sx,p.sy,r,0,Math.PI*2); ctx.stroke();
+
+      // the area label sits above the centre; contribution labels are laid out below
+      const on = (n.id===selected || n.id===hovered);
+      if(isArea){
+        ctx.fillStyle = "rgba(48,62,68,"+(on ? 0.95 : 0.9).toFixed(2)+")";
+        ctx.font = "600 12px Asap, sans-serif";
+        ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+        ctx.fillText(n.name, p.sx, p.sy - r - 7);
+      }
+      labelAlpha[n.id] = alpha;
+    });
+
+    // contribution labels, de-collided so any number of resources stays legible
+    if(roomForLabels()){
+      labelBoxes(pMap).forEach(o => {
+        const on = (o.n.id===selected || o.n.id===hovered);
+        ctx.fillStyle = "rgba(48,62,68,"+(on ? 0.95 : (0.3 + 0.42*(labelAlpha[o.n.id]||1))).toFixed(2)+")";
+        ctx.font = (on ? "600 " : "500 ") + "10.5px Asap, sans-serif";
+        ctx.textAlign = o.side==="R" ? "left" : "right";
+        ctx.textBaseline = "middle";
+        const top = o.cy - (o.lines.length-1)*6;
+        o.lines.forEach((ln,i) => ctx.fillText(ln, o.x, top + i*12));
+      });
+    } else {
+      // narrow embed: label only the active node
+      const id = hovered || selected;
+      const n = id && nodeMap[id];
+      if(n && id !== areaNode.id && shownIds.has(id)){
+        const p = pMap[id], r = nodeRadius(n), lines = wrapLabel(n.name);
+        ctx.fillStyle = "rgba(48,62,68,0.95)";
+        ctx.font = "600 10.5px Asap, sans-serif";
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        const y = p.sy + r + 12;
+        lines.forEach((ln,i) => ctx.fillText(ln, p.sx, y + i*12));
+      }
+    }
+
+    lastPts = shown.map(n => { const p = pMap[n.id]; return {id:n.id, x:p.sx, y:p.sy, r:nodeRadius(n)}; });
+  }
+
+  function hitTest(mx,my){
+    let best=null, bd=1e9;
+    for(let i=lastPts.length-1;i>=0;i--){
+      const p=lastPts[i], d=Math.hypot(mx-p.x,my-p.y);
+      if(d <= p.r+7 && d<bd){ bd=d; best=p.id; }
+    }
+    return best;
+  }
+
+  function tick(){
+    zoom += (targetZoom-zoom)*0.16;
+    panX += (targetPanX-panX)*0.16;
+    panY += (targetPanY-panY)*0.16;
+    draw();
+    requestAnimationFrame(tick);
+  }
+
+  /* ── pointer ── */
+  let dragging=false, moved=0, last={x:0,y:0};
+  function localXY(e){
+    const r = canvas.getBoundingClientRect();
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+    const cy = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
+    return {x:cx, y:cy};
+  }
+  function onDown(e){ const p=localXY(e); dragging=true; moved=0; last=p; canvas.classList.add("grabbing"); }
+  function onMove(e){
+    const p = localXY(e);
+    if(dragging){
+      const dx=p.x-last.x, dy=p.y-last.y; moved += Math.abs(dx)+Math.abs(dy); last=p;
+      targetPanX += dx/zoom; targetPanY += dy/zoom; panX=targetPanX; panY=targetPanY;
+      tt.classList.remove("show");
+      return;
+    }
+    const id = hitTest(p.x,p.y);
+    if(id !== hovered) hovered = id;
+    if(id){
+      const n = nodeMap[id];
+      document.getElementById("tt-k").textContent = (id===areaNode.id) ? "Area" : CATS[n.cat].label;
+      document.getElementById("tt-n").textContent = n.name;
+      tt.style.left = (p.x+14)+"px"; tt.style.top = (p.y-6)+"px";
+      tt.classList.add("show"); canvas.classList.add("pointing");
+    } else { tt.classList.remove("show"); canvas.classList.remove("pointing"); }
+  }
+  function onUp(e){
+    canvas.classList.remove("grabbing");
+    if(dragging && moved < 5){
+      const r = canvas.getBoundingClientRect();
+      const p = e.changedTouches
+        ? {x:e.changedTouches[0].clientX-r.left, y:e.changedTouches[0].clientY-r.top}
+        : last;
+      const id = hitTest(p.x,p.y);
+      if(id) openPanel(id);
+    }
+    dragging = false;
+  }
+  canvas.addEventListener("mousedown",onDown);
+  window.addEventListener("mousemove",onMove);
+  window.addEventListener("mouseup",onUp);
+  canvas.addEventListener("mouseleave",()=>{ hovered=null; tt.classList.remove("show"); });
+
+  /* Touch: one finger scrolls the host page (or taps a node); two fingers
+     pan and pinch the map. This keeps the embed from trapping the scroll. */
+  let touchMode = 0, tStart = null, pinchD = 0, pinchZoom = 1;
+  function touchDist(t){ return Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY); }
+  function touchMid(t){
+    const r = canvas.getBoundingClientRect();
+    return {x:(t[0].clientX+t[1].clientX)/2 - r.left, y:(t[0].clientY+t[1].clientY)/2 - r.top};
+  }
+  canvas.addEventListener("touchstart", e => {
+    touchMode = e.touches.length;
+    if(touchMode === 1){ tStart = localXY(e); }
+    else if(touchMode >= 2){
+      pinchD = touchDist(e.touches); pinchZoom = targetZoom; last = touchMid(e.touches);
+    }
+  }, {passive:true});
+  canvas.addEventListener("touchmove", e => {
+    if(e.touches.length >= 2){
+      e.preventDefault();                       // two fingers: the map takes over
+      const d = touchDist(e.touches);
+      if(pinchD > 0){
+        targetZoom = Math.max(0.3, Math.min(3, pinchZoom * (d/pinchD)));
+        zoom = targetZoom;
+      }
+      const m = touchMid(e.touches);
+      targetPanX += (m.x-last.x)/zoom; targetPanY += (m.y-last.y)/zoom;
+      panX = targetPanX; panY = targetPanY; last = m;
+    }
+    // one finger: do nothing, so the page scrolls normally
+  }, {passive:false});
+  canvas.addEventListener("touchend", e => {
+    if(touchMode === 1 && tStart && e.changedTouches.length){
+      const r = canvas.getBoundingClientRect();
+      const p = {x:e.changedTouches[0].clientX-r.left, y:e.changedTouches[0].clientY-r.top};
+      if(Math.hypot(p.x-tStart.x, p.y-tStart.y) < 12){
+        const id = hitTest(p.x,p.y);
+        if(id) openPanel(id);
+      }
+    }
+    touchMode = 0; tStart = null; pinchD = 0;
+  });
+
+  /* Wheel: zoom only when a modifier is held, so plain scrolling passes
+     through to the page the map is embedded in. */
+  canvas.addEventListener("wheel", e => {
+    if(!(e.ctrlKey || e.metaKey)) return;        // let the page scroll
+    e.preventDefault();
+    targetZoom *= e.deltaY>0 ? 0.9 : 1.1;
+    targetZoom = Math.max(0.3, Math.min(3, targetZoom));
+  }, {passive:false});
+
+  /* ── keyboard: arrow keys walk the ring, Enter reads, Escape returns ── */
+  canvas.addEventListener("keydown", e => {
+    const order = shown.map(n => n.id);
+    let i = order.indexOf(selected);
+    if(e.key === "ArrowRight" || e.key === "ArrowDown"){
+      i = (i+1) % order.length; openPanel(order[i]); e.preventDefault();
+    } else if(e.key === "ArrowLeft" || e.key === "ArrowUp"){
+      i = (i-1+order.length) % order.length; openPanel(order[i]); e.preventDefault();
+    } else if(e.key === "Home"){ openPanel(areaNode.id); e.preventDefault(); }
+    else if(e.key === "Escape"){ openPanel(areaNode.id); resetView(); e.preventDefault(); }
+  });
+
+  /* ============================================================
+     Panel
+     ============================================================ */
+  function openPanel(id){
+    selected = id;
+    const n = nodeMap[id];
+    const isArea = (id === areaNode.id);
+    const page = PAGES[n.id] || null;
+    const live = !!page;
+    const st = isArea ? "" : (live ? "Published resource" : "In development");
+
+    const srcHtml = (n.src||[]).map(k => {
+      const s = SOURCES[k], num = srcNum[k]; if(!s) return "";
+      const txt = "["+num+"] "+s.t;
+      return "<li>"+(s.u ? '<a href="'+s.u+'" target="_blank" rel="noopener">'+txt+'</a>' : txt)+"</li>";
+    }).filter(Boolean).join("");
+
+    // links inside this area are clickable; links beyond it point to the other area page
+    const inArea = [], beyond = [];
+    (n.connects||[]).forEach(cid => {
+      const cn = nodeMap[cid]; if(!cn) return;
+      if(shownIds.has(cid)){
+        if(cid !== id) inArea.push('<button class="chip" data-go="'+cid+'"><span class="cd" style="--sw:'+
+          (cid===areaNode.id ? "#303e44" : CATS[cn.cat].color)+'"></span>'+cn.name+'</button>');
+      } else if(cn.cat !== "core"){
+        beyond.push('<a class="chip" href="'+(LINKS[cn.cat]||"#")+'" target="_blank" rel="noopener">'+
+          '<span class="cd" style="--sw:'+CATS[cn.cat].color+'"></span>'+cn.name+'</a>');
+      }
+    });
+
+    // most related within this area, by shared theory and theme
+    let relHtml = "";
+    if(!isArea){
+      const rel = items.filter(m => m.id !== id)
+        .map(m => ({m, s:similarity(n,m)}))
+        .filter(o => o.s > 0.12)
+        .sort((a,b) => b.s - a.s).slice(0,3);
+      relHtml = rel.map(({m}) => {
+        const shTags = shared(n.tags, m.tags).map(t => TAG_LABELS[t]||t);
+        const shSrc = shared(n.src, m.src).length;
+        const basis = [];
+        if(shTags.length) basis.push(shTags.join(", "));
+        if(shSrc) basis.push(shSrc+" shared source"+(shSrc>1?"s":""));
+        return '<button class="rel" data-go="'+m.id+'">'+
+          '<span class="rel-bar" style="--rc:'+CATS[m.cat].color+'"></span>'+
+          '<span class="rel-txt"><span class="rel-name">'+m.name+'</span>'+
+          (basis.length ? '<span class="rel-basis">'+basis.join(" \u00b7 ")+'</span>' : '')+
+          '</span></button>';
+      }).join("");
+    }
+
+    const panel = document.getElementById("panel");
+    panel.innerHTML =
+      '<div class="p-tag" style="color:'+(isArea ? "#303e44" : CATS[n.cat].color)+'">'+
+        (isArea ? "This area" : CATS[n.cat].label)+'</div>'+
+      '<h3 class="p-title">'+n.name+'</h3>'+
+      '<p class="p-sub">'+n.sub+'</p>'+
+      (st ? '<p class="p-status">'+st+'</p>' : '')+
+      '<p class="p-body">'+n.body+'</p>'+
+      (isGuest(id) ? '<p class="p-note">A resource in both areas. Its home is '+
+        CATS[n.cat].label+', and it is also part of the '+CATS[AREA].label+' set.</p>' : '')+
+      (n.ground ? '<p class="p-ground"><span>Grounding.</span> '+n.ground+'</p>' : '')+
+      (n.note ? '<p class="p-note">'+n.note+'</p>' : '')+
+      (isArea ? '' : (live
+        ? '<a class="p-cta" href="'+page+'" target="_blank" rel="noopener">View the live page \u2192</a>'
+        : '<span class="p-soon">Live page coming soon</span>'))+
+      (srcHtml ? '<div class="p-label">Sources</div><ul class="p-src">'+srcHtml+'</ul>' : '')+
+      (relHtml ? '<div class="p-label">Most related here \u00b7 by shared theory &amp; theme</div>'+
+                 '<div class="p-rel">'+relHtml+'</div>' : '')+
+      (inArea.length ? '<div class="p-label">Connected in this area</div>'+
+                       '<div class="p-conns">'+inArea.join("")+'</div>' : '')+
+      (beyond.length ? '<div class="p-label">Where this work leads</div>'+
+                       '<div class="p-conns">'+beyond.join("")+'</div>' : '');
+    panel.querySelectorAll("[data-go]").forEach(b =>
+      b.addEventListener("click", () => openPanel(b.dataset.go)));
+    panel.scrollTop = 0;
+  }
+
+  function resetView(){ targetZoom = fitZoom; targetPanX = 0; targetPanY = 0; }
+  document.getElementById("reset").addEventListener("click", () => {
+    resetView(); openPanel(areaNode.id);
+  });
+
+  resize();
+  openPanel(areaNode.id);
+  requestAnimationFrame(tick);
+}
+
+if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", boot); }
+else { boot(); }
+</script>
+</body>
+</html>
