@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>About — Andrea Robin</title>
+<meta name="description" content="Four questions about a learning design practice: where the work comes from, what determines whether learning works, what the work makes possible, and how it begins." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root{--paper:#ffffff;--ink:#43525a;--ink-strong:#303e44;--stone:#8a959b;
+    --accent:#475f6a;--hair:#e2e6e8;--hair-soft:#eef1f2;--panel:#f7f8f9;
+    --maxw:860px;--ease:cubic-bezier(.22,.61,.36,1);}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{font-family:"Asap",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);
+    background:var(--paper);-webkit-font-smoothing:antialiased;line-height:1.6;}
+  .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0);white-space:nowrap;border:0;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:2px 0;}
+
+  .note{display:flex;align-items:flex-start;gap:8px;margin:0 0 12px;padding:0 2px;
+    font-size:12.5px;font-style:italic;color:var(--stone);line-height:1.5;}
+  .note svg{flex:0 0 14px;width:14px;height:14px;margin-top:3px;}
+
+  .acc{border:1px solid var(--hair);border-radius:6px;overflow:hidden;background:var(--paper);}
+  .item + .item{border-top:1px solid var(--hair);}
+
+  .qbtn{display:flex;align-items:center;justify-content:space-between;gap:24px;width:100%;
+    font-family:inherit;text-align:left;background:var(--paper);border:none;cursor:pointer;
+    padding:26px 28px;transition:background .2s var(--ease);}
+  .qbtn:hover{background:var(--panel);}
+  .qbtn:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;}
+  .q{font-size:18.5px;font-weight:500;color:var(--ink-strong);line-height:1.3;letter-spacing:-.01em;}
+  .ic{position:relative;flex:0 0 18px;width:18px;height:18px;}
+  .ic::before,.ic::after{content:"";position:absolute;background:var(--stone);
+    transition:transform .28s var(--ease),background .2s var(--ease);}
+  .ic::before{top:8px;left:0;width:18px;height:1.5px;}
+  .ic::after{left:8px;top:0;width:1.5px;height:18px;}
+  .qbtn:hover .ic::before,.qbtn:hover .ic::after{background:var(--ink-strong);}
+  .qbtn[aria-expanded="true"] .ic::after{transform:rotate(90deg);}
+  .qbtn[aria-expanded="true"] .ic::before{transform:rotate(180deg);}
+
+  .pane{display:grid;grid-template-rows:0fr;transition:grid-template-rows .34s var(--ease);
+    background:var(--paper);}
+  .pane.open{grid-template-rows:1fr;}
+  .inner{overflow:hidden;}
+  .pad{padding:0 28px 30px;max-width:660px;}
+  .pane:not(.open) .pad{visibility:hidden;}
+
+  p{margin:0 0 14px;font-size:15.5px;}
+  p:last-child{margin-bottom:0;}
+
+  .claim{margin:0 0 22px;}
+  .claim:last-child{margin-bottom:0;}
+  .claim h3{margin:0 0 5px;font-size:15.5px;font-weight:600;color:var(--ink-strong);
+    line-height:1.35;letter-spacing:-.005em;}
+  .claim p{margin:0;}
+  .tags{display:block;margin-top:9px;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;color:var(--stone);line-height:1.7;}
+
+  @media (max-width:640px){
+    .qbtn{padding:20px 18px;gap:16px;}
+    .q{font-size:16.5px;}
+    .pad{padding:0 18px 24px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .pane{transition:none;} .ic::before,.ic::after{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<h1 class="sr">About this practice — four questions</h1>
+
+<div class="wrap">
+
+  <p class="note">
+    <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+      <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+      <circle cx="8" cy="4.6" r="0.85" fill="currentColor"/>
+      <path d="M8 7.1v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    <span>Four questions about how this practice works. Select a question to expand it.</span>
+  </p>
+
+  <div class="acc">
+
+    <div class="item">
+      <button class="qbtn" id="b1" aria-expanded="false" aria-controls="p1">
+        <span class="q">Where does this work come from?</span><span class="ic" aria-hidden="true"></span>
+      </button>
+      <div class="pane" id="p1" role="region" aria-labelledby="b1">
+        <div class="inner"><div class="pad">
+          <p>I came to learning design through visual arts and neurobiology, and a decade of applied work across higher education, research, and the public sector. Those paths converged on one principle: learning and wellbeing are not separate systems.</p>
+          <p>The work draws on adult learning theory and the science of learning, instructional systems design, knowledge mobilization and implementation science, Universal Design for Learning, and disability scholarship. It operates at the level of individual courses and the organizational systems around them.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="item">
+      <button class="qbtn" id="b2" aria-expanded="false" aria-controls="p2">
+        <span class="q">What determines whether learning works?</span><span class="ic" aria-hidden="true"></span>
+      </button>
+      <div class="pane" id="p2" role="region" aria-labelledby="b2">
+        <div class="inner"><div class="pad">
+          <div class="claim">
+            <h3>Learning and wellbeing share the same conditions.</h3>
+            <p>Relevance, agency, belonging, social scaffolding and reflection make learning stick. They also support cognitive health. Designing for one strengthens the other, and organizations that pursue both get more of each.</p>
+          </div>
+          <div class="claim">
+            <h3>Architecture determines outcomes.</h3>
+            <p>Clear purpose, assessment aligned to intent, and protected time for practice are what produce results. Designing at that level takes longer than building a course and changes what a program is capable of producing.</p>
+          </div>
+          <div class="claim">
+            <h3>Access is a design decision.</h3>
+            <p>Barriers removed during design produce learning that is stronger and useful to a wider range of people. The people who encounter those barriers understand them best, so learners take part in the design from the start.</p>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="item">
+      <button class="qbtn" id="b3" aria-expanded="false" aria-controls="p3">
+        <span class="q">What does this work make possible?</span><span class="ic" aria-hidden="true"></span>
+      </button>
+      <div class="pane" id="p3" role="region" aria-labelledby="b3">
+        <div class="inner"><div class="pad">
+          <div class="claim">
+            <h3>Learning transfers into daily practice.</h3>
+            <p>Understanding forms through relevance, active experience, social consolidation and reflection. A sequence built on that rhythm produces capability rather than completion.</p>
+            <span class="tags">Learning experience design · Adult learning · Curriculum development</span>
+          </div>
+          <div class="claim">
+            <h3>New practice takes hold across large learner populations.</h3>
+            <p>Procedures are quick to write. The orientation underneath them shifts through practice, a different design problem from knowledge transfer and the one that decides whether a change holds.</p>
+            <span class="tags">Learning systems design · Change management · Facilitation</span>
+          </div>
+          <div class="claim">
+            <h3>A program can show what it produces.</h3>
+            <p>Evaluation designed alongside a program, rather than after it, measures change in how people think, work and perform. It also stands up to a regulator.</p>
+            <span class="tags">Evaluation framework design · Logic modelling · Curriculum mapping</span>
+          </div>
+          <div class="claim">
+            <h3>A program works across a wide range of learners.</h3>
+            <p>Range is decided in how goals are set, how participation is structured, and how outcomes are assessed. Designing all three for it produces learning that is stronger for everyone.</p>
+            <span class="tags">Universal Design for Learning · Accessibility · Assessment design</span>
+          </div>
+          <div class="claim">
+            <h3>Evidence reaches the people who can act on it.</h3>
+            <p>Uptake depends on relationships, formats and timing, all of which can be designed alongside the research rather than bolted on once it is published.</p>
+            <span class="tags">Knowledge mobilization · Implementation science</span>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="item">
+      <button class="qbtn" id="b4" aria-expanded="false" aria-controls="p4">
+        <span class="q">How does the work begin?</span><span class="ic" aria-hidden="true"></span>
+      </button>
+      <div class="pane" id="p4" role="region" aria-labelledby="b4">
+        <div class="inner"><div class="pad">
+          <p>Organizations usually hold the subject-matter expertise already. The work adds the architecture that turns it into something learnable and durable, and a clear picture of the conditions it has to hold up in. I begin with diagnosis and design for handover from the outset.</p>
+        </div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  var btns = document.querySelectorAll('.qbtn');
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pane = document.getElementById(btn.getAttribute('aria-controls'));
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      pane.classList.toggle('open', !open);
+      setTimeout(report, 380);
+    });
+  });
+  function report(){
+    var h = document.documentElement.scrollHeight;
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'ar-embed-height', height: h }, '*');
+    }
+  }
+  window.addEventListener('load', report);
+  if (window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+})();
+</script>
+
+</body>
+</html>
