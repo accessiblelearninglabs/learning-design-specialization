@@ -129,11 +129,17 @@
    Landscape, built for embedding in an area page via <iframe>.
 
    Choose the area with a query string:
-     area-map.html?area=lxd     Learning Experience Design
-     area-map.html?area=lsd     Learning Systems Design
-     area-map.html?area=kmb     Knowledge Mobilization
-     area-map.html?area=udl     Universal Design for Learning
-     area-map.html?area=access  Accessibility
+     area-map.html?area=learning-design   Learning Design (the trunk)
+     area-map.html?area=lxd               Learning Experience Design
+     area-map.html?area=lsd               Learning Systems Design
+     area-map.html?area=kmb               Knowledge Mobilization
+     area-map.html?area=udl               Universal Design for Learning
+     area-map.html?area=access            Accessibility
+
+   The trunk is the foundation the five branches grow from, so it has no
+   branch node of its own in the shared data block. One is built for this
+   map alone, just below the data, which leaves the block a straight copy
+   of landscape.html.
 
    The data below is identical to landscape.html. When a
    contribution changes there, copy the data block across.
@@ -146,6 +152,7 @@ const CATS = {
   kmb:    {label:"Knowledge Mobilization",          color:"#47607a"},
   lsd:    {label:"Learning Systems Design",         color:"#6d6550"},
   access: {label:"Accessibility",                   color:"#8a6a60"},
+  trunk:  {label:"Learning Design",                 color:"#55666e"},
 };
 // core is centred and always shown; the five below form the wedges, filters and legend
 const CAT_ORDER = ["lxd","udl","kmb","lsd","access"];
@@ -153,12 +160,26 @@ const CAT_ORDER = ["lxd","udl","kmb","lsd","access"];
 // The map's spatial layout keeps CAT_ORDER; only the display lists are alphabetised.
 const CAT_ORDER_DISPLAY = ["access","kmb","lxd","lsd","udl"];
 
+/* The trunk is the shared learning-design craft the five branches all grow from.
+   It sits INSIDE the branches rather than beside them, so it is deliberately
+   kept out of CAT_ORDER (which drives the spatial wedges) and out of
+   CAT_ORDER_DISPLAY, and handled explicitly wherever categories are
+   enumerated: bibliography numbering, legend, branch links, filters, the list
+   view, and the map layout. */
+const TRUNK = "trunk";
+// Bibliography numbering appends the trunk LAST so existing citation numbers
+// on published pages do not shift.
+const CAT_ORDER_BIB = ["core"].concat(CAT_ORDER).concat([TRUNK]);
+// Reader-facing lists lead with the trunk, because it is what the branches grow from.
+const CAT_ORDER_READ = [TRUNK].concat(CAT_ORDER_DISPLAY);
+
 const LINKS = {
   lxd:    "https://www.andrearobin.com/learning-experience-design",
   udl:    "https://www.andrearobin.com/universal-design-for-learning-udl",
   kmb:    "https://www.andrearobin.com/knowledge-mobilization",
   lsd:    "https://www.andrearobin.com/learning-systems-design",
   access: "https://www.andrearobin.com/accessibility",
+  trunk:  "https://www.andrearobin.com/learning-design",
   acc_services: "https://www.accessiblelearninglabs.com/services",
   acc_review:  "https://www.accessiblelearninglabs.com/accessibility-review",
   acc_curric:  "https://www.accessiblelearninglabs.com/course-and-curriculum-design",
@@ -169,6 +190,7 @@ const STATUS = {
   partial: "In development · evidence in hand",
   service: "Offered as a service",
   dev:     "In development",
+  planned: "Planned",
 };
 
 /* Specific live subpage per contribution. A node listed here is a PUBLISHED
@@ -274,8 +296,54 @@ const SOURCES = {
   nutbeam:{cat:"Health literacy", t:"Nutbeam, D. (2000). \u201cHealth Literacy as a Public Health Goal: A Challenge for Contemporary Health Education and Communication Strategies into the 21st Century.\u201d Health Promotion International, 15(3), 259\u2013267."},
   zabala:{cat:"Assistive technology", t:"Zabala, J. S. (2005). Ready, SETT, Go! Getting Started with the SETT Framework \u2014 the Student, Environments, Tasks, Tools framework for assistive technology decision-making."},
   cookpolgar:{cat:"Assistive technology", t:"Cook, A. M., & Polgar, J. M. (2015). Assistive Technologies: Principles and Practice (4th ed.). Elsevier \u2014 the source of the Human Activity Assistive Technology (HAAT) model."},
+  whoicf:{cat:"Disability classification", t:"World Health Organization (2001). International Classification of Functioning, Disability and Health (ICF). WHO \u2014 the source of the biopsychosocial model of disability.", u:"https://www.who.int/standards/classifications/international-classification-of-functioning-disability-and-health"},
+  retief:{cat:"Disability studies", t:"Reti\u0065f, M., & Let\u0161osa, R. (2018). \u201cModels of Disability: A Brief Overview.\u201d HTS Teologiese Studies / Theological Studies, 74(1)."},
+  shakespeare:{cat:"Disability studies", t:"Shakespeare, T. (2013). Disability Rights and Wrongs Revisited (2nd ed.). Routledge \u2014 a critical reassessment of the strong social model."},
+  whoat:{cat:"Assistive technology", t:"World Health Organization & UNICEF (2022). Global Report on Assistive Technology. World Health Organization.", u:"https://www.who.int/publications/i/item/9789240049451"},
+  whowrd:{cat:"Disability data", t:"World Health Organization & World Bank (2011). World Report on Disability. World Health Organization."},
+  whoghe:{cat:"Disability and health equity", t:"World Health Organization (2022). Global Report on Health Equity for Persons with Disabilities. World Health Organization."},
+  statcansd:{cat:"Disability data", t:"Statistics Canada. Canadian Survey on Disability \u2014 the national source for disability prevalence in Canada."},
+  unitedspinal:{cat:"Disability etiquette", t:"United Spinal Association. Disability Etiquette: Tips on Interacting with People with Disabilities."},
+  udhr:{cat:"International instruments", t:"United Nations (1948). Universal Declaration of Human Rights.", u:"https://www.un.org/en/about-us/universal-declaration-of-human-rights"},
+  crpd:{cat:"International instruments", t:"United Nations (2006). Convention on the Rights of Persons with Disabilities (CRPD).", u:"https://social.desa.un.org/issues/disability/crpd/convention-on-the-rights-of-persons-with-disabilities-crpd"},
+  marrakesh:{cat:"International instruments", t:"World Intellectual Property Organization (2013). Marrakesh Treaty to Facilitate Access to Published Works for Persons Who Are Blind, Visually Impaired or Otherwise Print Disabled."},
+  euchfr:{cat:"Regional instruments", t:"European Union (2012). Charter of Fundamental Rights of the European Union, 2012/C 326/02."},
+  csab651:{cat:"Built environment", t:"CSA Group. CSA B651: Accessible Design for the Built Environment. Canadian Standards Association."},
   tcps2:{cat:"Research ethics", t:"Canadian Institutes of Health Research, Natural Sciences and Engineering Research Council, & Social Sciences and Humanities Research Council (2022). Tri-Council Policy Statement: Ethical Conduct for Research Involving Humans \u2014 TCPS 2 (2022).", u:"https://ethics.gc.ca/eng/policy-politique_tcps2-eptc2_2022.html"},
   fancourt:{cat:"Creative health", t:"Fancourt, D., & Finn, S. (2019). What Is the Evidence on the Role of the Arts in Improving Health and Well-Being? WHO Regional Office for Europe, Health Evidence Network synthesis report 67."},
+
+  /* ── Trunk · learning design craft ──────────────────────────────────────
+     Sources carrying a direct link have been confirmed against a publisher or
+     repository record. */
+  mager:{cat:"Performance analysis", t:"Mager, R. F., & Pipe, P. (1997). Analyzing Performance Problems: Or, You Really Oughta Wanna (3rd ed.). Center for Effective Performance."},
+  gilbert:{cat:"Performance analysis", t:"Gilbert, T. F. (1978). Human Competence: Engineering Worthy Performance. McGraw-Hill. (Tribute edition, Pfeiffer, 2007.)"},
+  rummlerbrache:{cat:"Performance analysis", t:"Rummler, G. A., & Brache, A. P. (1995). Improving Performance: How to Manage the White Space on the Organization Chart (2nd ed.). Jossey-Bass."},
+  nathanpetrosino:{cat:"Learning sciences", t:"Nathan, M. J., & Petrosino, A. (2003). \u201cExpert Blind Spot Among Preservice Teachers.\u201d American Educational Research Journal, 40(4), 905\u2013928."},
+  clarkcta:{cat:"Design method", t:"Clark, R. E., Feldon, D. F., van Merri\u00ebnboer, J. J. G., Yates, K. A., & Early, S. (2008). \u201cCognitive Task Analysis.\u201d In Handbook of Research on Educational Communications and Technology (3rd ed.). Routledge."},
+  clarkmedia:{cat:"Design method", t:"Clark, R. E. (1994). \u201cMedia Will Never Influence Learning.\u201d Educational Technology Research and Development, 42(2), 21\u201329. See also Clark, R. C., & Mayer, R. E. (2016), e-Learning and the Science of Instruction (4th ed.), Wiley."},
+  rossettschafer:{cat:"Performance support", t:"Rossett, A., & Schafer, L. (2007). Job Aids and Performance Support: Moving from Knowledge in the Classroom to Knowledge Everywhere. Pfeiffer."},
+  gottfredsonmosher:{cat:"Performance support", t:"Gottfredson, C., & Mosher, B. (2011). Innovative Performance Support: Strategies and Practices for Learning in the Workflow. McGraw-Hill."},
+  gawande:{cat:"Performance support", t:"Gawande, A. (2009). The Checklist Manifesto: How to Get Things Right. Metropolitan Books."},
+  tufte:{cat:"Visual communication", t:"Tufte, E. R. (2001). The Visual Display of Quantitative Information (2nd ed.). Graphics Press."},
+  cairo:{cat:"Visual communication", t:"Cairo, A. (2012). The Functional Art: An Introduction to Information Graphics and Visualization. New Riders."},
+  iso24495:{cat:"Standards", t:"ISO 24495-1:2023, Plain language \u2014 Part 1: Governing principles and guidelines. International Organization for Standardization."},
+  pashler:{cat:"Learning sciences", t:"Pashler, H., McDaniel, M., Rohrer, D., & Bjork, R. (2008). \u201cLearning Styles: Concepts and Evidence.\u201d Psychological Science in the Public Interest, 9(3), 105\u2013119.", u:"https://doi.org/10.1111/j.1539-6053.2009.01038.x"},
+  dekker:{cat:"Learning sciences", t:"Dekker, S., Lee, N. C., Howard-Jones, P., & Jolles, J. (2012). \u201cNeuromyths in Education: Prevalence and Predictors of Misconceptions among Teachers.\u201d Frontiers in Psychology, 3, 429."},
+  howardjones:{cat:"Learning sciences", t:"Howard-Jones, P. A. (2014). \u201cNeuroscience and Education: Myths and Messages.\u201d Nature Reviews Neuroscience, 15(12), 817\u2013824."},
+  oakley:{cat:"Learning sciences", t:"Oakley, B., Sejnowski, T., & McConville, A. (2018). Learning How to Learn. TarcherPerigee."},
+  hadwin:{cat:"Learning sciences", t:"Hadwin, A. F., J\u00e4rvel\u00e4, S., & Miller, M. (2018). \u201cSelf-Regulation, Co-Regulation, and Shared Regulation in Collaborative Learning Environments.\u201d In Handbook of Self-Regulation of Learning and Performance (2nd ed.). Routledge."},
+  mullainathanshafir:{cat:"Behavioural science", t:"Mullainathan, S., & Shafir, E. (2013). Scarcity: Why Having Too Little Means So Much. Times Books."},
+  pipeda:{cat:"Privacy law", t:"Personal Information Protection and Electronic Documents Act, S.C. 2000, c. 5 (Canada)."},
+  phipa:{cat:"Privacy law", t:"Personal Health Information Protection Act, 2004, S.O. 2004, c. 3, Sched. A (Ontario)."},
+  ramsden:{cat:"Cultural safety", t:"Ramsden, I. (2002). Cultural Safety and Nursing Education in Aotearoa and Te Waipounamu. Doctoral thesis, Victoria University of Wellington."},
+  kirknessbarnhardt:{cat:"Indigenous education", t:"Kirkness, V. J., & Barnhardt, R. (1991). \u201cFirst Nations and Higher Education: The Four R\u2019s \u2014 Respect, Relevance, Reciprocity, Responsibility.\u201d Journal of American Indian Education, 30(3), 1\u201315 (May 1991).", u:"https://eric.ed.gov/?id=EJ438242"},
+  archibald:{cat:"Indigenous education", t:"Archibald, J. (Q\u2019um Q\u2019um Xiiem) (2008). Indigenous Storywork: Educating the Heart, Mind, Body, and Spirit. UBC Press."},
+  ermine:{cat:"Indigenous education", t:"Ermine, W. (2007). \u201cThe Ethical Space of Engagement.\u201d Indigenous Law Journal, 6(1), 193\u2013203.", u:"https://jps.library.utoronto.ca/index.php/ilj/article/view/27669"},
+  tuckyang:{cat:"Indigenous education", t:"Tuck, E., & Yang, K. W. (2012). \u201cDecolonization Is Not a Metaphor.\u201d Decolonization: Indigeneity, Education & Society, 1(1), 1\u201340."},
+  battiste:{cat:"Indigenous education", t:"Battiste, M. (2013). Decolonizing Education: Nourishing the Learning Spirit. Purich Publishing."},
+  smithlt:{cat:"Indigenous education", t:"Smith, L. T. (2012). Decolonizing Methodologies: Research and Indigenous Peoples (2nd ed.). Zed Books."},
+  trc:{cat:"Policy instrument", t:"Truth and Reconciliation Commission of Canada (2015). Truth and Reconciliation Commission of Canada: Calls to Action."},
+  undrip:{cat:"Policy instrument", t:"United Nations (2007). United Nations Declaration on the Rights of Indigenous Peoples. General Assembly resolution 61/295."},
 };
 
 /* Which sources ground each contribution (cited by number on the node). */
@@ -310,6 +378,13 @@ const SRC_BY_ID = {
   ac16:["aca","abca","kotter","senge"],
   ac17:["nutbeam","krahn","whocsdh","rosemeyer"],
   ac18:["tcps2","grahamk2a","wcag"],
+  ac19:["whoicf","oliver","retief","shakespeare"],
+  ac20:["whoicf","wcag","oliver"],
+  ac21:["cookpolgar","zabala","whoat"],
+  ac22:["whowrd","whoghe","statcansd","whoicf"],
+  ac23:["unitedspinal","crpd","charlton"],
+  ac24:["udhr","crpd","marrakesh","euchfr"],
+  ac25:["cud","csab651","aca"],
 
   // area nodes
   area_lxd:["kolb","hpl"], area_udl:["rosemeyer","castudl"], area_kmb:["grahamk2a"],
@@ -317,40 +392,70 @@ const SRC_BY_ID = {
   // new resources
   km_cop:["wenger","grahamk2a"],
   sd_org:["senge"], sd_eval:["kirkpatrick"], sd_curric:["wigginsmctighe"],
+
+  /* Trunk \u2014 learning design craft */
+  ld1:["mager","gilbert","rummlerbrache","rossett"],
+  ld2:["rossett","norman"],
+  ld3:["clarkcta","nathanpetrosino","knowles"],
+  ld4:["knowles","rossett"],
+  ld5:["sweller"],
+  ld6:["mayer","rossett","clarkmedia"],
+  ld7:[],
+  ld8:["rossett"],
+  ld26:["gilbert","rossettschafer","gottfredsonmosher","gawande","mager"],
+  ld9:["tufte","mayer","cairo"],
+  ld10:["wcag","tufte"],
+  ld11:["iso24495","nutbeam","castudl"],
+  ld12:["mayer","wcag"],
+  ld28:["oakley","bjork","roediger","hadwin","mullainathanshafir","flavell"],
+  ld13:["wcag","castudl","en301549"],
+  ld14:["pashler","dekker","howardjones","hpl"],
+  ld15:["nutley"],
+  ld16:["senge","nutley"],
+  ld17:["kirkpatrick","aca","fippa"],
+  ld18:["fippa","pipeda","phipa"],
+  ld19:["tcps2","fnigc"],
+  ld20:["iso24495","nutbeam"],
+  ld27:["ramsden","kirknessbarnhardt","archibald","ermine","tuckyang","battiste","smithlt","trc","undrip","fnigc"],
+  ld21:["knowles","wenger"],
+  ld22:["senge","nutley"],
+  ld23:["knowles","michie"],
+  ld24:["knowles"],
+  ld25:["kirkpatrick","gilbert"],
 };
 
 const NODES = [
   /* ── CENTRE ── */
-  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped by area",
-   body:"A single practice that designs how people and organizations learn, expressed across five connected areas of expertise — each with its own node and its own page. Every contribution below sits in its home area and links to the others it draws on, because the areas are not separate skills but one body of work seen from different perspectives.",
+  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped as a trunk and five branches",
+   body:"A single practice that designs how people and organizations learn, expressed as a trunk of shared craft and five connected branches of expertise — each with its own node and its own page. Every contribution below grows on one branch and links to the others it draws on, because the branches are not separate skills but one body of work seen from different perspectives.",
    ground:"Adult learning · learning sciences · human-centred design",link:"lxd",status:"dev",
    connects:["area_lxd","area_udl","area_kmb","area_lsd","area_access"]},
 
   /* ── AREA NODES (each links to its own area page) ── */
-  {id:"area_lxd",cat:"lxd",depth:4,name:"Learning Experience Design",sub:"Area · the learner's lived experience",
-   body:"The design of learning as it is actually experienced — how a learner moves through it, engages with it, and makes it their own. This area gathers the contributions that shape the experience itself, from motivation through practice, reflection, and the journey that holds them together.",
+  {id:"area_lxd",cat:"lxd",depth:4,name:"Learning Experience Design",sub:"Branch · the learner's lived experience",
+   body:"The design of learning as it is actually experienced — how a learner moves through it, engages with it, and makes it their own. This branch gathers the contributions that shape the experience itself, from motivation through practice, reflection, and the journey that holds them together.",
    ground:"Experiential learning; human-centred design",link:"lxd",
    connects:["c0","lx10","lx3","lx4"]},
-  {id:"area_udl",cat:"udl",depth:4,name:"Universal Design for Learning",sub:"Area · designing for the full range of learners",
-   body:"Designing proactively for the full, predictable range of human variability, so learning fits diverse learners from the outset rather than being retrofitted. This area gathers the contributions that reduce barriers and widen access without lowering rigour.",
+  {id:"area_udl",cat:"udl",depth:4,name:"Universal Design for Learning",sub:"Branch · designing for the full range of learners",
+   body:"Designing proactively for the full, predictable range of human variability, so learning fits diverse learners from the outset rather than being retrofitted. This branch gathers the contributions that reduce barriers and widen access without lowering rigour.",
    ground:"Universal Design for Learning (CAST)",link:"udl",
    connects:["c0","ud1","ud2","ud7"]},
-  {id:"area_kmb",cat:"kmb",depth:4,name:"Knowledge Mobilization",sub:"Area · moving evidence into practice",
-   body:"The design of how research and evidence reach the people who can use them, and change what they do. This area gathers the contributions that turn knowledge into usable, evaluated, and sustained practice across sectors.",
+  {id:"area_kmb",cat:"kmb",depth:4,name:"Knowledge Mobilization",sub:"Branch · moving evidence into practice",
+   body:"The design of how research and evidence reach the people who can use them, and change what they do. This branch gathers the contributions that turn knowledge into usable, evaluated, and sustained practice across sectors.",
    ground:"Knowledge mobilization; implementation science",link:"kmb",
    connects:["c0","km1","km2","km3"]},
-  {id:"area_lsd",cat:"lsd",depth:4,name:"Learning Systems Design",sub:"Area · learning across a whole organization",
-   body:"The design of learning as an organizational system — its analysis, infrastructure, evaluation, and change — rather than as isolated programs. This area gathers the contributions that situate learning inside institutions and help them move.",
+  {id:"area_lsd",cat:"lsd",depth:4,name:"Learning Systems Design",sub:"Branch · learning across a whole organization",
+   body:"The design of learning as an organizational system — its analysis, infrastructure, evaluation, and change — rather than as isolated programs. This branch gathers the contributions that situate learning inside institutions and help them move.",
    ground:"Systems thinking; organizational learning",link:"lsd",
    connects:["c0","sd_org","sd_eval","sd1","lx3","lx4","lx6"]},
-  {id:"area_access",cat:"access",depth:4,name:"Accessibility",sub:"Area · access, disability, and accommodation",
-   body:"Access understood at the level of the individual person and the obligation an institution holds toward them, alongside the proactive design that reduces how often that obligation must be invoked. This area gathers knowledge resources written for learning designers, faculty, and institutions, offered in support of — never in place of — the accessibility advisors and accommodation professionals who carry this work day to day.",
+  {id:"area_access",cat:"access",depth:4,name:"Accessibility",sub:"Branch · access, disability, and accommodation",
+   body:"Access understood at the level of the individual person and the obligation an institution holds toward them, alongside the proactive design that reduces how often that obligation must be invoked. This branch gathers knowledge resources written for learning designers, faculty, and institutions, offered in support of — never in place of — the accessibility advisors and accommodation professionals who carry this work day to day.",
    ground:"Human rights and accommodation law; disability studies; accessibility standards; inclusive design",link:"access",
    connects:["c0","ac4","ac5","ac6","ac7"]},
 
   /* ── LEARNING EXPERIENCE DESIGN ── */
   {id:"lx10",cat:"lxd",depth:3,name:"Learning Experience Architecture",sub:"The five-phase rhythm — Why · See · Try · Share · Reflect",
-   body:"The end-to-end arc a learner moves through, designed as one coherent journey rather than a sequence of modules. It is the organizing spine of the experience work, and the frame every other contribution in this area extends.",
+   body:"The end-to-end arc a learner moves through, designed as one coherent journey rather than a sequence of modules. It is the organizing spine of the experience work, and the frame every other contribution on this branch extends.",
    ground:"Experiential learning (Kolb); the Why→See→Try→Share→Reflect rhythm",link:"lxd",status:"built",
    connects:["c0","lx1","lx3","lx5"]},
   {id:"lx1",cat:"lxd",depth:3,name:"Designing for Motivation & Relevance",sub:"Why adult learners engage — or quietly disengage",
@@ -383,7 +488,7 @@ const NODES = [
 
   /* ── UNIVERSAL DESIGN FOR LEARNING ── */
   {id:"ud1",cat:"udl",depth:3,name:"Designing for Learner Variability at Scale",sub:"The thesis the other UDL work inherits",
-   body:"Designing from the outset for the full, predictable range of human variability, so the environment fits diverse learners rather than a mythical average one. It is the worldview that grounds every other contribution in this area.",
+   body:"Designing from the outset for the full, predictable range of human variability, so the environment fits diverse learners rather than a mythical average one. It is the worldview that grounds every other contribution on this branch.",
    ground:"Universal Design for Learning (CAST; Rose & Meyer)",link:"udl",status:"built",connects:["c0","ud2","lx6"]},
   {id:"ud2",cat:"udl",depth:3,name:"From Accommodation to Proactive Inclusive Design",sub:"The field's defining reframe",
    body:"Shifting from retrofitting access for individuals after the fact to designing inclusively from the start, so fewer barriers are ever built in. It states the paradigm shift the field rests on, plainly.",
@@ -398,7 +503,7 @@ const NODES = [
    body:"Designing entry so newcomers and experienced practitioners can each begin where they are, without boring the one or losing the other. It is a representation-principle problem common to every sector.",
    ground:"UDL representation principle",link:"udl",status:"dev",connects:["ud1","lx2"]},
   {id:"ud6",cat:"udl",depth:2,name:"Making Accessibility More Than Compliance",sub:"Access as design quality, not a checklist",
-   body:"Treating accessibility as a dimension of good design rather than a minimum legal standard met at the end. It is the conceptual bridge from inclusive learning design to the accessibility, disability and accommodation area, and to the service line offered alongside it.",
+   body:"Treating accessibility as a dimension of good design rather than a minimum legal standard met at the end. It is the conceptual bridge from inclusive learning design to the accessibility, disability and accommodation branch, and to the service line offered alongside it.",
    ground:"WCAG; UDL; inclusive design",link:"udl",status:"dev",alsoIn:"access",connects:["ud1","ac1","ac2","ac4"]},
   {id:"ud7",cat:"udl",depth:3,name:"Eliminating Construct-Irrelevant Barriers in Assessment",sub:"Measuring capability, not obstacles",
    body:"Removing features of an assessment that get in the way of demonstrating mastery without being part of what is measured, so results reflect capability rather than incidental barriers. It works alongside assessment designed as experience.",
@@ -418,7 +523,7 @@ const NODES = [
    body:"The conceptual architecture for how research and evidence reach the people who can use them, and change what they do. It is the centrepiece the other knowledge-mobilization contributions instantiate in specific contexts.",
    ground:"Knowledge mobilization; implementation frameworks",link:"kmb",status:"built",connects:["c0","km2","lx4","ud4"]},
   {id:"km2",cat:"kmb",depth:3,name:"KMb Evaluation Design",sub:"Did the evidence change practice?",
-   body:"Measurement built for knowledge mobilization specifically — indicators of uptake and changed practice, not only satisfaction or reach. It is referenced by every other contribution in this area, and shared with the wider evaluation family.",
+   body:"Measurement built for knowledge mobilization specifically — indicators of uptake and changed practice, not only satisfaction or reach. It is referenced by every other contribution on this branch, and shared with the wider evaluation family.",
    ground:"KMb indicators; evaluation design",link:"kmb",status:"built",connects:["km1","ud10","sd3","lx9"]},
   {id:"km3",cat:"kmb",depth:3,name:"Implementation Science Learning Design",sub:"Translating implementation frameworks into design",
    body:"Turning established implementation-science frameworks into concrete design decisions, giving change and needs work a theoretical backbone. It is a shared language among senior practitioners in health and the public sector.",
@@ -506,7 +611,7 @@ const NODES = [
    ground:"Nothing about us without us (Charlton); inclusive design; TCPS 2 research ethics",link:"access",status:"dev",
    connects:["ac7","km5","ac18"]},
   {id:"ac10",cat:"access",depth:3,name:"Accessibility Triage for Existing Course Inventories",sub:"A defensible order of work when everything cannot be fixed at once",
-   body:"Most institutions hold thousands of documents, modules, videos, and pages built before anyone was checking, with no realistic path to full conformance. This resource offers a tiered protocol — what is remediated now, what is rebuilt at next revision, what is retired, and which standard applies to each tier — using high-volume mandatory and compliance training as the worked example.",
+   body:"Most institutions hold thousands of documents, modules, videos, and pages built before anyone was checking, with no realistic path to full conformance. This resource offers a tiered protocol — what is remediated now, what is rebuilt at next revision, what is retired, and which standard applies to each tier — using high-volume required and compliance training as the worked example.",
    ground:"WCAG 2.2; EN 301 549; remediation prioritisation",link:"access",status:"dev",
    connects:["ac12","ac11","ac1"]},
   {id:"ac11",cat:"access",depth:3,name:"Designing for the Assistive Technology People Actually Use",sub:"Why conformant content can still fail in practice",
@@ -541,6 +646,34 @@ const NODES = [
    body:"Consent materials, participant-facing instruments, plain-language summaries, and accessible dissemination — increasingly expected by research ethics boards and funders, and rarely designed for. It sits at the junction of knowledge mobilization and accessibility, where a study’s reach is set as much by its materials as by its recruitment.",
    ground:"TCPS 2 (2022); knowledge mobilization; WCAG 2.2",link:"access",status:"dev",
    connects:["ac9","km4","km1"]},
+  {id:"ac19",cat:"access",depth:3,name:"Models of Disability as Design Decisions",sub:"The frame chosen before any design decision is made",
+   body:"Medical, social, biopsychosocial, economic, functional solutions, social identity or cultural affiliation, and charity — seven models in active circulation, each of which settles in advance what counts as the problem and who is obliged to act on it. This resource sets them beside one another with their strengths and their costs, and treats the choice of model as a design decision rather than a philosophical preference, because the model implicit in a project brief is usually the model that shapes what gets built.",
+   ground:"ICF (WHO, 2001); social model (Oliver); Retief & Letšosa; Shakespeare",link:"access",status:"dev",
+   connects:["ac7","ac4","ud2"]},
+  {id:"ac20",cat:"access",depth:3,name:"Disability Categories and the Barriers People Meet",sub:"The reference layer, written barrier-first",
+   body:"Visual, auditory, deafblind, speech, mobility and body structure, cognitive and learning, seizure, and psychological disabilities, each set against the barriers people actually encounter in digital and physical environments. It is written barrier-first rather than diagnosis-first, so that a designer reaches for the environmental change rather than the label — and it is the reference layer that the more argumentative resources on this branch quietly assume a reader already holds.",
+   ground:"ICF (WHO, 2001); WCAG 2.2; disability studies",link:"access",status:"dev",
+   connects:["ac11","ac19","ac13"]},
+  {id:"ac21",cat:"access",depth:3,name:"Assistive Technology and Adaptive Strategies",sub:"What exists, and what it does for a person",
+   body:"Screen readers, magnification, speech input, alternative pointing, augmentative and alternative communication, hearing technologies, and the low-technology and adaptive strategies used at least as often — described by what they accomplish for a person rather than by product name, and paired with the frameworks that structure a selection decision. It is the survey that has to precede the harder question of why conformant content still fails against the technology people actually use.",
+   ground:"HAAT model (Cook & Polgar); SETT framework (Zabala); WHO assistive technology guidance",link:"access",status:"dev",
+   connects:["ac11","ac20","ac12"]},
+  {id:"ac22",cat:"access",depth:3,name:"Disability Data and the Limits of Prevalence Figures",sub:"Why the numbers disagree, and how to use one honestly",
+   body:"Measurement by diagnosis, by function, or by self-identification produces materially different populations, which is why global and national prevalence figures diverge so widely and why the choice of instrument is never neutral. This resource covers the major global and Canadian sources and their known undercounts, and how to carry a number into a business case or a funding application without asking it to bear more weight than it can.",
+   ground:"WHO World Report on Disability; WHO Global Report on Health Equity for Persons with Disabilities; Canadian Survey on Disability; ICF",link:"access",status:"dev",
+   connects:["ac17","ac16","km4"]},
+  {id:"ac23",cat:"access",depth:3,name:"Disability Etiquette and Communication in Learning Environments",sub:"Professional practice, not a list of prohibitions",
+   body:"Person-first and identity-first language and why the choice belongs to the person rather than the institution; addressing someone directly rather than their interpreter or support worker; offering assistance without presuming it is wanted or acting before it is accepted. It is written for facilitators and instructors as professional communication practice, on the understanding that the failures that matter in a learning room are rarely failures of intention and almost always failures of default behaviour under time pressure.",
+   ground:"Disability etiquette guidance (United Spinal Association); CRPD; disability studies",link:"access",status:"dev",
+   connects:["ac3","ac9","ac7"]},
+  {id:"ac24",cat:"access",depth:3,name:"International and Regional Disability Rights Instruments",sub:"The layer above domestic duty",
+   body:"The Universal Declaration of Human Rights, the Convention on the Rights of Persons with Disabilities and its General Comments, and the Marrakesh Treaty, together with the regional instruments — the Charter of Fundamental Rights of the European Union, the African Charter on Human and Peoples’ Rights, and the Inter-American Convention. It explains why accessibility obligations converge across jurisdictions rather than arising independently in each, and supplies the vocabulary required to work with partners outside Canada.",
+   ground:"UDHR (1948); CRPD (2006); Marrakesh Treaty (2013); regional human rights instruments",link:"access",status:"dev",
+   connects:["ac5","ac16","ac9"]},
+  {id:"ac25",cat:"access",depth:3,name:"Accessible Physical and Hybrid Learning Environments",sub:"The part of universal design most often handed to facilities",
+   body:"The seven principles of universal design as they were originally written — for buildings, spaces, and products — and what they require of a classroom, a laboratory, a placement site, and the hybrid arrangements that now carry a large share of teaching. It is the part of universal design that learning designers most often hand to facilities management, and the part that determines whether a person can be present in the room at all.",
+   ground:"Principles of Universal Design (Connell et al., 1997); CSA B651; Accessible Canada Act",link:"access",status:"dev",
+   connects:["ac4","ac14","ud6"]},
 
   /* ── ACCESSIBILITY SERVICES · Accessible Learning Labs ── */
   {id:"ac1",cat:"access",depth:3,name:"Accessibility Review",sub:"Service · Accessible Learning Labs",
@@ -552,6 +685,187 @@ const NODES = [
   {id:"ac3",cat:"access",depth:3,name:"Inclusive Facilitation & Capacity Building",sub:"Service · Accessible Learning Labs",
    body:"Facilitation understood as a professional stance shaped by how power, identity, and legitimate knowledge are held — and the building of others' capacity to facilitate inclusively. It is offered as a specific service.",
    ground:"Power-aware facilitation; adult learning; equity",link:"acc_facil",status:"service",connects:["ac1","lx4","lx3","ac15"]},
+
+  /* ── TRUNK · LEARNING DESIGN CRAFT ──────────────────────────────────────
+     The shared practice everything else grows from. Two concentric rings inside
+     the five branches: the inner ring is about making the work, the outer ring
+     about the standards and obligations it answers to, and what sustains it. Depth here means how settled
+     the contribution is in the field, not how built out it is here. */
+
+  /* Inner ring — making the work */
+  {id:"ld1",cat:"trunk",ring:1,depth:4,name:"Telling a Learning Need from a Performance Problem",
+   sub:"The question asked before anything is designed",
+   body:"Organizations request training for problems training cannot fix — unclear expectations, missing tools, broken incentives, understaffing. Diagnosing which is which, before any design begins, changes the outcome more than any later decision will. It is also the step most often skipped.",
+   ground:"Behaviour engineering (Gilbert); performance analysis (Mager & Pipe); Rummler & Brache",
+   link:"trunk",status:"planned",connects:["ld26","ld2","sd1"]},
+
+  {id:"ld2",cat:"trunk",ring:1,depth:4,name:"Scoping and the Decision Gate",
+   sub:"Correcting while correction is still cheap",
+   body:"Designs get built well past the point where changing them stops being affordable. A named milestone, a defined output, and a structured reassessment before further investment is what keeps a project correctable rather than merely finishable.",
+   ground:"Project scoping and staged decision-making",
+   link:"trunk",status:"planned",connects:["ld1","ld8","ld16"]},
+
+  {id:"ld3",cat:"trunk",ring:1,depth:5,name:"Working with Subject-Matter Experts",
+   sub:"Surfacing what an expert can no longer see",
+   body:"Drawing out tacit knowledge, running review cycles that converge, and holding design integrity when the expert is also the partner who approves the work. Experts forget what was once hard for them, and cannot tell you what they have stopped noticing. Getting that knowledge out takes a deliberate method, not a good conversation.",
+   ground:"Cognitive task analysis; expert blind spot (Nathan & Petrosino)",
+   link:"trunk",status:"planned",connects:["ld23","ld13","ld2"]},
+
+  {id:"ld4",cat:"trunk",ring:1,depth:2,name:"Onboarding an Organization into Learning Design",
+   sub:"How a client learns to commission this work",
+   body:"Most organizations do not know what to ask a learning designer for, what they will be asked to supply, or what good looks like when it arrives. The intake, the shared vocabulary, and the first engagement are design problems in their own right.",
+   ground:"Developed in practice; client intake and needs assessment",
+   link:"trunk",status:"planned",connects:["ld25","ld2","ld22"]},
+
+  {id:"ld5",cat:"trunk",ring:1,depth:3,name:"Minimum Viable Content",
+   sub:"Deciding what to cut, before anything is built",
+   body:"The instinct to cover everything is the most reliable source of bloated, unfinishable learning. Deciding what genuinely must be present is an editorial judgment made before design begins — distinct from cognitive load, which is a limit on what working memory can hold once material is in front of someone.",
+   ground:"Editorial scoping before design; cognitive load (Sweller)",
+   link:"trunk",status:"planned",connects:["lx2","ld8","ld11"]},
+
+  {id:"ld6",cat:"trunk",ring:1,depth:4,name:"Modality and Technology Selection",
+   sub:"The tool decision comes after the analysis, not before it",
+   body:"Modality follows from what the analysis found — who the learners are, what the constraint is, where the work happens. Tool-first procurement, where a platform is bought and then filled, is endemic in the public sector and produces design decisions nobody made deliberately.",
+   ground:"Media selection; analysis before tooling",
+   link:"trunk",status:"planned",connects:["ld1","ld12","ld26"]},
+
+  {id:"ld7",cat:"trunk",ring:1,depth:2,name:"AI-Assisted Design, and Where It Fails",
+   sub:"What the tool is good for, and what it invents",
+   body:"Where generative tools genuinely accelerate design work — outlining, variant generation, first-pass drafting — and the failure modes that make unreviewed output unusable: fabricated citations, plausible-sounding pedagogy with no evidence behind it, and quiet homogenisation of everything it touches.",
+   ground:"Developed in practice; documented failure modes in generative tools",
+   link:"trunk",status:"planned",connects:["ld15","km10","ld14"]},
+
+  {id:"ld8",cat:"trunk",ring:1,depth:3,name:"Designing Under Constraint",
+   sub:"What good looks like when there isn\u2019t enough",
+   body:"Budget, timeline, and capacity are the actual conditions of the work, not deviations from it. What to protect and what to let go when the ideal method is unavailable — the honest counterpart to every best-case process on this map.",
+   ground:"Developed in practice",
+   link:"trunk",status:"planned",connects:["ld5","ld25","ld2"]},
+
+  {id:"ld26",cat:"trunk",ring:1,depth:4,name:"What to Build When the Answer Isn\u2019t a Course",
+   sub:"Support placed at the moment the work happens",
+   body:"Job aids, checklists, decision aids at the point of care, protocol cards, a better form, a workflow change. Support available when the task is being performed rather than instruction delivered weeks earlier and expected to survive until it is needed — frequently where the measurable effect actually is in health, research operations, and the public sector.",
+   ground:"Behaviour engineering (Gilbert); job aids (Rossett & Schafer); moments of need (Gottfredson & Mosher); checklist literature",
+   link:"trunk",status:"planned",connects:["ld1","ud4","ld6","ld9"]},
+
+  {id:"ld9",cat:"trunk",ring:1,depth:4,name:"Information and Data Visualization for Learning",
+   sub:"Making structure visible so it gets read",
+   body:"Complex technical content and evaluation findings arrive as prose and spreadsheets and stay unread. Process maps, decision trees, comparative frames, and results a governance committee can take in within a minute. In health, research, and the public sector, this is often the whole deliverable.",
+   ground:"Graphical excellence (Tufte); multimedia principles (Mayer); Cairo",
+   link:"trunk",status:"planned",connects:["km4","ld10","ld11"]},
+
+  {id:"ld10",cat:"trunk",ring:1,depth:3,name:"Visual Language and Design Systems for Learning Programs",
+   sub:"Making consistency economical instead of heroic",
+   body:"Materials produced by many hands drift — inconsistent, off-brand, and inaccessible in the same recurring ways. Templates, type and colour decisions with contrast decided once, a media library, and a house style are what let quality hold without a specialist reviewing every artefact.",
+   ground:"Design systems practice; WCAG contrast requirements",
+   note:"This is what makes facilitation craft and design infrastructure work. Without it they are aspirations.",
+   link:"trunk",status:"planned",connects:["ld22","ld9","ac10"]},
+
+  {id:"ld11",cat:"trunk",ring:1,depth:5,name:"Plain Language and Writing for Learning",
+   sub:"Reading load as a design decision",
+   body:"How hard something is to read is usually the biggest barrier to understanding it, and it has nothing to do with the subject itself. It is also the barrier designers most often leave to chance. Reading load decides whether a patient follows their discharge instructions, whether a public notice meets its plain-language duty, and whether a researcher can actually use a method someone has described.",
+   ground:"ISO 24495-1; health literacy (Nutbeam)",
+   link:"trunk",status:"planned",connects:["ac17","ud7","ld20"]},
+
+  {id:"ld12",cat:"trunk",ring:1,depth:3,name:"Motion, Video and Multimedia Production",
+   sub:"When moving image earns its cost",
+   body:"The production craft — scripting, shot planning, capture, edit, captioning and audio description as part of production rather than remediation — and the judgment about when video is the right answer rather than the expected one.",
+   ground:"Multimedia learning principles (Mayer)",
+   link:"trunk",status:"planned",connects:["ld6","ld10","ac11"]},
+
+  {id:"ld28",cat:"trunk",ring:1,depth:4,name:"How Learning Works, and Who Can Act on It",
+   sub:"Told plainly to learners, and built into the design",
+   body:"Most learners have never been told how consolidation works, why re-reading feels productive and isn\u2019t, or that difficulty is often the signal rather than the failure. This makes that knowledge available in plain language as something offered rather than assigned, and builds the regulating into the design — spacing in the schedule, retrieval in the activity, requirements stated plainly — because every strategy in this literature presupposes conditions that unequal circumstances do not distribute equally.",
+   ground:"Learning How to Learn (Oakley & Sejnowski); desirable difficulties (Bjork); retrieval practice (Roediger & Karpicke); co-regulated and socially shared regulation (Hadwin & J\u00e4rvel\u00e4); scarcity and bandwidth (Mullainathan & Shafir)",
+   link:"trunk",status:"planned",connects:["lx5","lx2","ld14","ud3"]},
+
+  /* Outer ring — shared standards, obligations, and what sustains the work */
+  {id:"ld13",cat:"trunk",ring:2,depth:4,name:"Quality Assurance as a Documented Practice",
+   sub:"Accountable, recorded, and repeatable",
+   body:"Review against instructional and accessibility standards, with the criteria written down, the reviewer named, and the result recorded. Distinct from remediating a legacy inventory: this is the check that runs before anything ships.",
+   ground:"Standards-based review against instructional and accessibility criteria",
+   link:"trunk",status:"planned",connects:["ac10","ld15","ld16"]},
+
+  {id:"ld14",cat:"trunk",ring:2,depth:5,name:"Reading Learning Science Without Neuromyths",
+   sub:"Telling the evidence from the folklore",
+   body:"Learning styles, the retention pyramid, left-brain and right-brain, and the attention-span figures that circulate without a source. Reading primary evidence well enough to tell what is supported from what is merely widespread is a professional obligation, and the myths are most persistent precisely where budgets are decided.",
+   ground:"Learning styles evidence (Pashler et al.); neuromyth prevalence (Dekker et al.; Howard-Jones)",
+   link:"trunk",status:"planned",connects:["ld15","ld28","lx2"]},
+
+  {id:"ld15",cat:"trunk",ring:2,depth:3,name:"Source Discipline in Knowledge Products",
+   sub:"Can an independent reader confirm this?",
+   body:"Citation integrity, fact-checking, and the verifiability test applied to learning materials rather than to research papers. The standard is whether a reader can confirm a claim without contacting the author — which most learning content, including most well-intentioned learning content, cannot meet.",
+   ground:"Developed in practice; citation integrity and verifiability",
+   link:"trunk",status:"planned",connects:["ld14","ld7","km4"]},
+
+  {id:"ld27",cat:"trunk",ring:2,depth:4,name:"Supporting Indigenous-Led Learning Design",
+   sub:"A settler designer\u2019s role, named at its actual size",
+   body:"Design craft placed in service of Indigenous-led education and directed by Indigenous knowledge holders — never a claim to Indigenous knowledge, which is held in relationship and community and does not transfer to a portfolio. The scholarship belongs to Ramsden, Kirkness and Barnhardt, Archibald, Battiste, Ermine, and Tuhiwai Smith; what is offered here is process, plain language, accessibility, and production discipline in support of work whose direction is not the designer\u2019s to set.",
+   ground:"Cultural safety (Ramsden); the Four R\u2019s \u2014 respect, relevance, reciprocity, responsibility (Kirkness & Barnhardt); Indigenous Storywork (Archibald); ethical space of engagement (Ermine); Decolonization Is Not a Metaphor (Tuck & Yang). Instruments: TRC Calls to Action 23 and 24; UNDRIP; BC\u2019s Declaration on the Rights of Indigenous Peoples Act; the First Nations principles of OCAP\u00ae; FNHA cultural safety and humility commitments.",
+   note:"Cultural safety is determined by the person receiving the care or the teaching, never asserted by the person providing it \u2014 Ramsden\u2019s principle, from the origin of the concept in M\u0101ori nursing scholarship. A designer can work toward an environment being safer, and cannot certify it safe on someone else\u2019s behalf. This contribution describes contribution, not authority: it says what the design craft supplied and under whose direction.",
+   link:"trunk",status:"planned",connects:["km9","ud8","ld19","ld11"]},
+
+  {id:"ld16",cat:"trunk",ring:2,depth:3,name:"Designing for the Update Cycle",
+   sub:"Who owns this after handover",
+   body:"Content decays, and sustainment is usually retrofitted or never happens at all. Update triggers, review cycles, version control, and a named owner decided during design rather than discovered two years later when the material is quietly wrong.",
+   ground:"Sustainment planning; knowledge management practice",
+   link:"trunk",status:"planned",connects:["ld13","ld22","sd_org"]},
+
+  {id:"ld17",cat:"trunk",ring:2,depth:4,name:"Designing in Regulated and Compliance-Driven Environments",
+   sub:"The tension between defensible and effective",
+   body:"Required training, audit trails, and evidence a regulator will accept — and the real craft problem underneath, which is that compliance-driven design usually optimizes for the record rather than the learner. A screening criterion for health authorities, research facilities, and provincial ministries.",
+   ground:"Regulatory evaluation frameworks; competency assurance practice",
+   link:"trunk",status:"planned",connects:["ld13","ld19","ld18"]},
+
+  {id:"ld18",cat:"trunk",ring:2,depth:3,name:"Learner Data, Privacy and Analytics Ethics",
+   sub:"What the learning function is actually allowed to hold",
+   body:"LMS records, completion tracking, dashboards that identify individuals by accident, retention schedules, and what FIPPA, PIPEDA and PHIPA require of a learning function that is usually not staffed to know. The default position — collect everything, decide later — is not lawful and not neutral.",
+   ground:"FIPPA; PIPEDA; PHIPA",
+   link:"trunk",status:"planned",connects:["ld19","ld17","ac8"]},
+
+  {id:"ld19",cat:"trunk",ring:2,depth:4,name:"Ethics and Consent in Learner Research",
+   sub:"What may be published, and on whose say-so",
+   body:"Consent that is informed rather than assumed, anonymization that actually anonymizes in small populations, and a clear line about what may be quoted or published from research with participants. The line matters most when the participants are colleagues.",
+   ground:"TCPS 2; research ethics practice",
+   link:"trunk",status:"planned",connects:["ld18","lx6","ac18"]},
+
+  {id:"ld20",cat:"trunk",ring:2,depth:3,name:"Multilingual Design and Localization",
+   sub:"The difference between translated and designed",
+   body:"Plain language before translation, terminology decided once, cultural adaptation rather than substitution, and the recognition that a translated course carries the structural assumptions of the original. A live requirement in Canadian health and federal contexts.",
+   ground:"ISO 24495-1; localization practice",
+   link:"trunk",status:"planned",connects:["ld11","ac17","ud8"]},
+
+
+  {id:"ld21",cat:"trunk",ring:2,depth:4,name:"Facilitation and Live Delivery Craft",
+   sub:"What happens in the room",
+   body:"Technique, timing, group dynamics, reading a room that has gone quiet, and recovering a session that is not working — where most public-sector and higher-education learning still actually happens, and the part least often written down.",
+   ground:"Adult learning practice (Knowles); facilitation craft",
+   link:"trunk",status:"planned",connects:["lx4","ac3","ld23"]},
+
+  {id:"ld22",cat:"trunk",ring:2,depth:3,name:"Learning Design Infrastructure",
+   sub:"What a practice needs in order to exist",
+   body:"Templates, source libraries, a media gallery, working groups, and standards documented where someone other than their author can find them. The scaffolding that decides whether a design practice is a person or a capability.",
+   ground:"Developed in practice; organizational learning (Senge)",
+   note:"Distinct from organizational learning design, which is the organization\u2019s learning rather than the practice\u2019s own scaffolding.",
+   link:"trunk",status:"planned",connects:["ld10","ld16","sd_org"]},
+
+  {id:"ld23",cat:"trunk",ring:2,depth:3,name:"Building Design Capability in Non-Designers",
+   sub:"Helping SMEs and faculty make decent materials",
+   body:"Most learning content in any institution is made by people whose job is something else. Giving them a small number of decisions that matter, in a form they will actually use, does more for quality at scale than any single well-designed course.",
+   ground:"Adult learning practice (Knowles); behaviour change (Michie)",
+   link:"trunk",status:"planned",connects:["ac15","km7","ld3"]},
+
+  {id:"ld24",cat:"trunk",ring:2,depth:3,name:"Competency Development for Learning Designers",
+   sub:"What the work requires, on a scale you can use",
+   body:"An eight-competency framework with a four-level scale, written for self-review, hiring, and team capability mapping. Peer-facing, and the kind of artefact the field mostly keeps in private documents rather than publishing.",
+   ground:"Developed in practice; competency frameworks and self-assessment",
+   link:"trunk",status:"planned",connects:["ld23","ld22","ld3"]},
+
+  {id:"ld25",cat:"trunk",ring:2,depth:3,name:"The Business Case for Learning Design",
+   sub:"Arguing for the resource before the constraint is set",
+   body:"Cost, effort, and how the work is justified to somebody holding a budget who has seen learning functions produce very little. Distinct from designing well inside a constraint — this is the argument made before the constraint exists, and the strongest version of it includes recommending against building a course.",
+   ground:"Evaluation and impact frameworks (Kirkpatrick); practice-derived",
+   link:"trunk",status:"planned",connects:["ld8","ld26","sd_eval"]},
+
 ];
 
 /* ============================================================
@@ -575,6 +889,9 @@ const TAG_LABELS = {
   capacity:"Capacity", systems:"Systems", change:"Change", complexity:"Complexity",
   wellbeing:"Wellbeing", indigenous:"Indigenous knowledge", journey:"Journey",
   accommodation:"Accommodation", standards:"Standards", disability:"Disability studies",
+  // trunk themes
+  craft:"Craft", process:"Process", evidence:"Evidence", ethics:"Ethics",
+  language:"Language", visual:"Visual communication",
 };
 const TAGS_BY_ID = {
   c0:["journey","systems"],
@@ -599,6 +916,10 @@ const TAGS_BY_ID = {
   ac14:["accommodation","assessment","access"], ac15:["capacity","change","access"],
   ac16:["policy","systems","change"], ac17:["access","wellbeing","equity"],
   ac18:["research","access","equity"],
+  ac19:["disability","access","equity"], ac20:["disability","access","variability"],
+  ac21:["disability","access","standards"], ac22:["research","disability","equity"],
+  ac23:["community","disability","capacity"], ac24:["policy","standards","access"],
+  ac25:["access","variability","standards"],
 
   // area nodes
   area_lxd:["journey","experiential","motivation"], area_udl:["variability","access","equity"],
@@ -607,6 +928,21 @@ const TAGS_BY_ID = {
   // new resources
   km_cop:["community","implementation"],
   sd_org:["systems","capacity"], sd_eval:["evaluation","systems"], sd_curric:["alignment","systems"],
+
+  /* Trunk \u2014 learning design craft */
+  ld1:["process","evidence"], ld2:["process"], ld3:["process","capacity"],
+  ld4:["process","capacity"], ld5:["craft","cognition"], ld6:["process","craft"],
+  ld7:["craft","iteration","evidence"], ld8:["process","craft"],
+  ld26:["process","transfer","craft"], ld9:["visual","craft"],
+  ld10:["visual","standards","craft"], ld11:["language","access","craft"],
+  ld12:["craft","visual","access"], ld28:["cognition","reflection","equity"],
+  ld13:["standards","process","evidence"], ld14:["evidence","cognition"],
+  ld15:["evidence","ethics"], ld16:["process","systems"],
+  ld17:["policy","standards","process"], ld18:["ethics","policy"],
+  ld19:["ethics","research"], ld20:["language","access","equity"],
+  ld27:["indigenous","ethics","equity"], ld21:["craft","community","capacity"],
+  ld22:["systems","capacity","craft"], ld23:["capacity","craft"],
+  ld24:["capacity","evidence"], ld25:["policy","evaluation","process"],
 };
 NODES.forEach(n => { n.tags = TAGS_BY_ID[n.id] || []; });
 
@@ -629,7 +965,8 @@ function similarity(a,b){
 }
 
 const usedKeys = [];
-["core"].concat(CAT_ORDER).forEach(c => {
+// CAT_ORDER_BIB puts the trunk last, so citation numbers match landscape.html exactly
+CAT_ORDER_BIB.forEach(c => {
   NODES.filter(n => n.cat===c).forEach(n => n.src.forEach(k => { if(!usedKeys.includes(k)) usedKeys.push(k); }));
 });
 const srcNum = {};
@@ -644,13 +981,35 @@ usedKeys.forEach((k,i) => srcNum[k] = i+1);
    ============================================================ */
 const AREA = (function(){
   const q = (new URLSearchParams(location.search).get("area")
-             || location.hash.replace("#","") || "lxd").toLowerCase().trim();
-  const alias = {ux:"lxd","learning-experience-design":"lxd","systems":"lsd",
+             || location.hash.replace("#","") || TRUNK).toLowerCase().trim();
+  const alias = {"learning-design":TRUNK, "learning-design-craft":TRUNK, foundation:TRUNK,
+                 ux:"lxd","learning-experience-design":"lxd","systems":"lsd",
                  "learning-systems-design":"lsd","knowledge-mobilization":"kmb",
                  "universal-design-for-learning":"udl","accessibility":"access"};
   const key = alias[q] || q;
-  return (CATS[key] && key !== "core") ? key : "lxd";
+  // an unrecognised value falls back to the trunk, which is the whole practice
+  return (CATS[key] && key !== "core") ? key : TRUNK;
 })();
+
+/* The word used for this view in the interface. The five are branches; the
+   trunk is not one of them, and calling it an area would misdescribe it. */
+const UNIT = (AREA === TRUNK) ? "the trunk" : "this branch";
+
+/* The trunk's hub node. The five branches each have one in the data block
+   (area_lxd, area_udl, and so on); the trunk does not, because on the full
+   landscape it is the centre rather than a branch beside them. It is built
+   here so this map has something to ring its contributions around, using the
+   same wording as landscape-linear.html. */
+if(AREA === TRUNK && !nodeMap.area_trunk){
+  const hub = {
+    id:"area_trunk", cat:TRUNK, depth:4, name:"Learning Design",
+    sub:"The foundation \u00b7 shared craft, process, and evidence discipline",
+    body:"The shared craft of learning design, which every branch grows from and none of them owns. It runs from the first diagnostic question \u2014 whether this is a learning problem at all \u2014 through scoping, working with experts, writing, visual language and production, and out to the practices the field holds in common: quality assurance, source discipline, privacy, ethics, update cycles, and the case made for the resource in the first place.",
+    ground:"Performance analysis; adult learning; learning sciences; plain language and accessibility standards; research and privacy ethics",
+    link:TRUNK, connects:[], src:[], tags:["craft","process","evidence"]
+  };
+  NODES.push(hub); nodeMap[hub.id] = hub;
+}
 
 function boot(){
   const areaNode = nodeMap["area_"+AREA];
@@ -692,11 +1051,13 @@ function boot(){
   /* ── text alternative: a real, linked list for screen readers ── */
   (function textAlt(){
     const box = document.getElementById("textalt");
-    let html = '<h2>'+CATS[AREA].label+' — contributions in this area</h2><ul>';
+    let html = '<h2>'+CATS[AREA].label+' — contributions in '+UNIT+'</h2><ul>';
     items.forEach(n => {
       const page = PAGES[n.id] || null;
       html += '<li>'+(page ? '<a href="'+page+'" target="_blank" rel="noopener">'+n.name+'</a>' : n.name)+
-              ' — '+n.body+' '+(page ? '(Published resource.)' : '(In development; live page coming soon.)')+'</li>';
+              ' — '+n.body+' '+(page ? '(Published resource.)'
+                : ((n.status && n.status !== "built" ? STATUS[n.status] : STATUS.dev)+
+                   '; live page coming soon.'))+'</li>';
     });
     html += '</ul>';
     box.innerHTML = html;
@@ -1032,7 +1393,11 @@ function boot(){
     const isArea = (id === areaNode.id);
     const page = PAGES[n.id] || null;
     const live = !!page;
-    const st = isArea ? "" : (live ? "Published resource" : "In development");
+    // PAGES decides whether a live page exists; the node's own status supplies the
+    // wording when it does not, so a planned contribution is not called in development
+    const st = isArea ? ""
+      : live ? (n.status === "service" ? STATUS.service : STATUS.built)
+             : (n.status && n.status !== "built" ? STATUS[n.status] : STATUS.dev);
 
     const srcHtml = (n.src||[]).map(k => {
       const s = SOURCES[k], num = srcNum[k]; if(!s) return "";
@@ -1077,12 +1442,12 @@ function boot(){
     const panel = document.getElementById("panel");
     panel.innerHTML =
       '<div class="p-tag" style="color:'+(isArea ? "#303e44" : CATS[n.cat].color)+'">'+
-        (isArea ? "This area" : CATS[n.cat].label)+'</div>'+
+        (isArea ? (AREA===TRUNK ? "The trunk" : "This branch") : CATS[n.cat].label)+'</div>'+
       '<h3 class="p-title">'+n.name+'</h3>'+
       '<p class="p-sub">'+n.sub+'</p>'+
       (st ? '<p class="p-status">'+st+'</p>' : '')+
       '<p class="p-body">'+n.body+'</p>'+
-      (isGuest(id) ? '<p class="p-note">A resource in both areas. Its home is '+
+      (isGuest(id) ? '<p class="p-note">A resource in both branches. Its home is '+
         CATS[n.cat].label+', and it is also part of the '+CATS[AREA].label+' set.</p>' : '')+
       (n.ground ? '<p class="p-ground"><span>Grounding.</span> '+n.ground+'</p>' : '')+
       (n.note ? '<p class="p-note">'+n.note+'</p>' : '')+
@@ -1092,7 +1457,7 @@ function boot(){
       (srcHtml ? '<div class="p-label">Sources</div><ul class="p-src">'+srcHtml+'</ul>' : '')+
       (relHtml ? '<div class="p-label">Most related here \u00b7 by shared theory &amp; theme</div>'+
                  '<div class="p-rel">'+relHtml+'</div>' : '')+
-      (inArea.length ? '<div class="p-label">Connected in this area</div>'+
+      (inArea.length ? '<div class="p-label">Connected in '+UNIT+'</div>'+
                        '<div class="p-conns">'+inArea.join("")+'</div>' : '')+
       (beyond.length ? '<div class="p-label">Where this work leads</div>'+
                        '<div class="p-conns">'+beyond.join("")+'</div>' : '');
