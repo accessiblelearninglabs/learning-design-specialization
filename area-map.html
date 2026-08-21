@@ -563,7 +563,7 @@ const NODES = [
   /* ── LEARNING SYSTEMS DESIGN ── */
   {id:"sd4",cat:"lsd",depth:3,name:"Learning Design at the Systems Level",sub:"How learning functions across a whole organization",
    body:"Designing learning as an organizational system — governance, infrastructure, and sustainment — rather than as a set of isolated programs. It is the capstone that situates every other contribution inside the institution.",
-   ground:"Systems thinking; organizational learning",link:"lsd",status:"built",connects:["c0","sd1","sd2"]},
+   ground:"Systems thinking; organizational learning",link:"lsd",status:"dev",connects:["c0","sd1","sd2"]},
   {id:"sd1",cat:"lsd",depth:3,name:"Needs Analysis for Organizational Transformation",sub:"Diagnosing the problem before proposing a solution",
    body:"Entering an organization by asking the right diagnostic questions first — where intentions and outcomes have drifted apart — so design addresses the real problem. It is the organizational scale of learner research.",
    ground:"Needs analysis; gap analysis",link:"lsd",status:"built",connects:["sd4","lx6","km3","km6"]},
@@ -913,7 +913,7 @@ const NODES = [
 ];
 
 /* ============================================================
-   Build reference-facing UI (list + area links + legend + filters)
+   Build reference-facing UI (list + branch links + legend + filters)
    ============================================================ */
 const nodeMap = {};
 NODES.forEach(n => nodeMap[n.id] = n);

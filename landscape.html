@@ -675,7 +675,7 @@ const NODES = [
   /* ── LEARNING SYSTEMS DESIGN ── */
   {id:"sd4",cat:"lsd",depth:3,name:"Learning Design at the Systems Level",sub:"How learning functions across a whole organization",
    body:"Designing learning as an organizational system — governance, infrastructure, and sustainment — rather than as a set of isolated programs. It is the capstone that situates every other contribution inside the institution.",
-   ground:"Systems thinking; organizational learning",link:"lsd",status:"built",connects:["c0","sd1","sd2"]},
+   ground:"Systems thinking; organizational learning",link:"lsd",status:"dev",connects:["c0","sd1","sd2"]},
   {id:"sd1",cat:"lsd",depth:3,name:"Needs Analysis for Organizational Transformation",sub:"Diagnosing the problem before proposing a solution",
    body:"Entering an organization by asking the right diagnostic questions first — where intentions and outcomes have drifted apart — so design addresses the real problem. It is the organizational scale of learner research.",
    ground:"Needs analysis; gap analysis",link:"lsd",status:"built",connects:["sd4","lx6","km3","km6"]},
@@ -1535,21 +1535,24 @@ function boot(){
     const isCore = n.cat==="core";
     const page = PAGES[n.id] || null;
     const live = !!page;
-    const st = isCore ? "" : (n.status==="planned" ? STATUS.planned
-                      : (live ? "Published resource" : "In development"));
+    // PAGES decides whether a live page exists; the node's own status supplies the
+    // wording. Same rule as area-map.html, so a contribution reads the same in both views.
+    const st = isCore ? ""
+      : live ? (n.status === "service" ? STATUS.service : STATUS.built)
+             : (n.status && n.status !== "built" ? STATUS[n.status] : STATUS.dev);
     const srcHtml = n.src.length ? n.src.map(k=>{
       const s=SOURCES[k], num=srcNum[k]; if(!s) return "";
       const txt="["+num+"] "+s.t;
       return "<li>"+(s.u? '<a href="'+s.u+'" target="_blank" rel="noopener">'+txt+'</a>' : txt)+"</li>";
     }).filter(Boolean).join("") : "";
     const conns = n.connects.map(cid=>{
-      const cn=nodeMap[cid]; if(!cn) return "";
+      const cn=nodeMap[cid]; if(!cn || cn.cat==="core") return "";
       return '<button class="chip" data-go="'+cid+'"><span class="cd" style="--sw:'+CATS[cn.cat].color+'"></span>'+cn.name+'</button>';
     }).join("");
     // most related by computed similarity (shared theory + themes), across all areas
     let relHtml = "";
     if(n.cat!=="core"){
-      const rel = NODES.filter(m => m.id!==n.id && m.cat!=="core")
+      const rel = NODES.filter(m => m.id!==n.id && m.cat!=="core" && !m.id.startsWith("area_"))
         .map(m => ({m, s:similarity(n,m)}))
         .filter(o => o.s>0.12)
         .sort((a,b)=> b.s-a.s).slice(0,5);
