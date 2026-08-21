@@ -344,6 +344,11 @@ const SOURCES = {
   smithlt:{cat:"Indigenous education", t:"Smith, L. T. (2012). Decolonizing Methodologies: Research and Indigenous Peoples (2nd ed.). Zed Books."},
   trc:{cat:"Policy instrument", t:"Truth and Reconciliation Commission of Canada (2015). Truth and Reconciliation Commission of Canada: Calls to Action."},
   undrip:{cat:"Policy instrument", t:"United Nations (2007). United Nations Declaration on the Rights of Indigenous Peoples. General Assembly resolution 61/295."},
+  biggs:{cat:"Instructional design", t:"Biggs, J. (1996). \u201cEnhancing Teaching Through Constructive Alignment.\u201d Higher Education, 32(3), 347\u2013364.", u:"https://doi.org/10.1007/BF00138871"},
+  dawson:{cat:"Assessment", t:"Dawson, P. (2021). Defending Assessment Security in a Digital World: Preventing E-Cheating and Supporting Academic Integrity in Higher Education. Routledge."},
+  perkins:{cat:"Assessment", t:"Perkins, M., Furze, L., Roe, J., & MacVaugh, J. (2024). \u201cThe Artificial Intelligence Assessment Scale (AIAS): A Framework for Ethical Integration of Generative AI in Educational Assessment.\u201d Journal of University Teaching and Learning Practice, 21(6).", u:"https://doi.org/10.53761/q3azde36"},
+  macnell:{cat:"Evaluation", t:"MacNell, L., Driscoll, A., & Hunt, A. N. (2015). \u201cWhat\u2019s in a Name: Exposing Gender Bias in Student Ratings of Teaching.\u201d Innovative Higher Education, 40(4), 291\u2013303.", u:"https://doi.org/10.1007/s10755-014-9313-4"},
+  slade:{cat:"Learning analytics", t:"Slade, S., & Prinsloo, P. (2013). \u201cLearning Analytics: Ethical Issues and Dilemmas.\u201d American Behavioral Scientist, 57(10), 1510\u20131529."},
 };
 
 /* Which sources ground each contribution (cited by number on the node). */
@@ -413,7 +418,7 @@ const SRC_BY_ID = {
   ld15:["nutley"],
   ld16:["senge","nutley"],
   ld17:["kirkpatrick","aca","fippa"],
-  ld18:["fippa","pipeda","phipa"],
+  ld18:["fippa","pipeda","phipa","slade"],
   ld19:["tcps2","fnigc"],
   ld20:["iso24495","nutbeam"],
   ld27:["ramsden","kirknessbarnhardt","archibald","ermine","tuckyang","battiste","smithlt","trc","undrip","fnigc"],
@@ -422,6 +427,11 @@ const SRC_BY_ID = {
   ld23:["knowles","michie"],
   ld24:["knowles"],
   ld25:["kirkpatrick","gilbert"],
+  ld29:["biggs","wigginsmctighe","messick","hattie"],
+  ld30:["dawson","perkins","messick","wigginsmctighe"],
+  ld31:["schon","rossett","knowles"],
+  ld32:["macnell","slade","messick","kirkpatrick"],
+  ld33:["knowles","nathanpetrosino","nutley","schon"],
 };
 
 const NODES = [
@@ -695,13 +705,13 @@ const NODES = [
   /* Inner ring — making the work */
   {id:"ld1",cat:"trunk",ring:1,depth:4,name:"Telling a Learning Need from a Performance Problem",
    sub:"The question asked before anything is designed",
-   body:"Organizations request training for problems training cannot fix — unclear expectations, missing tools, broken incentives, understaffing. Diagnosing which is which, before any design begins, changes the outcome more than any later decision will. It is also the step most often skipped.",
+   body:"A request for training usually arrives attached to a problem training cannot fix — unclear expectations, missing tools, broken incentives, understaffing, a marking load nobody costed, a prerequisite that quietly stopped being taught. Diagnosing which is which, before any design begins, changes the outcome more than any later decision will. It is also the step most often skipped.",
    ground:"Behaviour engineering (Gilbert); performance analysis (Mager & Pipe); Rummler & Brache",
    link:"trunk",status:"planned",connects:["ld26","ld2","sd1"]},
 
   {id:"ld2",cat:"trunk",ring:1,depth:4,name:"Scoping and the Decision Gate",
    sub:"Correcting while correction is still cheap",
-   body:"Designs get built well past the point where changing them stops being affordable. A named milestone, a defined output, and a structured reassessment before further investment is what keeps a project correctable rather than merely finishable.",
+   body:"Designs get built well past the point where changing them stops being affordable. A named milestone, a defined output, and a structured reassessment before more is committed — whether what is being committed is a budget or someone’s unpaid hours — is what keeps a project correctable rather than merely finishable.",
    ground:"Project scoping and staged decision-making",
    link:"trunk",status:"planned",connects:["ld1","ld8","ld16"]},
 
@@ -711,9 +721,9 @@ const NODES = [
    ground:"Cognitive task analysis; expert blind spot (Nathan & Petrosino)",
    link:"trunk",status:"planned",connects:["ld23","ld13","ld2"]},
 
-  {id:"ld4",cat:"trunk",ring:1,depth:2,name:"Onboarding an Organization into Learning Design",
-   sub:"How a client learns to commission this work",
-   body:"Most organizations do not know what to ask a learning designer for, what they will be asked to supply, or what good looks like when it arrives. The intake, the shared vocabulary, and the first engagement are design problems in their own right.",
+  {id:"ld4",cat:"trunk",ring:1,depth:2,name:"Onboarding a Partner into Learning Design",
+   sub:"How someone learns to commission this work",
+   body:"Few partners know what to ask a learning designer for, what they will be asked to supply, or what good looks like when it arrives. That holds for an organization with a procurement process and for a single person with a course, a deadline, and no budget line at all. The intake, the shared vocabulary, and the first engagement are design problems in their own right.",
    ground:"Developed in practice; client intake and needs assessment",
    link:"trunk",status:"planned",connects:["ld25","ld2","ld22"]},
 
@@ -725,7 +735,7 @@ const NODES = [
 
   {id:"ld6",cat:"trunk",ring:1,depth:4,name:"Modality and Technology Selection",
    sub:"The tool decision comes after the analysis, not before it",
-   body:"Modality follows from what the analysis found — who the learners are, what the constraint is, where the work happens. Tool-first procurement, where a platform is bought and then filled, is endemic in the public sector and produces design decisions nobody made deliberately.",
+   body:"Modality follows from what the analysis found — who the learners are, what the constraint is, where the work happens. Tool-first decisions, where a platform is procured or centrally supported and then filled, are endemic in large institutions and produce design choices nobody made deliberately.",
    ground:"Media selection; analysis before tooling",
    link:"trunk",status:"planned",connects:["ld1","ld12","ld26"]},
 
@@ -733,23 +743,24 @@ const NODES = [
    sub:"What the tool is good for, and what it invents",
    body:"Where generative tools genuinely accelerate design work — outlining, variant generation, first-pass drafting — and the failure modes that make unreviewed output unusable: fabricated citations, plausible-sounding pedagogy with no evidence behind it, and quiet homogenisation of everything it touches.",
    ground:"Developed in practice; documented failure modes in generative tools",
-   link:"trunk",status:"planned",connects:["ld15","km10","ld14"]},
+   note:"This stays about generative tools in the designer’s hands. Their use by learners, and what that does to assessment, is a separate contribution.",
+   link:"trunk",status:"planned",connects:["ld15","km10","ld14","ld30"]},
 
   {id:"ld8",cat:"trunk",ring:1,depth:3,name:"Designing Under Constraint",
    sub:"What good looks like when there isn\u2019t enough",
-   body:"Budget, timeline, and capacity are the actual conditions of the work, not deviations from it. What to protect and what to let go when the ideal method is unavailable — the honest counterpart to every best-case process on this map.",
+   body:"Budget, timeline, and capacity are the actual conditions of the work, not deviations from it — and where the partner is a volunteer, the scarcest of them is their attention. What to protect and what to let go when the ideal method is unavailable, which is the honest counterpart to every best-case process on this map.",
    ground:"Developed in practice",
    link:"trunk",status:"planned",connects:["ld5","ld25","ld2"]},
 
   {id:"ld26",cat:"trunk",ring:1,depth:4,name:"What to Build When the Answer Isn\u2019t a Course",
    sub:"Support placed at the moment the work happens",
-   body:"Job aids, checklists, decision aids at the point of care, protocol cards, a better form, a workflow change. Support available when the task is being performed rather than instruction delivered weeks earlier and expected to survive until it is needed — frequently where the measurable effect actually is in health, research operations, and the public sector.",
+   body:"Job aids, checklists, decision aids at the point of care, protocol cards, a worked-example set, a rubric released before the work starts, a clearer brief, a page that answers the question forty people are about to ask. Support available at the moment the task is performed rather than instruction delivered weeks earlier and expected to survive until it is needed — frequently where the measurable effect actually is.",
    ground:"Behaviour engineering (Gilbert); job aids (Rossett & Schafer); moments of need (Gottfredson & Mosher); checklist literature",
    link:"trunk",status:"planned",connects:["ld1","ud4","ld6","ld9"]},
 
   {id:"ld9",cat:"trunk",ring:1,depth:4,name:"Information and Data Visualization for Learning",
    sub:"Making structure visible so it gets read",
-   body:"Complex technical content and evaluation findings arrive as prose and spreadsheets and stay unread. Process maps, decision trees, comparative frames, and results a governance committee can take in within a minute. In health, research, and the public sector, this is often the whole deliverable.",
+   body:"Complex technical content and evaluation findings arrive as prose and spreadsheets and stay unread. Process maps, decision trees, comparative frames, and results a governance or curriculum committee can take in within a minute. Wherever decisions are made by a committee reading on short time, this is often the whole deliverable rather than a garnish on one.",
    ground:"Graphical excellence (Tufte); multimedia principles (Mayer); Cairo",
    link:"trunk",status:"planned",connects:["km4","ld10","ld11"]},
 
@@ -762,7 +773,7 @@ const NODES = [
 
   {id:"ld11",cat:"trunk",ring:1,depth:5,name:"Plain Language and Writing for Learning",
    sub:"Reading load as a design decision",
-   body:"How hard something is to read is usually the biggest barrier to understanding it, and it has nothing to do with the subject itself. It is also the barrier designers most often leave to chance. Reading load decides whether a patient follows their discharge instructions, whether a public notice meets its plain-language duty, and whether a researcher can actually use a method someone has described.",
+   body:"How hard something is to read is usually the biggest barrier to understanding it, and it has nothing to do with the subject itself. It is also the barrier designers most often leave to chance. Reading load decides whether a patient follows their discharge instructions, whether a public notice meets its plain-language duty, whether a researcher can actually use a method someone has described, and whether a student can tell what an assignment is asking them to do.",
    ground:"ISO 24495-1; health literacy (Nutbeam)",
    link:"trunk",status:"planned",connects:["ac17","ud7","ld20"]},
 
@@ -777,6 +788,26 @@ const NODES = [
    body:"Most learners have never been told how consolidation works, why re-reading feels productive and isn\u2019t, or that difficulty is often the signal rather than the failure. This makes that knowledge available in plain language as something offered rather than assigned, and builds the regulating into the design — spacing in the schedule, retrieval in the activity, requirements stated plainly — because every strategy in this literature presupposes conditions that unequal circumstances do not distribute equally.",
    ground:"Learning How to Learn (Oakley & Sejnowski); desirable difficulties (Bjork); retrieval practice (Roediger & Karpicke); co-regulated and socially shared regulation (Hadwin & J\u00e4rvel\u00e4); scarcity and bandwidth (Mullainathan & Shafir)",
    link:"trunk",status:"planned",connects:["lx5","lx2","ld14","ud3"]},
+
+  {id:"ld29",cat:"trunk",ring:1,depth:5,name:"Writing Outcomes That Can Be Assessed",
+   sub:"Holding outcome, evidence and activity in one line",
+   body:"Most outcomes state an aspiration no assessment can reach — appreciate, understand, be aware of — and most activities drift from whatever is finally marked. Naming what someone will be able to do, choosing the evidence that would show it, and building the activity that gets them there is the most-performed move in the craft and the one most often made by habit. It is also what makes a design reviewable by anyone who was not in the room when it was decided.",
+   ground:"Constructive alignment (Biggs); backward design (Wiggins & McTighe); construct validity (Messick)",
+   note:"Backward design on the experience branch applies this to one designed experience. Here it is the general move, applied to anything that claims to teach something.",
+   link:"trunk",status:"planned",connects:["lx8","ld30","ud7","ld2"]},
+
+  {id:"ld30",cat:"trunk",ring:1,depth:2,name:"Assessment When the Answer Can Be Generated",
+   sub:"Designing tasks a model cannot sit in for",
+   body:"Detection is unreliable, adversarial, and falls hardest on the people least able to contest it. The durable answers are in the task itself: work anchored to a particular context, a process that leaves a trail, evidence gathered in person at the points where it genuinely matters, and stated expectations about permitted use rather than a blanket prohibition nobody can enforce. The prior question is which capability a task is protecting, and whether it is worth protecting there.",
+   ground:"Assessment security (Dawson); permitted-use scales (Perkins et al.); construct validity (Messick)",
+   link:"trunk",status:"planned",connects:["ld29","ld7","ud7","ld15"]},
+
+  {id:"ld31",cat:"trunk",ring:1,depth:3,name:"When the Consultation Is the Whole Intervention",
+   sub:"One conversation, and no project behind it",
+   body:"A great deal of this work is not a project. It is an hour with someone who has a course, a deadline, and the option of simply not writing back. What can be diagnosed, decided, and left behind in a single conversation is a different craft from running a scoped build, and it is where most of a practice’s actual reach lives. Designing that hour — what to ask, what to skip, what to leave in their hands — deserves the same attention as designing anything else.",
+   ground:"Reflective practice (Sch\u00f6n); needs analysis (Rossett); adult learning (Knowles)",
+   note:"Distinct from onboarding a partner, which assumes an engagement follows. This one assumes it may not.",
+   link:"trunk",status:"planned",connects:["ld4","ld1","ld23","ld8"]},
 
   /* Outer ring — shared standards, obligations, and what sustains the work */
   {id:"ld13",cat:"trunk",ring:2,depth:4,name:"Quality Assurance as a Documented Practice",
@@ -810,16 +841,16 @@ const NODES = [
    ground:"Sustainment planning; knowledge management practice",
    link:"trunk",status:"planned",connects:["ld13","ld22","sd_org"]},
 
-  {id:"ld17",cat:"trunk",ring:2,depth:4,name:"Designing in Regulated and Compliance-Driven Environments",
+  {id:"ld17",cat:"trunk",ring:2,depth:4,name:"Designing Where the Work Must Satisfy a Reviewer",
    sub:"The tension between defensible and effective",
-   body:"Required training, audit trails, and evidence a regulator will accept — and the real craft problem underneath, which is that compliance-driven design usually optimizes for the record rather than the learner. A screening criterion for health authorities, research facilities, and provincial ministries.",
-   ground:"Regulatory evaluation frameworks; competency assurance practice",
+   body:"Required training, audit trails, accreditation evidence, and curriculum approval — and the real craft problem underneath, which is that review-driven design usually optimizes for the record rather than the learner. The reviewer may be a regulator, a professional accrediting body, an ethics board, or a curriculum committee. The pressure each puts on the design is the same, and so is the way out of it.",
+   ground:"Regulatory and accreditation frameworks; competency assurance practice",
    link:"trunk",status:"planned",connects:["ld13","ld19","ld18"]},
 
   {id:"ld18",cat:"trunk",ring:2,depth:3,name:"Learner Data, Privacy and Analytics Ethics",
    sub:"What the learning function is actually allowed to hold",
-   body:"LMS records, completion tracking, dashboards that identify individuals by accident, retention schedules, and what FIPPA, PIPEDA and PHIPA require of a learning function that is usually not staffed to know. The default position — collect everything, decide later — is not lawful and not neutral.",
-   ground:"FIPPA; PIPEDA; PHIPA",
+   body:"Platform records, completion tracking, dashboards that identify individuals by accident, retention schedules, and what privacy law requires of a learning function that is usually not staffed to know. It also covers the assessment a third-party tool has to pass before anyone can be required to use it, and the alternative that has to exist when it has not. The default position — collect everything, decide later — is not lawful and not neutral.",
+   ground:"FIPPA; PIPEDA; PHIPA; privacy impact assessment; learning analytics ethics (Slade & Prinsloo)",
    link:"trunk",status:"planned",connects:["ld19","ld17","ac8"]},
 
   {id:"ld19",cat:"trunk",ring:2,depth:4,name:"Ethics and Consent in Learner Research",
@@ -830,7 +861,7 @@ const NODES = [
 
   {id:"ld20",cat:"trunk",ring:2,depth:3,name:"Multilingual Design and Localization",
    sub:"The difference between translated and designed",
-   body:"Plain language before translation, terminology decided once, cultural adaptation rather than substitution, and the recognition that a translated course carries the structural assumptions of the original. A live requirement in Canadian health and federal contexts.",
+   body:"Plain language before translation, terminology decided once, cultural adaptation rather than substitution, and the recognition that a translated course carries the structural assumptions of the original. A live requirement wherever services, research, or study run across languages — Canadian health and federal contexts, and any room where much of the group is working in an additional language.",
    ground:"ISO 24495-1; localization practice",
    link:"trunk",status:"planned",connects:["ld11","ac17","ud8"]},
 
@@ -850,7 +881,7 @@ const NODES = [
 
   {id:"ld23",cat:"trunk",ring:2,depth:3,name:"Building Design Capability in Non-Designers",
    sub:"Helping SMEs and faculty make decent materials",
-   body:"Most learning content in any institution is made by people whose job is something else. Giving them a small number of decisions that matter, in a form they will actually use, does more for quality at scale than any single well-designed course.",
+   body:"Most learning content in any institution is made by people whose job is something else. Giving them a small number of decisions that matter, in a form they will actually use, does more for quality at scale than any single well-designed course. Where a small team supports a large institution, this is not a secondary mode of delivery. It is the main one.",
    ground:"Adult learning practice (Knowles); behaviour change (Michie)",
    link:"trunk",status:"planned",connects:["ac15","km7","ld3"]},
 
@@ -860,11 +891,24 @@ const NODES = [
    ground:"Developed in practice; competency frameworks and self-assessment",
    link:"trunk",status:"planned",connects:["ld23","ld22","ld3"]},
 
-  {id:"ld25",cat:"trunk",ring:2,depth:3,name:"The Business Case for Learning Design",
-   sub:"Arguing for the resource before the constraint is set",
-   body:"Cost, effort, and how the work is justified to somebody holding a budget who has seen learning functions produce very little. Distinct from designing well inside a constraint — this is the argument made before the constraint exists, and the strongest version of it includes recommending against building a course.",
+  {id:"ld25",cat:"trunk",ring:2,depth:3,name:"Arguing for the Work Before the Constraint Is Set",
+   sub:"Making the case while there is still something to decide",
+   body:"Cost, effort, and how the work is justified — sometimes to somebody holding a budget who has seen learning functions produce very little, and sometimes to a partner being asked for hours already owed to research, teaching, and service. The second argument is the harder one, because there is no line item to point at. Distinct from designing well inside a constraint: this is the case made before the constraint exists, and its strongest version includes recommending against building a course.",
    ground:"Evaluation and impact frameworks (Kirkpatrick); practice-derived",
    link:"trunk",status:"planned",connects:["ld8","ld26","sd_eval"]},
+
+  {id:"ld32",cat:"trunk",ring:2,depth:3,name:"Reading Course Signals Without Overreading Them",
+   sub:"Feedback, evaluations, and platform data",
+   body:"Learner feedback, end-of-term evaluation instruments, and platform analytics each answer a narrower question than they appear to. Evaluation instruments carry documented bias by instructor gender; platform data records activity rather than learning; open comments are a self-selected sample in which the unhappy are overrepresented. Knowing what each signal can and cannot support is the difference between a revision that helps and one that chases the loudest few.",
+   ground:"Bias in student ratings of teaching (MacNell et al.); learning analytics ethics (Slade & Prinsloo); construct validity (Messick)",
+   link:"trunk",status:"planned",connects:["ld18","ld16","lx9","ld13"]},
+
+  {id:"ld33",cat:"trunk",ring:2,depth:3,name:"Designing Inside a Research Culture",
+   sub:"No authority, and a partner whose first obligation is elsewhere",
+   body:"In institutions built around producing knowledge, the person being designed with is an expert in their own field first, holds more standing in it than the designer does, and is taking part voluntarily. Nothing can be required. The evidence has to meet the standard they apply to their own discipline, which is higher than the one most learning content is written to. And the design has to survive a term in which teaching is one obligation of three. The craft is influence without authority, and evidence good enough for a sceptical expert.",
+   ground:"Adult learning (Knowles); expert blind spot (Nathan & Petrosino); evidence use (Nutley)",
+   note:"Distinct from working with subject-matter experts, which is about eliciting what they know. This is about the conditions under which they can be worked with at all.",
+   link:"trunk",status:"planned",connects:["ld3","ld23","ld31","ld14"]},
 
 ];
 
@@ -943,6 +987,9 @@ const TAGS_BY_ID = {
   ld27:["indigenous","ethics","equity"], ld21:["craft","community","capacity"],
   ld22:["systems","capacity","craft"], ld23:["capacity","craft"],
   ld24:["capacity","evidence"], ld25:["policy","evaluation","process"],
+  ld29:["alignment","assessment","process"], ld30:["assessment","evidence","craft"],
+  ld31:["process","craft","capacity"], ld32:["evaluation","evidence","research"],
+  ld33:["capacity","evidence","craft"],
 };
 NODES.forEach(n => { n.tags = TAGS_BY_ID[n.id] || []; });
 
