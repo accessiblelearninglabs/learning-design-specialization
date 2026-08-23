@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Learning Design Landscape · Andrea Robin</title>
-<meta name="description" content="An interactive map of a learning design practice — a trunk of shared craft and five branches of expertise — learning experience design, universal design for learning, knowledge mobilization, learning systems design, and accessibility, disability and accommodation — with accessibility running through all five." />
+<meta name="description" content="An interactive map of a learning design practice — a trunk of shared craft and six branches of expertise — learning experience design, universal design for learning, knowledge mobilization, learning systems design, accessibility, disability and accommodation, and epistemology — with accessibility running through all six." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
@@ -13,7 +13,8 @@
     --accent:#475f6a;--hair:#e2e6e8;--hair-soft:#eef1f2;--panel:#f7f8f9;
     --maxw:1080px;--ease:cubic-bezier(.22,.61,.36,1);
     /* area tints — desaturated to sit beside the slate brand palette */
-    --c-lxd:#4c6b66;--c-udl:#635f7a;--c-kmb:#47607a;--c-lsd:#6d6550;--c-access:#8a6a60;--c-core:#303e44;}
+    --c-lxd:#4c6b66;--c-udl:#635f7a;--c-kmb:#47607a;--c-lsd:#6d6550;--c-access:#8a6a60;
+    --c-epist:#7a5c6b;--c-core:#303e44;}
   *{box-sizing:border-box;} html,body{margin:0;padding:0;}
   body{font-family:"Asap",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);
     background:var(--paper);-webkit-font-smoothing:antialiased;line-height:1.6;}
@@ -181,11 +182,11 @@
     <header class="hero">
       <p class="eyebrow"><span>Learning Design Specialization</span><span class="status">Interactive map</span></p>
       <h1>A learning design practice, <em>mapped</em></h1>
-      <p class="lede">Much of what people need in order to act — on their health, their rights, their work — is not missing but unusable: built without them, for conditions that are not theirs. Learning design is where those choices are made. This practice develops knowledge through interaction with the people it concerns, and treats access as a condition of the work rather than a correction to it. The map sets out part of that practice: a trunk of shared craft and five branches of expertise, with lines where they draw on the same theory and method.</p>
+      <p class="lede">Much of what people need in order to act — on their health, their rights, their work — is not missing but unusable: built without them, for conditions that are not theirs. Learning design is where those choices are made. This practice develops knowledge through interaction with the people it concerns, and treats access as a condition of the work rather than a correction to it. The map sets out part of that practice: a trunk of shared craft and six branches of expertise, with lines where they draw on the same theory and method.</p>
       <p class="lede" style="margin-top:14px;font-size:14.5px;color:var(--ink);"><a href="landscape-linear.html" style="color:var(--accent);">A text version of this map</a> presents the same content in reading order, without the diagram, for screen reader and keyboard use.</p>
     </header>
 
-    <div class="note"><strong>How to read this.</strong> <strong>By branch</strong> shows where each contribution sits: the trunk at the centre, the five branches beyond it. <strong>By affinity</strong> repositions the same circles by likeness, so relationships across branches surface. Select any circle to read it. A few contributions belong to two branches; each appears once, in its home colour, and says so when selected.</div>
+    <div class="note"><strong>How to read this.</strong> <strong>By branch</strong> shows where each contribution sits: the trunk at the centre, the six branches beyond it. <strong>By affinity</strong> repositions the same circles by likeness, so relationships across branches surface. Select any circle to read it. A few contributions belong to two branches; each appears once, in its home colour, and says so when selected.</div>
 
     <div class="controls" role="region" aria-label="Map controls">
       <div class="tf" id="filters" role="group" aria-label="Filter by branch of expertise"></div>
@@ -203,7 +204,7 @@
 
     <div class="stage">
       <div class="canvas-wrap" id="cwrap">
-        <canvas id="map" aria-label="Map of a learning-design practice — a trunk of shared craft and five branches of expertise. Interactive; a readable list of every contribution follows below."></canvas>
+        <canvas id="map" aria-label="Map of a learning-design practice — a trunk of shared craft and six branches of expertise. Interactive; a readable list of every contribution follows below."></canvas>
         <div class="tt" id="tt"><div class="k" id="tt-k"></div><div class="n" id="tt-n"></div></div>
       </div>
       <aside class="panel" id="panel" aria-live="polite">
@@ -253,8 +254,8 @@
 <script>
 /* ============================================================
    LEARNING DESIGN SPECIALIZATION — data
-   One practice across five areas of expertise, including
-   accessibility, disability and accommodation. Each contribution appears once,
+   One practice across six areas of expertise, including
+   accessibility, disability and accommodation, and epistemology. Each contribution appears once,
    in its home area; connections show cross-area relationships.
    ============================================================ */
 const CATS = {
@@ -264,24 +265,26 @@ const CATS = {
   kmb:    {label:"Knowledge Mobilization",          color:"#47607a"},
   lsd:    {label:"Learning Systems Design",         color:"#6d6550"},
   access: {label:"Accessibility",                   color:"#8a6a60"},
+  epist:  {label:"Epistemology",                    color:"#7a5c6b"},
   trunk:  {label:"Learning Design",                 color:"#55666e"},
 };
-// core is centred and always shown; the five below form the wedges, filters and legend
-const CAT_ORDER = ["lxd","udl","kmb","lsd","access"];
+// core is centred and always shown; the six below form the wedges, filters and legend
+const CAT_ORDER = ["lxd","udl","kmb","lsd","access","epist"];
 // Alphabetical order for reader-facing surfaces (tabs, legend, list, area links).
 // The map's spatial layout keeps CAT_ORDER; only the display lists are alphabetised.
-const CAT_ORDER_DISPLAY = ["access","kmb","lxd","lsd","udl"];
+const CAT_ORDER_DISPLAY = ["access","epist","kmb","lxd","lsd","udl"];
 
-/* The trunk is the shared learning-design craft the five branches all grow from.
+/* The trunk is the shared learning-design craft the six branches all grow from.
    It sits INSIDE the branches rather than beside them, so it is deliberately
    kept out of CAT_ORDER (which drives the spatial wedges) and out of
    CAT_ORDER_DISPLAY, and handled explicitly wherever categories are
    enumerated: bibliography numbering, legend, branch links, filters, the list
    view, and the map layout. */
 const TRUNK = "trunk";
-// Bibliography numbering appends the trunk LAST so existing citation numbers
-// on published pages do not shift.
-const CAT_ORDER_BIB = ["core"].concat(CAT_ORDER).concat([TRUNK]);
+// Bibliography numbering appends the trunk, and then each later addition, LAST,
+// so existing citation numbers on published pages do not shift. The order is
+// therefore written out rather than derived from CAT_ORDER.
+const CAT_ORDER_BIB = ["core","lxd","udl","kmb","lsd","access",TRUNK,"epist"];
 // Reader-facing lists lead with the trunk, because it is what the branches grow from.
 const CAT_ORDER_READ = [TRUNK].concat(CAT_ORDER_DISPLAY);
 
@@ -291,6 +294,7 @@ const LINKS = {
   kmb:    "https://www.andrearobin.com/knowledge-mobilization",
   lsd:    "https://www.andrearobin.com/learning-systems-design",
   access: "https://www.andrearobin.com/accessibility",
+  epist:  "https://www.andrearobin.com/epistemology",
   trunk:  "https://www.andrearobin.com/learning-design",
   acc_services: "https://www.accessiblelearninglabs.com/services",
   acc_review:  "https://www.accessiblelearninglabs.com/accessibility-review",
@@ -316,6 +320,7 @@ const PAGES = {
   area_lxd:"https://www.andrearobin.com/learning-experience-design",
   area_lsd:"https://www.andrearobin.com/learning-systems-design",
   area_udl:"https://www.andrearobin.com/universal-design-for-learning-udl",
+  area_epist:"https://www.andrearobin.com/epistemology",
   // Accessibility (Accessible Learning Labs)
   ac1:"https://www.accessiblelearninglabs.com/accessibility-review",
   ac2:"https://www.accessiblelearninglabs.com/course-and-curriculum-design",
@@ -461,6 +466,39 @@ const SOURCES = {
   perkins:{cat:"Assessment", t:"Perkins, M., Furze, L., Roe, J., & MacVaugh, J. (2024). \u201cThe Artificial Intelligence Assessment Scale (AIAS): A Framework for Ethical Integration of Generative AI in Educational Assessment.\u201d Journal of University Teaching and Learning Practice, 21(6).", u:"https://doi.org/10.53761/q3azde36"},
   macnell:{cat:"Evaluation", t:"MacNell, L., Driscoll, A., & Hunt, A. N. (2015). \u201cWhat\u2019s in a Name: Exposing Gender Bias in Student Ratings of Teaching.\u201d Innovative Higher Education, 40(4), 291\u2013303.", u:"https://doi.org/10.1007/s10755-014-9313-4"},
   slade:{cat:"Learning analytics", t:"Slade, S., & Prinsloo, P. (2013). \u201cLearning Analytics: Ethical Issues and Dilemmas.\u201d American Behavioral Scientist, 57(10), 1510\u20131529."},
+
+  /* Epistemology */
+  longino:{cat:"Social epistemology", t:"Longino, H. E. (2002). The Fate of Knowledge. Princeton University Press."},
+  goldmansoc:{cat:"Social epistemology", t:"Goldman, A. I. (1999). Knowledge in a Social World. Oxford University Press."},
+  fricker:{cat:"Epistemic injustice", t:"Fricker, M. (2007). Epistemic Injustice: Power and the Ethics of Knowing. Oxford University Press."},
+  dotson:{cat:"Epistemic injustice", t:"Dotson, K. (2011). \u201cTracking Epistemic Violence, Tracking Practices of Silencing.\u201d Hypatia, 26(2), 236\u2013257."},
+  coady:{cat:"Epistemology of testimony", t:"Coady, C. A. J. (1992). Testimony: A Philosophical Study. Oxford University Press."},
+  lackey:{cat:"Epistemology of testimony", t:"Lackey, J. (2008). Learning from Words: Testimony as a Source of Knowledge. Oxford University Press."},
+  hardwig:{cat:"Epistemology of testimony", t:"Hardwig, J. (1985). \u201cEpistemic Dependence.\u201d The Journal of Philosophy, 82(7), 335\u2013349."},
+  harding:{cat:"Standpoint theory", t:"Harding, S. (1986). The Science Question in Feminism. Cornell University Press."},
+  haraway:{cat:"Standpoint theory", t:"Haraway, D. (1988). \u201cSituated Knowledges: The Science Question in Feminism and the Privilege of Partial Perspective.\u201d Feminist Studies, 14(3), 575\u2013599."},
+  hillcollins:{cat:"Standpoint theory", t:"Collins, P. H. (1990). Black Feminist Thought: Knowledge, Consciousness, and the Politics of Empowerment. Unwin Hyman."},
+  wylie:{cat:"Standpoint theory", t:"Wylie, A. (2003). \u201cWhy Standpoint Matters.\u201d In R. Figueroa & S. Harding (Eds.), Science and Other Cultures: Issues in Philosophies of Science and Technology. Routledge."},
+  proctor:{cat:"Agnotology", t:"Proctor, R. N., & Schiebinger, L. (Eds.). (2008). Agnotology: The Making and Unmaking of Ignorance. Stanford University Press."},
+  mills:{cat:"Agnotology", t:"Mills, C. W. (2007). \u201cWhite Ignorance.\u201d In S. Sullivan & N. Tuana (Eds.), Race and Epistemologies of Ignorance. State University of New York Press."},
+  tuana:{cat:"Agnotology", t:"Tuana, N. (2006). \u201cThe Speculum of Ignorance: The Women\u2019s Health Movement and Epistemologies of Ignorance.\u201d Hypatia, 21(3), 1\u201319."},
+  ryle:{cat:"Epistemology of practice", t:"Ryle, G. (1949). The Concept of Mind. Hutchinson \u2014 the source of the knowing-how and knowing-that distinction."},
+  polanyi:{cat:"Epistemology of practice", t:"Polanyi, M. (1958). Personal Knowledge: Towards a Post-Critical Philosophy. University of Chicago Press."},
+  collinstacit:{cat:"Epistemology of practice", t:"Collins, H. (2010). Tacit and Explicit Knowledge. University of Chicago Press."},
+  collinsevans:{cat:"Sociology of expertise", t:"Collins, H., & Evans, R. (2007). Rethinking Expertise. University of Chicago Press."},
+  jasanoffnature:{cat:"Science and technology studies", t:"Jasanoff, S. (2005). Designs on Nature: Science and Democracy in Europe and the United States. Princeton University Press \u2014 the source of civic epistemology."},
+  epstein:{cat:"Science and technology studies", t:"Epstein, S. (1996). Impure Science: AIDS, Activism, and the Politics of Knowledge. University of California Press."},
+  wynne:{cat:"Science and technology studies", t:"Wynne, B. (1992). \u201cMisunderstood Misunderstanding: Social Identities and Public Uptake of Science.\u201d Public Understanding of Science, 1(3), 281\u2013304 \u2014 the Cumbrian sheep farmers study."},
+  jasanoffbar:{cat:"Socio-legal epistemology", t:"Jasanoff, S. (1995). Science at the Bar: Law, Science, and Technology in America. Harvard University Press."},
+  twining:{cat:"Socio-legal epistemology", t:"Twining, W. (1990). Rethinking Evidence: Exploratory Essays. Basil Blackwell (2nd ed., Cambridge University Press, 2006)."},
+  daubert:{cat:"Evidence law", t:"Daubert v. Merrell Dow Pharmaceuticals, Inc., 509 U.S. 579 (1993) \u2014 the admissibility standard for expert evidence in United States federal courts."},
+  borsboom:{cat:"Construct validity", t:"Borsboom, D., Mellenbergh, G. J., & van Heerden, J. (2004). \u201cThe Concept of Validity.\u201d Psychological Review, 111(4), 1061\u20131071."},
+  kleinman:{cat:"Construct validity", t:"Kleinman, A. (1977). \u201cDepression, Somatization and the \u2018New Cross-Cultural Psychiatry\u2019.\u201d Social Science & Medicine, 11(1), 3\u201310 \u2014 the source of the category fallacy."},
+  nichter:{cat:"Construct validity", t:"Nichter, M. (1981). \u201cIdioms of Distress: Alternatives in the Expression of Psychosocial Distress.\u201d Culture, Medicine and Psychiatry, 5(4), 379\u2013408."},
+  feldmanwarfield:{cat:"Peer disagreement", t:"Feldman, R., & Warfield, T. A. (Eds.). (2010). Disagreement. Oxford University Press."},
+  fishkin:{cat:"Deliberation", t:"Fishkin, J. S. (2009). When the People Speak: Deliberative Democracy and Public Consultation. Oxford University Press."},
+  landemore:{cat:"Deliberation", t:"Landemore, H. (2013). Democratic Reason: Politics, Collective Intelligence, and the Rule of the Many. Princeton University Press."},
+  ehn:{cat:"Participatory design", t:"Ehn, P. (1988). Work-Oriented Design of Computer Artifacts. Arbetslivscentrum."},
 };
 
 /* Which sources ground each contribution (cited by number on the node). */
@@ -505,7 +543,7 @@ const SRC_BY_ID = {
 
   // area nodes
   area_lxd:["kolb","hpl"], area_udl:["rosemeyer","castudl"], area_kmb:["grahamk2a"],
-  area_lsd:["senge"], area_access:["wcag","castudl"],
+  area_lsd:["senge"], area_access:["wcag","castudl"], area_epist:["longino","fricker","proctor"],
   // new resources
   km_cop:["wenger","grahamk2a"],
   sd_org:["senge"], sd_eval:["kirkpatrick"], sd_curric:["wigginsmctighe"],
@@ -544,14 +582,27 @@ const SRC_BY_ID = {
   ld31:["schon","rossett","knowles"],
   ld32:["macnell","slade","messick","kirkpatrick"],
   ld33:["knowles","nathanpetrosino","nutley","schon"],
+
+  /* Epistemology */
+  ep0:["longino","harding","goldmansoc"],
+  ep1:["coady","lackey","hardwig","fricker"],
+  ep2:["fricker","dotson","jasanoffbar","twining","daubert"],
+  ep3:["proctor","mills","tuana"],
+  ep4:["fricker","dotson","nichter","kleinman"],
+  ep5:["ryle","polanyi","collinstacit","schon"],
+  ep6:["hardwig","goldmansoc","collinsevans","epstein","wynne","jasanoffnature"],
+  ep7:["feldmanwarfield","fishkin","landemore","ehn"],
+  ep8:["ermine","twoeyed","twining"],
+  ep9:["messick","borsboom","kleinman","nichter"],
+  ep10:["harding","haraway","wylie","hillcollins","longino"],
 };
 
 const NODES = [
   /* ── CENTRE ── */
-  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped as a trunk and five branches",
-   body:"A single practice that designs how people and organizations learn, expressed as a trunk of shared craft and five connected branches of expertise — each with its own node and its own page. Every contribution below grows on one branch and links to the others it draws on, because the branches are not separate skills but one body of work seen from different perspectives.",
+  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped as a trunk and six branches",
+   body:"A single practice that designs how people and organizations learn, expressed as a trunk of shared craft and six connected branches of expertise — each with its own node and its own page. Every contribution below grows on one branch and links to the others it draws on, because the branches are not separate skills but one body of work seen from different perspectives.",
    ground:"Adult learning · learning sciences · human-centred design",link:"lxd",status:"dev",
-   connects:["area_lxd","area_udl","area_kmb","area_lsd","area_access"]},
+   connects:["area_lxd","area_udl","area_kmb","area_lsd","area_access","area_epist"]},
 
   /* ── AREA NODES (each links to its own area page) ── */
   {id:"area_lxd",cat:"lxd",depth:4,name:"Learning Experience Design",sub:"Branch · the learner's lived experience",
@@ -574,6 +625,10 @@ const NODES = [
    body:"Access understood at the level of the individual person and the obligation an institution holds toward them, alongside the proactive design that reduces how often that obligation must be invoked. This branch gathers knowledge resources written for learning designers, faculty, and institutions, offered in support of — never in place of — the accessibility advisors and accommodation professionals who carry this work day to day.",
    ground:"Human rights and accommodation law; disability studies; accessibility standards; inclusive design",link:"access",
    connects:["c0","ac4","ac5","ac6","ac7"]},
+  {id:"area_epist",cat:"epist",depth:4,name:"Epistemology",sub:"Branch · whose knowledge counts, and on what grounds",
+   body:"The conditions under which a knowledge claim is admitted, discounted, or never formed at all — the questions that arise before evidence is appraised rather than during it. This branch gathers the contributions that give a design process language for how it decides what will count as knowledge, and for what the exclusions cost. It supplies analysis; the standing obligations owed to communities and to Indigenous knowledge holders remain with the branches and instruments that carry them.",
+   ground:"Social epistemology; epistemic injustice; science and technology studies; socio-legal epistemology of evidence",link:"epist",
+   connects:["c0","ep0","ep1","ep2"]},
 
   /* ── LEARNING EXPERIENCE DESIGN ── */
   {id:"lx10",cat:"lxd",depth:3,name:"Learning Experience Architecture",sub:"The five-phase rhythm — Why · See · Try · Share · Reflect",
@@ -808,9 +863,83 @@ const NODES = [
    body:"Facilitation understood as a professional stance shaped by how power, identity, and legitimate knowledge are held — and the building of others' capacity to facilitate inclusively. It is offered as a specific service.",
    ground:"Power-aware facilitation; adult learning; equity",link:"acc_facil",status:"service",connects:["ac1","lx4","lx3","ac15"]},
 
+
+  /* ── EPISTEMOLOGY ──────────────────────────────────────────────────────
+     What decides whether a knowledge claim is admitted, discounted, or never
+     formed at all. A contribution belongs here only where the failure happens
+     before appraisal rather than during it; appraisal itself remains trunk work.
+     The branch coordinates with the Indigenous-led contributions held elsewhere
+     on the map and does not contain them. */
+
+  {id:"ep0",cat:"epist",depth:4,name:"What a Sound Knowledge Process Looks Like",
+   sub:"The entry node · the standard the rest of the branch measures against",
+   body:"Four conditions rendered for design work: real avenues through which criticism can travel while a decision can still change, demonstrable uptake of that criticism, standards of evidence agreed before evidence is gathered, and authority that tracks relevant knowledge rather than rank. They are necessary rather than sufficient — they make error detectable, not absent — and the fourth cannot be self-certified, which is why it is written as an arrangement a process submits to rather than a check it performs on itself.",
+   ground:"Critical contextual empiricism (Longino); strong objectivity (Harding); veritistic social epistemology (Goldman)",
+   link:"epist",status:"planned",connects:["c0","ep1","ep2","ep10","ld15"]},
+
+  {id:"ep1",cat:"epist",depth:4,name:"When Testimony Becomes Evidence",
+   sub:"The criterion an evidence hierarchy cannot supply",
+   body:"What makes a firsthand account count as evidence, and equally what makes a claim fail regardless of who holds it. It is the contribution that keeps a widened set of knowers from becoming an unlimited set of claims, and it leaves appraisal discipline — distinguishing a robust finding from folklore — fully intact.",
+   ground:"Epistemology of testimony (Coady; Lackey); epistemic dependence (Hardwig); testimonial injustice (Fricker)",
+   link:"epist",status:"planned",connects:["ep0","ep6","ld14","ld15","km4"]},
+
+  {id:"ep2",cat:"epist",depth:3,name:"The Invisible Rules of Admissibility",
+   sub:"The diagnostic · specifiable rules rather than bias",
+   body:"Sequencing, genre, the credential gate, proxy substitution, small-n erasure, safety closure, and the upstream lock: named filters that settle what enters a record before anything in it is weighed. Naming them as rules rather than as bias is what makes them examinable, and correctable, by the room that has just applied one.",
+   ground:"Epistemic injustice (Fricker; Dotson); socio-legal work on admissibility, expert qualification, and burden of proof",
+   link:"epist",status:"planned",connects:["ep0","ep4","ld3","ld15","ac9"]},
+
+  {id:"ep3",cat:"epist",depth:3,name:"Knowledge That Was Never Produced",
+   sub:"The absence that leaves no trace",
+   body:"Questions never funded, populations never studied, outcomes never defined. Nothing was excluded because nothing was submitted, which makes non-production the likeliest reason an evidence base looks thin and the hardest thing to detect from inside a literature search.",
+   ground:"Agnotology (Proctor & Schiebinger); structured ignorance (Mills); Tuana",
+   link:"epist",status:"planned",connects:["ep2","km1","ac22","ld15"]},
+
+  {id:"ep4",cat:"epist",depth:3,name:"Experience Without Language",
+   sub:"Hermeneutical injustice · when the account cannot be formed",
+   body:"Nobody is disbelieved and no claim is rejected: the concept required to state the experience does not yet exist in the shared interpretive resource. It leaves no trace in a consultation record, so a process that measures only what was said will read it as an absence of concern.",
+   ground:"Hermeneutical and contributory injustice (Fricker; Dotson); idioms of distress (Nichter); Kleinman",
+   link:"epist",status:"planned",connects:["ep2","ep9","ac13","ud8"]},
+
+  {id:"ep5",cat:"epist",depth:5,name:"Making as Knowing",
+   sub:"Whether knowing-how is knowledge in the same sense",
+   body:"The form of knowledge most present in craft, facilitation, and clinical practice, and least legible to a hierarchy built for claims. Elicitation methods presuppose an answer to this question and rarely state it, which is the point at which a tacit account is either carried into a design or lost at the interview.",
+   ground:"Knowing-how (Ryle); tacit knowledge (Polanyi; H. Collins); reflective practice (Schön)",
+   link:"epist",status:"planned",connects:["ep6","ld3","lx3","ac3"]},
+
+  {id:"ep6",cat:"epist",depth:4,name:"Warranted Trust and the Division of Cognitive Labour",
+   sub:"When deference is well-grounded rather than deferential",
+   body:"Nobody verifies most of what they know, so dependence is the ordinary condition of expertise rather than a lapse in it. This contribution sets out the grounds on which trust in an expert, a source, or a community is warranted, alongside the documented cases in which expertise established outside formal credentials has held up against expertise inside them.",
+   ground:"Epistemic dependence (Hardwig); epistemology of expertise (Goldman); interactional expertise (Collins & Evans); civic epistemology (Jasanoff)",
+   link:"epist",status:"planned",connects:["ep0","ep1","ld3","ld14"]},
+
+  {id:"ep7",cat:"epist",depth:3,name:"Designing Under Disagreement",
+   sub:"Deciding and building when knowledgeable people conflict",
+   body:"Disagreement between well-informed people working inside a single framework, where a decision still has to be made and something still has to be built to a deadline. It covers what the disagreement is itself evidence of, and which deliberative arrangements produce a defensible decision rather than the loudest one.",
+   ground:"Peer disagreement (Feldman & Warfield); deliberative method (Fishkin; Landemore); participatory design (Ehn)",
+   link:"epist",status:"planned",connects:["ep0","km5","ld2","sd9"]},
+
+  {id:"ep8",cat:"epist",depth:2,name:"When Integration Becomes Assimilation",
+   sub:"Where synthesis is the wrong instrument",
+   body:"Two knowledge systems can answer the same question incompatibly, and integrating them under unequal power absorbs one into the other. Holding the conflict open is an arrangement to be maintained rather than a deliverable to be produced. This contribution coordinates with the Indigenous-led work held elsewhere on the map and does not stand in for it.",
+   ground:"Ethical space (Ermine); Two-Eyed Seeing (Bartlett, Marshall & Marshall); legal pluralism",
+   link:"epist",status:"planned",connects:["ep7","km9","ld27"]},
+
+  {id:"ep9",cat:"epist",depth:4,name:"The Construct Inside the Measure",
+   sub:"How an instrument decides which outcomes become visible",
+   body:"An instrument encodes a construct, and choosing it settles in advance what will be able to register as an outcome. Where the construct does not hold in the setting, the measure returns nothing on something that worked, or an effect on something nobody intended.",
+   ground:"Construct validity (Messick; Borsboom et al.); category fallacy (Kleinman); idioms of distress (Nichter)",
+   link:"epist",status:"planned",connects:["ep4","ac14","ud7","sd_eval","km2"]},
+
+  {id:"ep10",cat:"epist",depth:3,name:"The Designer\u2019s Own Position",
+   sub:"The assumptions a method cannot catch on its own",
+   body:"No method examines the assumptions it was built on, and elicitation presumes a neutral extractor. The correction is criticism from a differently positioned knower holding authority to overrule — an arrangement submitted to rather than a process run — which applies to the designer the same condition a sound knowledge process is asked to meet.",
+   ground:"Strong objectivity (Harding); situated knowledges (Haraway); Wylie; Hill Collins; Longino",
+   link:"epist",status:"planned",connects:["ep0","lx6","km5","ac9"]},
+
   /* ── TRUNK · LEARNING DESIGN CRAFT ──────────────────────────────────────
      The shared practice everything else grows from. Two concentric rings inside
-     the five branches: the inner ring is about making the work, the outer ring
+     the six branches: the inner ring is about making the work, the outer ring
      about the standards and obligations it answers to, and what sustains it. Depth here means how settled
      the contribution is in the field, not how built out it is here. */
 
@@ -1102,6 +1231,15 @@ const TAGS_BY_ID = {
   ld29:["alignment","assessment","process"], ld30:["assessment","evidence","craft"],
   ld31:["process","craft","capacity"], ld32:["evaluation","evidence","research"],
   ld33:["capacity","evidence","craft"],
+
+  /* Epistemology */
+  area_epist:["evidence","equity"],
+  ep0:["evidence","process","standards"], ep1:["evidence","research"],
+  ep2:["evidence","equity","process"], ep3:["evidence","research","equity"],
+  ep4:["equity","language","disability"], ep5:["craft","capacity","experiential"],
+  ep6:["evidence","capacity","ethics"], ep7:["process","evidence","community"],
+  ep8:["indigenous","ethics","equity"], ep9:["assessment","evaluation","evidence"],
+  ep10:["research","ethics","reflection"],
 };
 NODES.forEach(n => { n.tags = TAGS_BY_ID[n.id] || []; });
 
