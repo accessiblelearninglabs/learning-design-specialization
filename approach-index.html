@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>On this page · My Learning Design Approach</title>
+<meta name="description" content="An index of the sections on the learning design approach page." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;0,600&display=swap" rel="stylesheet" />
+<style>
+  :root{--paper:#ffffff;--ink:#43525a;--ink-strong:#303e44;--stone:#8a959b;
+    --accent:#475f6a;--hair:#e2e6e8;--hair-soft:#eef1f2;
+    --ease:cubic-bezier(.22,.61,.36,1);}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:transparent;}
+  body{font-family:"Asap",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);
+    -webkit-font-smoothing:antialiased;line-height:1.5;}
+
+  .index{max-width:760px;margin:0;padding:0;}
+
+  .eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;
+    color:var(--stone);margin:0 0 10px;}
+
+  ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--hair);}
+  li{border-bottom:1px solid var(--hair-soft);}
+  li:last-child{border-bottom:1px solid var(--hair);}
+
+  .row{display:grid;grid-template-columns:minmax(0,15.5em) minmax(0,1fr);gap:4px 24px;
+    align-items:baseline;text-decoration:none;color:inherit;
+    padding:11px 4px 11px 0;border-radius:3px;
+    transition:background .18s var(--ease);}
+  .row:hover,.row:focus-visible{background:#f7f8f9;}
+  .row:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  .label{font-size:15px;font-weight:500;color:var(--ink-strong);letter-spacing:-.005em;
+    border-bottom:1px solid transparent;display:inline;
+    transition:border-color .2s var(--ease);}
+  .row:hover .label,.row:focus-visible .label{border-bottom-color:var(--accent);}
+  .desc{font-size:13px;color:var(--stone);}
+
+  @media (max-width:640px){
+    .row{grid-template-columns:1fr;padding:10px 4px;}
+    .label{font-size:14.5px;}
+    .desc{font-size:12.5px;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+
+<nav class="index" aria-label="Sections on this page">
+  <p class="eyebrow" id="index-heading">On this page</p>
+  <ol aria-labelledby="index-heading">
+
+    <li><a class="row" href="https://www.andrearobin.com/approach#practice-origins" target="_parent">
+      <span class="label">Where the practice comes from</span>
+      <span class="desc">Studio pedagogy, neurobiology, and constructivism — three disciplines, none of which started as learning design.</span>
+    </a></li>
+
+    <li><a class="row" href="https://www.andrearobin.com/approach#five-phases" target="_parent">
+      <span class="label">Five phases, one movement</span>
+      <span class="desc">The rhythm each learning experience moves through, from where the learner is to where they can take it next.</span>
+    </a></li>
+
+    <li><a class="row" href="https://www.andrearobin.com/approach#the-process" target="_parent">
+      <span class="label">From first conversation to sustained use</span>
+      <span class="desc">A three-phase workflow with milestones, stakeholder touchpoints, and decision gates that allow course correction.</span>
+    </a></li>
+
+    <li><a class="row" href="https://www.andrearobin.com/approach#measuring-change" target="_parent">
+      <span class="label">Measuring what actually changes</span>
+      <span class="desc">Evaluation planned before anything is built — and a nine-level framework built with an 80-member working group.</span>
+    </a></li>
+
+    <li><a class="row" href="https://www.andrearobin.com/approach#references" target="_parent">
+      <span class="label">References</span>
+      <span class="desc">The literature this approach rests on.</span>
+    </a></li>
+
+  </ol>
+</nav>
+
+<script>
+/* If this block sits directly in the page (not in an iframe), keep the jump
+   in-document and smooth, and respect reduced-motion. In an iframe, the
+   absolute href + target="_parent" already does the right thing. */
+(function(){
+  if (window.parent !== window) return;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.row').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var id = a.getAttribute('href').split('#')[1];
+      var target = document.getElementById(id);
+      if (!target) return;                 // anchors not on the page yet — let the link behave normally
+      e.preventDefault();
+      target.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'});
+      history.replaceState(null, '', '#' + id);
+      target.setAttribute('tabindex','-1');
+      target.focus({preventScroll:true});  // move keyboard focus, not just the viewport
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
