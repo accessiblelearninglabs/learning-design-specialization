@@ -1769,5 +1769,26 @@ function boot(){
 if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", boot); }
 else { boot(); }
 </script>
+<script>
+/* Reports this document's height to the parent page so the iframe can
+   grow to fit. Harmless when the file is opened on its own. */
+(function(){
+  if (window.parent === window) return;
+  var last = 0;
+  function post(){
+    var h = Math.ceil(document.documentElement.scrollHeight);
+    if (h && Math.abs(h - last) > 2){
+      last = h;
+      window.parent.postMessage({ type:'ldmap-height', height:h }, '*');
+    }
+  }
+  window.addEventListener('load', post);
+  window.addEventListener('resize', post);
+  document.addEventListener('toggle', function(){ setTimeout(post, 60); }, true);
+  document.addEventListener('click', function(){ setTimeout(post, 120); }, true);
+  if (window.ResizeObserver){ new ResizeObserver(post).observe(document.documentElement); }
+  post();
+})();
+</script>
 </body>
 </html>
