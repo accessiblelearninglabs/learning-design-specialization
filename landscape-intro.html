@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning design — an introduction to the landscape</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;0,600;1,400&display=swap");
+
+  /* Tokens taken from landscape.html so this sits inside the existing
+     visual system rather than beside it. */
+  .ldi{
+    --paper:#ffffff; --ink:#43525a; --ink-strong:#303e44; --stone:#8a959b;   /* hairlines only */
+    --muted:#5c6a72;   /* all small text: 5.59:1 on white */
+    --hair:#e2e6e8; --hair-soft:#eef1f2;
+    --trunk:#556066;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --fade:.9s;
+    font-family:"Asap",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink); background:var(--paper);
+    -webkit-font-smoothing:antialiased; line-height:1.6;
+    max-width:1080px; margin:0 auto;
+  }
+  /* set on every descendant so a host theme cannot override it */
+  .ldi, .ldi *{font-family:"Asap",system-ui,-apple-system,"Segoe UI",sans-serif;}
+  .ldi *{box-sizing:border-box;}
+
+  .ldi-fig{margin:0;}
+  .ldi-stage{
+    position:relative; width:100%; aspect-ratio:100/70;
+    background:var(--paper); border:1px solid var(--hair); overflow:hidden;
+  }
+  .ldi-svg{position:absolute; inset:0; width:100%; height:100%; display:block;}
+
+  /* ── Type zones ────────────────────────────────────────────────────── */
+  .ldi-hero{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:1.15em;
+    padding:0 15%; text-align:center; pointer-events:none;
+    opacity:0; transition:opacity var(--fade) var(--ease);
+  }
+  .ldi-hero.on{opacity:1;}
+  .ldi-hero p{
+    margin:0; font-weight:500; letter-spacing:-.014em; line-height:1.34;
+    color:var(--ink-strong); font-size:clamp(15px,2.6vw,29px);
+    opacity:0; transform:translateY(10px);
+    transition:opacity .8s var(--ease), transform .8s var(--ease);
+  }
+  .ldi-hero p.on{opacity:1; transform:none;}
+  .ldi-hero.stack p{font-size:clamp(12.5px,1.95vw,22px); font-weight:400; color:var(--ink);
+    line-height:1.4;}
+  .ldi-hero.stack{gap:1.5em;}
+
+  .ldi-cap{
+    position:absolute; left:50%; bottom:6.5%; transform:translateX(-50%);
+    width:68%; text-align:center; pointer-events:none;
+    font-size:clamp(12px,1.68vw,19px); font-weight:500;
+    letter-spacing:-.008em; line-height:1.45; color:var(--ink-strong);
+    opacity:0; transition:opacity var(--fade) var(--ease);
+  }
+  .ldi-cap.on{opacity:1;}
+
+  /* ── Labels (real DOM text over the SVG) ───────────────────────────── */
+  .ldi-labels{position:absolute; inset:0; pointer-events:none;}
+  .ldi-lab{
+    position:absolute; max-width:16.5%; line-height:1.34; padding:3px 6px;
+    opacity:0; transform:translate(-50%,calc(-50% + 9px));
+    transition:opacity .85s var(--ease), transform .85s var(--ease);
+  }
+  .ldi-lab.on{opacity:1; transform:translate(-50%,-50%);}
+  .ldi-lab.branch{font-size:clamp(8px,1.2vw,13.5px); font-weight:600;
+    letter-spacing:.004em;}
+  .ldi-lab.term{
+    font-size:clamp(7px,1.04vw,11.5px); font-weight:600; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--muted); max-width:22%; line-height:1.45;
+  }
+  .ldi-lab.core{
+    font-size:clamp(6.5px,.98vw,11px); font-weight:600; letter-spacing:.11em;
+    text-transform:uppercase; color:#fff; text-align:center; max-width:26%;
+  }
+
+  /* ── Outro ─────────────────────────────────────────────────────────── */
+  .ldi-outro{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:1.25em;
+    padding:0 14%; text-align:center;
+    background:var(--paper); pointer-events:none;
+    opacity:0; transition:opacity 1.1s var(--ease);
+  }
+  .ldi-outro.on{opacity:.97; pointer-events:auto;}
+  .ldi-outro .n{font-size:clamp(19px,3.4vw,38px); font-weight:500;
+    letter-spacing:-.02em; color:var(--ink-strong); margin:0;}
+  .ldi-outro .s{font-size:clamp(11px,1.45vw,16px); color:var(--ink); margin:0;
+    max-width:24em; line-height:1.5;}
+  .ldi-outro a{
+    font-size:clamp(9.5px,1.16vw,13px); letter-spacing:.16em; text-transform:uppercase;
+    font-weight:600; color:var(--ink-strong); text-decoration:none;
+    border-bottom:1px solid var(--muted); padding-bottom:3px; margin-top:.4em;
+    transition:border-color .2s var(--ease);
+  }
+  .ldi-outro a:hover{border-color:var(--ink-strong);}
+  .ldi-outro a:focus-visible{outline:2px solid var(--ink-strong); outline-offset:3px;}
+
+  /* ── Controls ──────────────────────────────────────────────────────── */
+  .ldi-bar{display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:12px 2px 0;}
+  .ldi-prog{flex:1 1 160px; height:2px; background:var(--hair-soft);
+    position:relative; overflow:hidden; min-width:110px;}
+  .ldi-prog i{position:absolute; inset:0 auto 0 0; width:0%; background:var(--trunk); display:block;}
+  .ldi-btn{
+    font-family:inherit; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase;
+    font-weight:600; color:var(--muted); background:var(--paper);
+    border:1px solid var(--hair); border-radius:100px; padding:6px 14px; cursor:pointer;
+    white-space:nowrap; transition:color .2s var(--ease), border-color .2s var(--ease);
+  }
+  .ldi-btn:hover{color:var(--ink-strong); border-color:var(--stone);}
+  .ldi-btn:focus-visible{outline:2px solid var(--ink-strong); outline-offset:2px;}
+
+  /* ── Text version ──────────────────────────────────────────────────── */
+  .ldi-text{margin:16px 0 0; border-top:1px solid var(--hair); padding-top:14px;}
+  .ldi-text summary{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+    font-weight:600; color:var(--muted); cursor:pointer; list-style:none;}
+  .ldi-text summary::-webkit-details-marker{display:none;}
+  .ldi-text summary::before{content:"+ ";}
+  .ldi-text[open] summary::before{content:"– ";}
+  .ldi-text summary:hover{color:var(--ink-strong);}
+  .ldi-text summary:focus-visible{outline:2px solid var(--ink-strong); outline-offset:3px;}
+  .ldi-text .body{font-size:15px; max-width:660px;}
+  .ldi-text .body p{margin:.85em 0;}
+  .ldi-text .body ul{margin:.5em 0; padding-left:1.1em;}
+  .ldi-text .body li{margin:.2em 0;}
+
+  .ldi-sr{position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
+
+  /* ── Ambient motion ────────────────────────────────────────────────── */
+  /* One keyframe, three tempos. Dash period is 8 (2 on, 6 off) and -96 is
+     twelve whole periods, so every loop is seamless. */
+  @keyframes ldi-march{to{stroke-dashoffset:-96;}}
+  .ldi-march-slow{animation:ldi-march 34s linear infinite;}
+  .ldi-march-fast{animation:ldi-march 2.1s linear infinite;}
+  .ldi-march-flow{animation:ldi-march 9s linear infinite;}
+
+  @media (max-width:560px){
+    .ldi-stage{aspect-ratio:100/86;}
+    .ldi-lab.term{display:none;}   /* unreadable at phone size; noise, not information */
+    .ldi-lab.branch{max-width:26%;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .ldi *{transition-duration:.001ms !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ldi">
+<figure class="ldi-fig">
+  <div class="ldi-stage" id="ldi-stage">
+    <svg class="ldi-svg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet"
+         aria-hidden="true" focusable="false" id="ldi-svg"></svg>
+    <div class="ldi-labels" id="ldi-labels" aria-hidden="true"></div>
+    <div class="ldi-hero" id="ldi-hero" aria-hidden="true"></div>
+    <p class="ldi-cap" id="ldi-cap" aria-hidden="true"></p>
+    <div class="ldi-outro" id="ldi-outro" aria-hidden="true">
+      <p class="n">173 contributions.</p>
+      <p class="s">Shaped by the learners, teams, and organizations this work was built with.</p>
+      <a href="https://www.andrearobin.com">Explore the map</a>
+    </div>
+  </div>
+
+  <figcaption class="ldi-sr">
+    An animated introduction to the learning design landscape. The full text
+    appears below the animation under “Read this as text.”
+  </figcaption>
+
+  <div class="ldi-bar">
+    <button class="ldi-btn" id="ldi-play" type="button">Pause</button>
+    <button class="ldi-btn" id="ldi-replay" type="button">Replay</button>
+    <span class="ldi-prog" aria-hidden="true"><i id="ldi-prog"></i></span>
+  </div>
+</figure>
+
+<details class="ldi-text">
+  <summary>Read this as text</summary>
+  <div class="body">
+    <p>Nearly every effort to improve the world eventually depends on someone learning something well.</p>
+    <p>A health worker putting new evidence into practice. A public servant applying a law that just
+       changed. A community claiming a right it already holds.</p>
+    <p>How well that learning is designed shapes how much of the intended effect reaches practice.</p>
+    <p>Learning design is the practice that makes that difference deliberate.</p>
+    <p>It rests on a shared craft — diagnosis, scoping, working with experts, and plain language,
+       held to a common standard of evidence appraisal, accessibility, and ethics.</p>
+    <p>This practice has grown across ten branches of expertise:</p>
+    <ul>
+      <li>Learning Experience Design</li>
+      <li>Public Learning</li>
+      <li>Universal Design for Learning</li>
+      <li>Knowledge Mobilization</li>
+      <li>Evaluation</li>
+      <li>Learning Systems Design</li>
+      <li>Human Rights Education</li>
+      <li>Health Workforce Education</li>
+      <li>Accessibility</li>
+      <li>Epistemology</li>
+    </ul>
+    <p>Not ten separate skills — one practice, seen from ten perspectives.</p>
+    <p>173 contributions, shaped by the learners, teams, and organizations this work was
+       built with. <a href="https://www.andrearobin.com">Explore the map.</a></p>
+  </div>
+</details>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var CX=500, CY=302;
+  var T1={rx:80,  ry:51},  T2={rx:118, ry:75};    // the two trunk rings
+  var BR={rx:244, ry:155}, LB={rx:276, ry:184};   // branch ellipse, label ellipse
+  var TERM_IN={rx:172, ry:110}, TERM_OUT={rx:226, ry:144};
+
+  // Spatial order is CAT_ORDER from landscape.html, so video and map agree.
+  var BRANCHES=[
+    {n:"Learning Experience Design",   c:"#534d6a"},
+    {n:"Public Learning",              c:"#5a5889"},
+    {n:"Universal Design for Learning",c:"#3f436e"},
+    {n:"Knowledge Mobilization",       c:"#4c5990"},
+    {n:"Evaluation",                   c:"#374972"},
+    {n:"Learning Systems Design",      c:"#426494"},
+    {n:"Human Rights Education",       c:"#2f5374"},
+    {n:"Health Workforce Education",   c:"#386e94"},
+    {n:"Accessibility",                c:"#295c75"},
+    {n:"Epistemology",                 c:"#6a6685"}
+  ];
+
+  // Four from the inner trunk ring (making the work), three from the outer
+  // (the standards it answers to), so the beat shows the trunk's shape.
+  var TERMS=[
+    {t:"Diagnosis",              a:-90, r:TERM_IN},
+    {t:"Scoping",                a:  0, r:TERM_IN},
+    {t:"Working with experts",   a: 90, r:TERM_IN},
+    {t:"Plain language",         a:180, r:TERM_IN},
+    {t:"Evidence appraisal",     a:-40, r:TERM_OUT},
+    {t:"Accessibility standards",a: 62, r:TERM_OUT},
+    {t:"Ethics and privacy",     a:-142,r:TERM_OUT}
+  ];
+
+  var BEATS=[
+    {ms:6500, hero:["Nearly every effort to improve the world eventually depends on someone learning something well."]},
+    {ms:12000, stack:true, hero:["A health worker putting new evidence into practice.",
+                                "A public servant applying a law that just changed.",
+                                "A community claiming a right it already holds."]},
+    {ms:8000, hero:["How well that learning is designed shapes how much of the intended effect reaches practice."]},
+    {ms:5000, cap:"Learning design is the practice that makes that difference deliberate.", act:"trunk"},
+    {ms:9000, cap:"It rests on a shared craft.",            act:"terms"},
+    {ms:5000, cap:"This practice has grown across ten branches of expertise.", act:"spokes"},
+    {ms:18000,cap:"This practice has grown across ten branches of expertise.", act:"names"},
+    {ms:7000, cap:"Not ten separate skills — one practice, seen from ten perspectives.", act:"links"},
+    {ms:8000, act:"outro"}
+  ];
+
+  var svg  = document.getElementById("ldi-svg"),
+      labs = document.getElementById("ldi-labels"),
+      hero = document.getElementById("ldi-hero"),
+      cap  = document.getElementById("ldi-cap"),
+      outro= document.getElementById("ldi-outro"),
+      stage= document.getElementById("ldi-stage"),
+      bPlay= document.getElementById("ldi-play"),
+      bRep = document.getElementById("ldi-replay"),
+      prog = document.getElementById("ldi-prog");
+
+  var NS="http://www.w3.org/2000/svg", E=" cubic-bezier(.22,.61,.36,1)";
+  function el(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e;}
+  function pt(ang,r){var d=ang*Math.PI/180;return{x:CX+r.rx*Math.cos(d), y:CY+r.ry*Math.sin(d)};}
+  function pct(p){return{l:p.x/1000*100, t:p.y/700*100};}
+  function perim(a,b){return Math.PI*(3*(a+b)-Math.sqrt((3*a+b)*(a+3*b)));}
+
+  /* Set an element up to be "drawn" along its own length. Real lengths are
+     measured rather than relying on pathLength support. */
+  function drawable(e,len,dur,ease){
+    e.style.strokeDasharray=len+" "+len;
+    e.style.strokeDashoffset=len;
+    e.style.transition="stroke-dashoffset "+dur+"s"+(ease||E);
+    e._len=len; return e;
+  }
+  function draw(e,on,delay){
+    e.style.transitionDelay=(delay||0)+"ms";
+    e.style.strokeDashoffset = on ? 0 : e._len;
+  }
+
+  var gLink=el("g",{}), gSpoke=el("g",{}), gTrunk=el("g",{});
+  svg.appendChild(gLink); svg.appendChild(gSpoke); svg.appendChild(gTrunk);
+
+  /* ── Trunk ─────────────────────────────────────────────────────────── */
+  var ring1=el("ellipse",{cx:CX,cy:CY,rx:T1.rx,ry:T1.ry,fill:"none",
+        stroke:"#556066","stroke-width":1.1});
+  // NB: no rotate() here — rotating an ellipse deforms it. The trace simply
+  // starts at the 3 o'clock point, which is where the path itself begins.
+  drawable(ring1, perim(T1.rx,T1.ry), 1.5);
+
+  var ring2=el("ellipse",{cx:CX,cy:CY,rx:T2.rx,ry:T2.ry,fill:"none",
+        stroke:"#556066","stroke-width":1,"stroke-dasharray":"2 6",opacity:0});
+  ring2.style.transition="opacity 1.2s"+E;
+
+  var core=el("circle",{cx:CX,cy:CY,r:0,fill:"#556066"});
+  core.style.transition="r 1s"+E;
+
+  gTrunk.appendChild(ring2); gTrunk.appendChild(ring1); gTrunk.appendChild(core);
+
+  /* ── Spokes ────────────────────────────────────────────────────────
+     Each branch reaches outward as a dotted line with its dashes marching,
+     then settles into a solid one once it arrives. Growth is tweened on the
+     endpoint rather than via stroke-dashoffset, which leaves the dash pattern
+     free to carry the movement. */
+  var spokes=[], ends=[], bLabs=[], labMeta=[];
+  BRANCHES.forEach(function(b,i){
+    var ang=-90+i*36, a=pt(ang,T2), z=pt(ang,BR);
+    ends.push(z);
+
+    var ln=el("line",{x1:a.x,y1:a.y,x2:a.x,y2:a.y,stroke:b.c,
+      "stroke-width":1.5,"stroke-linecap":"round",opacity:.9});
+    ln.style.strokeDasharray="2 6";
+    ln.style.transition="stroke-dasharray .8s"+E;
+    ln._a=a; ln._z=z;
+
+    var dot=el("circle",{cx:z.x,cy:z.y,r:0,fill:b.c});
+    dot.style.transition="r .55s"+E;
+
+    gSpoke.appendChild(ln); gSpoke.appendChild(dot);
+    spokes.push({ln:ln,dot:dot});
+
+    var d=document.createElement("div");
+    d.className="ldi-lab branch"; d.textContent=b.n; d.style.color=b.c;
+    var cs=Math.cos(ang*Math.PI/180);
+    d.style.textAlign = cs>.28 ? "left" : (cs<-.28 ? "right" : "center");
+    labs.appendChild(d); bLabs.push(d);
+    labMeta.push({el:d, anchor:z});
+  });
+
+  /* ── Chords ────────────────────────────────────────────────────────
+     Dotted and permanently flowing. Solid means settled structure; dotted
+     means a live relationship, so the connections never stop moving. */
+  var CH=[[0,4],[1,6],[2,7],[3,8],[5,9],[0,6],[2,5]];
+  var chords=CH.map(function(p){
+    var a=ends[p[0]], b=ends[p[1]];
+    var c=el("path",{d:"M"+a.x+" "+a.y+" Q "+CX+" "+CY+" "+b.x+" "+b.y,
+      fill:"none",stroke:"#6c7a86","stroke-width":1,"stroke-dasharray":"2 6",opacity:0});
+    c.style.transition="opacity 1.1s"+E;
+    gLink.appendChild(c);
+    return c;
+  });
+
+  /* ── Core label and the seven trunk terms ──────────────────────────── */
+  var coreLab=document.createElement("div");
+  coreLab.className="ldi-lab core"; coreLab.innerHTML="Learning<br>Design";
+  var cq=pct({x:CX,y:CY});
+  coreLab.style.left=cq.l+"%"; coreLab.style.top=cq.t+"%";
+  coreLab.style.setProperty("--tx","-50%"); coreLab.style.setProperty("--ty","-50%");
+  coreLab.style.transform="translate(-50%,-50%)";
+  labs.appendChild(coreLab);
+
+  var tMeta=[];
+  var tLabs=TERMS.map(function(t){
+    var p=pt(t.a,t.r), cs=Math.cos(t.a*Math.PI/180);
+    var d=document.createElement("div");
+    d.className="ldi-lab term"; d.textContent=t.t;
+    d.style.textAlign = cs>.28 ? "left" : (cs<-.28 ? "right" : "center");
+    labs.appendChild(d); tMeta.push({el:d,p:p}); return d;
+  });
+
+  /* ── Label placement by measurement ─────────────────────────────────
+     A name that wraps to two lines is taller than one that doesn't, so a
+     fixed radius will always collide for some of them. Instead: measure each
+     label, work out how far its own box extends along its spoke's direction,
+     and push it out until that edge clears the endpoint dot by a set margin.
+     Recomputed whenever the stage resizes or the webfont finishes loading. */
+  var CLEAR=16, DOTR=5;
+  function layoutLabels(){
+    var W=stage.clientWidth, H=stage.clientHeight;
+    if(!W||!H) return;
+    var sc=Math.min(W/1000,H/700), ox=(W-1000*sc)/2, oy=(H-700*sc)/2;
+    function place(d,vx,vy){ d.style.left=(ox+vx*sc)+"px"; d.style.top=(oy+vy*sc)+"px"; }
+
+    place(coreLab,CX,CY);
+    tMeta.forEach(function(m){ place(m.el,m.p.x,m.p.y); });
+
+    labMeta.forEach(function(m){
+      var r=m.el.getBoundingClientRect();
+      var hw=(r.width/2)/sc, hh=(r.height/2)/sc;
+      var ux=m.anchor.x-CX, uy=m.anchor.y-CY, L=Math.hypot(ux,uy)||1;
+      ux/=L; uy/=L;
+      // Inflate the label box by the clearance, then solve for the smallest
+      // push-out that puts the dot outside it. Solving along the ray alone is
+      // not enough: a wide, short label sitting side-on to the trunk has its
+      // nearest edge perpendicular to that ray, not along it.
+      var pad=DOTR+CLEAR, W2=hw+pad, H2=hh+pad;
+      var k=Math.min(Math.abs(ux)>1e-3 ? W2/Math.abs(ux) : 1e9,
+                     Math.abs(uy)>1e-3 ? H2/Math.abs(uy) : 1e9);
+      var dist=L+k;
+      var x=CX+ux*dist, y=CY+uy*dist;
+      x=Math.max(hw+10, Math.min(1000-hw-10, x));
+      y=Math.max(hh+10, Math.min(600-hh,    y));
+      place(m.el,x,y);
+    });
+  }
+
+  /* ── State ─────────────────────────────────────────────────────────── */
+  var pulseTimers=[];
+  function clearPulses(){ pulseTimers.forEach(clearTimeout); pulseTimers=[]; }
+
+  var tweens=[];
+  function tween(dur,step,done){
+    var t0=(window.performance||Date).now(), h={live:true,step:step,done:done};
+    function frame(now){
+      if(!h.live) return;
+      var e=Math.min(1,(now-t0)/dur);
+      step(1-Math.pow(1-e,3));
+      if(e<1) h.id=requestAnimationFrame(frame);
+      else { h.live=false; if(done) done(); }
+    }
+    h.id=requestAnimationFrame(frame); tweens.push(h); return h;
+  }
+  function killTweens(snap){
+    tweens.forEach(function(h){
+      if(!h.live) return;
+      h.live=false; cancelAnimationFrame(h.id);
+      if(snap){ h.step(1); if(h.done) h.done(); }
+    });
+    tweens=[];
+  }
+
+  function showTrunk(on){
+    draw(ring1,on,0);
+    ring2.style.transitionDelay=(on?600:0)+"ms";
+    ring2.style.opacity = on?.7:0;
+    ring2.classList.toggle("ldi-march-slow",on);
+    core.style.transitionDelay=(on?250:0)+"ms";
+    core.setAttribute("r", on?35:0);
+    coreLab.classList.toggle("on",on);
+    if(on) coreLab.style.transitionDelay="700ms"; else coreLab.style.transitionDelay="0ms";
+  }
+  function showTerms(on){
+    tLabs.forEach(function(d,i){
+      d.style.transitionDelay=(on? i*220 : 0)+"ms";
+      d.classList.toggle("on",on);
+    });
+  }
+  function showSpokes(on,animate){
+    clearPulses(); killTweens(false);
+    spokes.forEach(function(s,i){
+      var ln=s.ln, a=ln._a, z=ln._z;
+      ln.classList.remove("ldi-march-fast");
+      s.dot.style.transitionDelay="0ms";
+
+      if(!on){
+        ln.style.strokeDasharray="2 6";
+        ln.setAttribute("x2",a.x); ln.setAttribute("y2",a.y);
+        s.dot.setAttribute("r",0);
+        return;
+      }
+      if(!animate){                       // reduced motion / resumed state
+        ln.style.strokeDasharray="600 0";
+        ln.setAttribute("x2",z.x); ln.setAttribute("y2",z.y);
+        s.dot.setAttribute("r",4.5);
+        return;
+      }
+      ln.style.strokeDasharray="2 6";
+      ln.setAttribute("x2",a.x); ln.setAttribute("y2",a.y);
+      s.dot.setAttribute("r",0);
+
+      pulseTimers.push(setTimeout(function(){
+        ln.classList.add("ldi-march-fast");
+        tween(1050,function(e){
+          ln.setAttribute("x2", a.x+(z.x-a.x)*e);
+          ln.setAttribute("y2", a.y+(z.y-a.y)*e);
+        },function(){
+          ln.style.strokeDasharray="600 0";   // dots close up into a solid line
+          s.dot.setAttribute("r",4.5);
+          pulseTimers.push(setTimeout(function(){
+            ln.classList.remove("ldi-march-fast");
+          },820));
+        });
+      }, i*130));
+    });
+  }
+  function showNames(n){ bLabs.forEach(function(d,i){d.classList.toggle("on", i<n);}); }
+  function showChords(on,animate){
+    chords.forEach(function(c,i){
+      c.style.transitionDelay=(on&&animate ? i*180 : 0)+"ms";
+      c.style.opacity = on ? .5 : 0;
+      c.classList.toggle("ldi-march-flow",on);
+    });
+  }
+
+  function setHero(lines,stack){
+    hero.innerHTML=""; hero.classList.toggle("stack",!!stack);
+    lines.forEach(function(t){var p=document.createElement("p");p.textContent=t;hero.appendChild(p);});
+    hero.classList.add("on");
+    Array.prototype.forEach.call(hero.querySelectorAll("p"),function(p,i){
+      sub.push(setTimeout(function(){p.classList.add("on");}, stack? i*1150 : 60));
+    });
+  }
+  function clearHero(){ hero.classList.remove("on"); }
+  function setCap(t){ if(t){cap.textContent=t; cap.classList.add("on");} else cap.classList.remove("on"); }
+
+  function reset(){
+    clearHero(); setCap(null); outro.classList.remove("on");
+    showTrunk(false); showTerms(false); showSpokes(false,false);
+    showNames(0); showChords(false,false);
+  }
+  function finalState(){
+    clearHero(); showTrunk(true); showTerms(false);
+    showSpokes(true,false); showNames(10); showChords(true,false);
+    setCap("Not ten separate skills — one practice, seen from ten perspectives.");
+  }
+
+  /* ── Timeline ──────────────────────────────────────────────────────── */
+  var TOTAL=BEATS.reduce(function(a,b){return a+b.ms;},0);
+  var idx=-1, timer=null, sub=[], startedAt=0, elapsedBefore=0, raf=null, playing=false;
+  function clearSubs(){ sub.forEach(clearTimeout); sub=[]; }
+
+  function enter(i){
+    idx=i; var b=BEATS[i]; clearSubs();
+    if(b.hero){ setCap(null); setHero(b.hero,b.stack); } else clearHero();
+    if(b.cap) setCap(b.cap);
+    switch(b.act){
+      case "trunk":  showTrunk(true); break;
+      case "terms":  showTerms(true); break;
+      case "spokes": showTerms(false); showSpokes(true,true); break;
+      case "names":
+        bLabs.forEach(function(d,k){ sub.push(setTimeout(function(){d.classList.add("on");}, k*1600)); });
+        break;
+      case "links":  showNames(10); showChords(true,true); break;
+      case "outro":  setCap(null); outro.classList.add("on"); break;
+    }
+  }
+
+  function schedule(){
+    timer=setTimeout(function(){
+      if(idx+1<BEATS.length){
+        elapsedBefore+=BEATS[idx].ms; startedAt=Date.now(); enter(idx+1); schedule();
+      } else { playing=false; bPlay.textContent="Replay"; }
+    }, Math.max(0, BEATS[idx].ms-(Date.now()-startedAt)));
+  }
+  function tick(){
+    if(!playing) return;
+    prog.style.width=Math.min(100,(elapsedBefore+Date.now()-startedAt)/TOTAL*100)+"%";
+    raf=requestAnimationFrame(tick);
+  }
+  function play(){
+    playing=true; bPlay.textContent="Pause"; startedAt=Date.now();
+    if(idx<0) enter(0);
+    schedule(); tick();
+  }
+  function pause(){
+    playing=false; bPlay.textContent="Play";
+    clearTimeout(timer); clearSubs(); clearPulses(); killTweens(true); cancelAnimationFrame(raf);
+    elapsedBefore+=Date.now()-startedAt;
+  }
+  function start(){
+    clearTimeout(timer); clearSubs(); clearPulses(); killTweens(false); cancelAnimationFrame(raf);
+    playing=false; idx=-1; elapsedBefore=0; prog.style.width="0%"; reset();
+    setTimeout(play,140);
+  }
+
+  bPlay.addEventListener("click",function(){
+    if(playing) pause();
+    else if(idx>=BEATS.length-1) start();
+    else play();
+  });
+  bRep.addEventListener("click",start);
+
+  layoutLabels();
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutLabels);
+  window.addEventListener("load",layoutLabels);
+  var rzT=null;
+  window.addEventListener("resize",function(){ clearTimeout(rzT); rzT=setTimeout(layoutLabels,140); });
+  if("ResizeObserver" in window) new ResizeObserver(function(){layoutLabels();}).observe(stage);
+
+  /* ── Reduced motion: the finished map, no auto-advance ─────────────── */
+  var RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
+  function honourRM(){
+    if(!(RM && RM.matches)) return false;
+    clearTimeout(timer); clearSubs(); clearPulses(); killTweens(false); cancelAnimationFrame(raf);
+    playing=false; finalState(); prog.style.width="100%";
+    bPlay.disabled=true; bRep.disabled=true;
+    bPlay.textContent="Motion off";
+    bPlay.style.opacity=".45"; bRep.style.opacity=".45";
+    return true;
+  }
+  if(!honourRM()){
+    if(RM && RM.addEventListener) RM.addEventListener("change",honourRM);
+    if("IntersectionObserver" in window){
+      var io=new IntersectionObserver(function(es){
+        es.forEach(function(e){ if(e.isIntersecting && idx<0){ play(); io.disconnect(); } });
+      },{threshold:.4});
+      io.observe(stage);
+    } else play();
+  }
+})();
+</script>
+</body>
+</html>
