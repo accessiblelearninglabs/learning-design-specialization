@@ -152,6 +152,7 @@
   .areas a:hover{text-decoration-color:var(--accent);}
 
   .bib{list-style:none;margin:14px 0 0;padding:0;counter-reset:b;}
+  .listbody>.bib{margin:0;}
   .bib li{position:relative;font-size:13px;line-height:1.6;color:var(--ink);padding:11px 0 11px 34px;
     border-top:1px solid var(--hair-soft);}
   .bib li:first-child{border-top:none;}
@@ -242,7 +243,10 @@
     <div class="section">
       <h2>References &amp; resources</h2>
       <p style="font-size:13.5px;color:var(--ink);margin:0 0 4px;max-width:720px;">The theory and knowledge this practice is rooted in, listed once here and cited by number on each contribution above. Peer-reviewed and institutional sources link directly; books and reports are cited in full so they can be found in any library catalogue.</p>
-      <ol class="bib" id="bib"></ol>
+      <details class="aslist" id="asbib">
+        <summary id="bibsummary">Every source, in full, in citation order</summary>
+        <div class="listbody"><ol class="bib" id="bib"></ol></div>
+      </details>
     </div>
 
     <footer>Learning Design Specialization · Andrea Robin</footer>
@@ -1606,6 +1610,8 @@ function boot(){
     li.innerHTML = cat + (s.u ? '<a href="'+s.u+'" target="_blank" rel="noopener">'+s.t+'</a>' : s.t);
     ol.appendChild(li);
   });
+  const sum = document.getElementById("bibsummary");
+  if(sum) sum.textContent = "All " + ol.children.length + " sources, in full, in citation order";
 })();
 
 (function buildLegendCats(){
