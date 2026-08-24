@@ -66,19 +66,19 @@
   /* ── Labels (real DOM text over the SVG) ───────────────────────────── */
   .ldi-labels{position:absolute; inset:0; pointer-events:none;}
   .ldi-lab{
-    position:absolute; max-width:16.5%; line-height:1.34; padding:3px 6px;
+    position:absolute; max-width:17%; line-height:1.38; padding:4px 8px;
     opacity:0; transform:translate(-50%,calc(-50% + 9px));
     transition:opacity .85s var(--ease), transform .85s var(--ease);
   }
   .ldi-lab.on{opacity:1; transform:translate(-50%,-50%);}
-  .ldi-lab.branch{font-size:clamp(8px,1.2vw,13.5px); font-weight:600;
+  .ldi-lab.branch{font-size:clamp(8.5px,1.28vw,14.5px); font-weight:600;
     letter-spacing:.004em;}
   .ldi-lab.term{
-    font-size:clamp(7px,1.04vw,11.5px); font-weight:600; letter-spacing:.1em;
-    text-transform:uppercase; color:var(--muted); max-width:22%; line-height:1.45;
+    font-size:clamp(8px,1.16vw,12.5px); font-weight:600; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--muted); max-width:27%; line-height:1.55;
   }
   .ldi-lab.core{
-    font-size:clamp(6.5px,.98vw,11px); font-weight:600; letter-spacing:.11em;
+    font-size:clamp(7px,1.02vw,11.5px); font-weight:600; letter-spacing:.12em;
     text-transform:uppercase; color:#fff; text-align:center; max-width:26%;
   }
 
@@ -218,9 +218,9 @@
   "use strict";
 
   var CX=500, CY=302;
-  var T1={rx:80,  ry:51},  T2={rx:118, ry:75};    // the two trunk rings
+  var T1={rx:92,  ry:62},  T2={rx:134, ry:88};    // the two trunk rings
   var BR={rx:244, ry:155}, LB={rx:276, ry:184};   // branch ellipse, label ellipse
-  var TERM_IN={rx:172, ry:110}, TERM_OUT={rx:226, ry:144};
+  var TERM_IN={rx:206, ry:132}, TERM_OUT={rx:322, ry:206};
 
   // Spatial order is CAT_ORDER from landscape.html, so video and map agree.
   var BRANCHES=[
@@ -239,13 +239,13 @@
   // Four from the inner trunk ring (making the work), three from the outer
   // (the standards it answers to), so the beat shows the trunk's shape.
   var TERMS=[
-    {t:"Diagnosis",              a:-90, r:TERM_IN},
-    {t:"Scoping",                a:  0, r:TERM_IN},
-    {t:"Working with experts",   a: 90, r:TERM_IN},
-    {t:"Plain language",         a:180, r:TERM_IN},
-    {t:"Evidence appraisal",     a:-40, r:TERM_OUT},
-    {t:"Accessibility standards",a: 62, r:TERM_OUT},
-    {t:"Ethics and privacy",     a:-142,r:TERM_OUT}
+    {t:"Diagnosis",              a: -90, r:TERM_IN},
+    {t:"Scoping",                a:   0, r:TERM_IN},
+    {t:"Working with experts",   a:  90, r:TERM_IN},
+    {t:"Plain language",         a: 180, r:TERM_IN},
+    {t:"Ethics and privacy",     a:-135, r:TERM_OUT},
+    {t:"Evidence appraisal",     a: -45, r:TERM_OUT},
+    {t:"Accessibility standards",a:  45, r:TERM_OUT}
   ];
 
   var BEATS=[
@@ -364,11 +364,11 @@
 
   var tMeta=[];
   var tLabs=TERMS.map(function(t){
-    var p=pt(t.a,t.r), cs=Math.cos(t.a*Math.PI/180);
+    var cs=Math.cos(t.a*Math.PI/180);
     var d=document.createElement("div");
     d.className="ldi-lab term"; d.textContent=t.t;
     d.style.textAlign = cs>.28 ? "left" : (cs<-.28 ? "right" : "center");
-    labs.appendChild(d); tMeta.push({el:d,p:p}); return d;
+    labs.appendChild(d); tMeta.push({el:d,ang:t.a,ring:t.r}); return d;
   });
 
   /* ── Label placement by measurement ─────────────────────────────────
@@ -377,34 +377,79 @@
      label, work out how far its own box extends along its spoke's direction,
      and push it out until that edge clears the endpoint dot by a set margin.
      Recomputed whenever the stage resizes or the webfont finishes loading. */
-  var CLEAR=16, DOTR=5;
+  var CLEAR=16, DOTR=5, RING_CLEAR=18;
   function layoutLabels(){
     var W=stage.clientWidth, H=stage.clientHeight;
     if(!W||!H) return;
     var sc=Math.min(W/1000,H/700), ox=(W-1000*sc)/2, oy=(H-700*sc)/2;
     function place(d,vx,vy){ d.style.left=(ox+vx*sc)+"px"; d.style.top=(oy+vy*sc)+"px"; }
 
-    place(coreLab,CX,CY);
-    tMeta.forEach(function(m){ place(m.el,m.p.x,m.p.y); });
+    // smallest push-out along (ux,uy) that puts the origin point outside a
+    // box of half-extents hw/hh inflated by pad
+    function solve(ux,uy,hw,hh,pad){
+      var W2=hw+pad, H2=hh+pad;
+      return Math.min(Math.abs(ux)>1e-3 ? W2/Math.abs(ux) : 1e9,
+                      Math.abs(uy)>1e-3 ? H2/Math.abs(uy) : 1e9);
+    }
+    function measure(el){
+      var r=el.getBoundingClientRect();
+      return {hw:(r.width/2)/sc, hh:(r.height/2)/sc};
+    }
+    function boxOf(it){
+      var x=CX+it.ux*it.dist, y=CY+it.uy*it.dist;
+      return {x:x, y:y, l:x-it.hw, r:x+it.hw, t:y-it.hh, b:y+it.hh};
+    }
+    // nothing may sit within `gap` of anything else in its own group
+    function separate(items,gap){
+      for(var pass=0; pass<60; pass++){
+        var moved=false;
+        for(var i=0;i<items.length;i++){
+          var A=boxOf(items[i]);
+          for(var j=i+1;j<items.length;j++){
+            var B=boxOf(items[j]);
+            if(A.l-gap<B.r && B.l-gap<A.r && A.t-gap<B.b && B.t-gap<A.b){
+              items[j].dist+=9; moved=true;
+            }
+          }
+        }
+        if(!moved) break;
+      }
+    }
+    function commit(items){
+      items.forEach(function(it){
+        var b=boxOf(it);
+        var x=Math.max(it.hw+10, Math.min(1000-it.hw-10, b.x));
+        var y=Math.max(it.hh+10, Math.min(628-it.hh,    b.y));
+        place(it.el,x,y);
+      });
+    }
 
-    labMeta.forEach(function(m){
-      var r=m.el.getBoundingClientRect();
-      var hw=(r.width/2)/sc, hh=(r.height/2)/sc;
+    place(coreLab,CX,CY);
+
+    // Branch names: clear the endpoint dot they belong to.
+    var bItems=labMeta.map(function(m){
+      var d=measure(m.el);
       var ux=m.anchor.x-CX, uy=m.anchor.y-CY, L=Math.hypot(ux,uy)||1;
       ux/=L; uy/=L;
-      // Inflate the label box by the clearance, then solve for the smallest
-      // push-out that puts the dot outside it. Solving along the ray alone is
-      // not enough: a wide, short label sitting side-on to the trunk has its
-      // nearest edge perpendicular to that ray, not along it.
-      var pad=DOTR+CLEAR, W2=hw+pad, H2=hh+pad;
-      var k=Math.min(Math.abs(ux)>1e-3 ? W2/Math.abs(ux) : 1e9,
-                     Math.abs(uy)>1e-3 ? H2/Math.abs(uy) : 1e9);
-      var dist=L+k;
-      var x=CX+ux*dist, y=CY+uy*dist;
-      x=Math.max(hw+10, Math.min(1000-hw-10, x));
-      y=Math.max(hh+10, Math.min(600-hh,    y));
-      place(m.el,x,y);
+      return {el:m.el,ux:ux,uy:uy,hw:d.hw,hh:d.hh,
+              dist:L+solve(ux,uy,d.hw,d.hh,DOTR+CLEAR)};
     });
+    separate(bItems,10);
+    commit(bItems);
+
+    // Craft terms: sit on their own ring, but never closer to the dotted
+    // trunk ring than RING_CLEAR, and never crowding each other.
+    var tItems=tMeta.map(function(m){
+      var d=measure(m.el);
+      var pB=pt(m.ang,m.ring), pT=pt(m.ang,T2);
+      var ux=pB.x-CX, uy=pB.y-CY, Lb=Math.hypot(ux,uy)||1;
+      ux/=Lb; uy/=Lb;
+      var Lt=Math.hypot(pT.x-CX,pT.y-CY);
+      return {el:m.el,ux:ux,uy:uy,hw:d.hw,hh:d.hh,
+              dist:Math.max(Lb, Lt+solve(ux,uy,d.hw,d.hh,RING_CLEAR))};
+    });
+    separate(tItems,16);
+    commit(tItems);
   }
 
   /* ── State ─────────────────────────────────────────────────────────── */
@@ -438,7 +483,7 @@
     ring2.style.opacity = on?.7:0;
     ring2.classList.toggle("ldi-march-slow",on);
     core.style.transitionDelay=(on?250:0)+"ms";
-    core.setAttribute("r", on?35:0);
+    core.setAttribute("r", on?40:0);
     coreLab.classList.toggle("on",on);
     if(on) coreLab.style.transitionDelay="700ms"; else coreLab.style.transitionDelay="0ms";
   }
