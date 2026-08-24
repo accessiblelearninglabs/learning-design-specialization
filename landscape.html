@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Learning Design Landscape · Andrea Robin</title>
-<meta name="description" content="An interactive map of a learning design practice — a trunk of shared craft and nine branches of expertise — accessibility, epistemology, evaluation, human rights education, knowledge mobilization, learning experience design, learning systems design, public learning, and universal design for learning — with access running through all nine." />
+<meta name="description" content="An interactive map of a learning design practice — a trunk of shared craft and ten branches of expertise — accessibility, epistemology, evaluation, human rights education, knowledge mobilization, learning experience design, learning systems design, public learning, and universal design for learning — with access running through all nine." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
@@ -183,11 +183,11 @@
     <header class="hero">
       <p class="eyebrow"><span>Learning Design Specialization</span><span class="status">Interactive map</span></p>
       <h1>A learning design practice, <em>mapped</em></h1>
-      <p class="lede">Much of what people need in order to act — on their health, their rights, their work — is not missing but unusable: built without them, for conditions that are not theirs. Learning design is where those choices are made. This practice develops knowledge through interaction with the people it concerns, and treats access as a condition of the work rather than a correction to it. The map sets out part of that practice: a trunk of shared craft and nine branches of expertise, with lines where they draw on the same theory and method.</p>
+      <p class="lede">Much of what people need in order to act — on their health, their rights, their work — is not missing but unusable: built without them, for conditions that are not theirs. Learning design is where those choices are made. This practice develops knowledge through interaction with the people it concerns, and treats access as a condition of the work rather than a correction to it. The map sets out part of that practice: a trunk of shared craft and ten branches of expertise, with lines where they draw on the same theory and method.</p>
       <p class="lede" style="margin-top:14px;font-size:14.5px;color:var(--ink);"><a href="landscape-linear.html" style="color:var(--accent);">A text version of this map</a> presents the same content in reading order, without the diagram, for screen reader and keyboard use.</p>
     </header>
 
-    <div class="note"><strong>How to read this.</strong> <strong>By branch</strong> shows where each contribution sits: the trunk at the centre, the nine branches beyond it. <strong>By affinity</strong> repositions the same circles by likeness, so relationships across branches surface. Select any circle to read it. A few contributions belong to two branches; each appears once, in its home colour, and says so when selected.</div>
+    <div class="note"><strong>How to read this.</strong> <strong>By branch</strong> shows where each contribution sits: the trunk at the centre, the ten branches beyond it. <strong>By affinity</strong> repositions the same circles by likeness, so relationships across branches surface. Select any circle to read it. A few contributions belong to two branches; each appears once, in its home colour, and says so when selected.</div>
 
     <div class="controls" role="region" aria-label="Map controls">
       <div class="tf" id="filters" role="group" aria-label="Filter by branch of expertise"></div>
@@ -205,7 +205,7 @@
 
     <div class="stage">
       <div class="canvas-wrap" id="cwrap">
-        <canvas id="map" aria-label="Map of a learning-design practice — a trunk of shared craft and nine branches of expertise. Interactive; a readable list of every contribution follows below."></canvas>
+        <canvas id="map" aria-label="Map of a learning-design practice — a trunk of shared craft and ten branches of expertise. Interactive; a readable list of every contribution follows below."></canvas>
         <div class="tt" id="tt"><div class="k" id="tt-k"></div><div class="n" id="tt-n"></div></div>
       </div>
       <aside class="panel" id="panel" aria-live="polite">
@@ -270,15 +270,16 @@ const CATS = {
   eval:   {label:"Evaluation",                    color:"#41697a"},
   public: {label:"Public Learning",               color:"#5b7d8c"},
   hr:     {label:"Human Rights Education",        color:"#3f5570"},
+  hwe:    {label:"Health Workforce Education",   color:"#2e5f8a"},
   trunk:  {label:"Learning Design",                 color:"#55666e"},
 };
-// core is centred and always shown; the nine below form the wedges, filters and legend
-const CAT_ORDER = ["lxd","public","udl","kmb","eval","lsd","hr","access","epist"];
+// core is centred and always shown; the ten below form the wedges, filters and legend
+const CAT_ORDER = ["lxd","public","udl","kmb","eval","lsd","hr","hwe","access","epist"];
 // Alphabetical order for reader-facing surfaces (tabs, legend, list, area links).
 // The map's spatial layout keeps CAT_ORDER; only the display lists are alphabetised.
-const CAT_ORDER_DISPLAY = ["access","epist","eval","hr","kmb","lxd","lsd","public","udl"];
+const CAT_ORDER_DISPLAY = ["access","epist","eval","hr","hwe","kmb","lxd","lsd","public","udl"];
 
-/* The trunk is the shared learning-design craft the nine branches all grow from.
+/* The trunk is the shared learning-design craft the ten branches all grow from.
    It sits INSIDE the branches rather than beside them, so it is deliberately
    kept out of CAT_ORDER (which drives the spatial wedges) and out of
    CAT_ORDER_DISPLAY, and handled explicitly wherever categories are
@@ -288,7 +289,7 @@ const TRUNK = "trunk";
 // Bibliography numbering appends the trunk, and then each later addition, LAST,
 // so existing citation numbers on published pages do not shift. The order is
 // therefore written out rather than derived from CAT_ORDER.
-const CAT_ORDER_BIB = ["core","lxd","udl","kmb","lsd","access",TRUNK,"epist","eval","public","hr"];
+const CAT_ORDER_BIB = ["core","lxd","udl","kmb","lsd","access",TRUNK,"epist","eval","public","hr","hwe"];
 // Reader-facing lists lead with the trunk, because it is what the branches grow from.
 const CAT_ORDER_READ = [TRUNK].concat(CAT_ORDER_DISPLAY);
 
@@ -307,6 +308,7 @@ const LINKS = {
   eval:   "https://www.andrearobin.com/evaluation",
   public: "https://www.andrearobin.com/public-learning",
   hr:     "https://www.andrearobin.com/human-rights-education",
+  hwe:    "https://www.andrearobin.com/health-workforce-education",
 };
 const STATUS = {
   built:   "Published resource",
@@ -328,6 +330,7 @@ const PAGES = {
   area_lsd:"https://www.andrearobin.com/learning-systems-design",
   area_udl:"https://www.andrearobin.com/universal-design-for-learning-udl",
   area_epist:"https://www.andrearobin.com/epistemology",
+  area_hwe:"https://www.andrearobin.com/health-workforce-education",
   // Accessibility (Accessible Learning Labs)
   ac1:"https://www.accessiblelearninglabs.com/accessibility-review",
   ac2:"https://www.accessiblelearninglabs.com/course-and-curriculum-design",
@@ -566,6 +569,42 @@ const SOURCES = {
   figley:{cat:"Practitioner sustainability", t:"Figley, C. R. (Ed.). (1995). Compassion Fatigue: Coping with Secondary Traumatic Stress Disorder in Those Who Treat the Traumatized. Brunner/Mazel."},
   leavy:{cat:"Arts-based research", t:"Leavy, P. (2020). Method Meets Art: Arts-Based Research Practice (3rd ed.). Guilford Press."},
   march:{cat:"Organizational learning", t:"March, J. G. (1991). \u201cExploration and Exploitation in Organizational Learning.\u201d Organization Science, 2(1), 71\u201387.", u:"https://doi.org/10.1287/orsc.2.1.71"},
+  whomhgap:{cat:"Task-sharing", t:"World Health Organization (2016). mhGAP Intervention Guide for Mental, Neurological and Substance Use Disorders in Non-Specialized Health Settings, Version 2.0. Geneva: World Health Organization.", u:"https://www.who.int/publications/i/item/9789241549790"},
+  singla:{cat:"Task-sharing", t:"Singla, D. R., Kohrt, B. A., Murray, L. K., Anand, A., Chorpita, B. F., & Patel, V. (2017). “Psychological Treatments for the World: Lessons from Low- and Middle-Income Countries.” Annual Review of Clinical Psychology, 13, 149–181.", u:"https://doi.org/10.1146/annurev-clinpsy-032816-045217"},
+  patelhap:{cat:"Task-sharing", t:"Patel, V., Weobong, B., Weiss, H. A., et al. (2017). “The Healthy Activity Program (HAP), a Lay Counsellor-Delivered Brief Psychological Treatment for Severe Depression, in Primary Care in India: A Randomised Controlled Trial.” The Lancet, 389(10065), 176–185.", u:"https://doi.org/10.1016/S0140-6736(16)31589-6"},
+  rahmanthp:{cat:"Task-sharing", t:"Rahman, A., Malik, A., Sikander, S., Roberts, C., & Creed, F. (2008). “Cognitive Behaviour Therapy-Based Intervention by Community Health Workers for Mothers with Depression and Their Infants in Rural Pakistan: A Cluster-Randomised Controlled Trial.” The Lancet, 372(9642), 902–909.", u:"https://doi.org/10.1016/S0140-6736(08)61400-2"},
+  whochw:{cat:"Health workforce policy", t:"World Health Organization (2018). WHO Guideline on Health Policy and System Support to Optimize Community Health Worker Programmes. Geneva: World Health Organization.", u:"https://iris.who.int/handle/10665/275474"},
+  whohrh:{cat:"Health workforce policy", t:"World Health Organization (2016). Global Strategy on Human Resources for Health: Workforce 2030. Geneva: World Health Organization.", u:"https://www.who.int/publications/i/item/9789241511131"},
+  frenk:{cat:"Health professions education", t:"Frenk, J., Chen, L., Bhutta, Z. A., et al. (2010). “Health Professionals for a New Century: Transforming Education to Strengthen Health Systems in an Interdependent World.” The Lancet, 376(9756), 1923–1958.", u:"https://doi.org/10.1016/S0140-6736(10)61854-5"},
+  murrayapp:{cat:"Supervision", t:"Murray, L. K., Dorsey, S., Bolton, P., Jordans, M. J. D., Rahman, A., Bass, J., & Verdeli, H. (2011). “Building Capacity in Mental Health Interventions in Low Resource Countries: An Apprenticeship Model for Training Local Providers.” International Journal of Mental Health Systems, 5, 30.", u:"https://doi.org/10.1186/1752-4458-5-30"},
+  kohrtenact:{cat:"Competence assessment", t:"Kohrt, B. A., Jordans, M. J. D., Rai, S., et al. (2015). “Therapist Competence in Global Mental Health: Development of the ENhancing Assessment of Common Therapeutic Factors (ENACT) Rating Scale.” Behaviour Research and Therapy, 69, 11–21.", u:"https://doi.org/10.1016/j.brat.2015.03.009"},
+  milne:{cat:"Supervision", t:"Milne, D. (2009). Evidence-Based Clinical Supervision: Principles and Practice. BPS Blackwell."},
+  beidas:{cat:"Training transfer", t:"Beidas, R. S., & Kendall, P. C. (2010). “Training Therapists in Evidence-Based Practice: A Critical Review of Studies from a Systems-Contextual Perspective.” Clinical Psychology: Science and Practice, 17(1), 1–30.", u:"https://doi.org/10.1111/j.1468-2850.2009.01187.x"},
+  carrollfid:{cat:"Implementation fidelity", t:"Carroll, C., Patterson, M., Wood, S., Booth, A., Rick, J., & Balain, S. (2007). “A Conceptual Framework for Implementation Fidelity.” Implementation Science, 2, 40.", u:"https://doi.org/10.1186/1748-5908-2-40"},
+  frame:{cat:"Adaptation", t:"Wiltsey Stirman, S., Baumann, A. A., & Miller, C. J. (2019). “The FRAME: An Expanded Framework for Reporting Adaptations and Modifications to Evidence-Based Interventions.” Implementation Science, 14, 58.", u:"https://doi.org/10.1186/s13012-019-0898-y"},
+  bernalevm:{cat:"Cultural adaptation", t:"Bernal, G., Bonilla, J., & Bellido, C. (1995). “Ecological Validity and Cultural Sensitivity for Outcome Research: Issues for the Cultural Adaptation and Development of Psychosocial Treatments with Hispanics.” Journal of Abnormal Child Psychology, 23(1), 67–82.", u:"https://doi.org/10.1007/BF01447045"},
+  chowdhary:{cat:"Cultural adaptation", t:"Chowdhary, N., Jotheeswaran, A. T., Nadkarni, A., et al. (2014). “The Methods and Outcomes of Cultural Adaptations of Psychological Treatments for Depressive Disorders: A Systematic Review.” Psychological Medicine, 44(6), 1131–1146.", u:"https://doi.org/10.1017/S0033291713001785"},
+  repper:{cat:"Peer support", t:"Repper, J., & Carter, T. (2011). “A Review of the Literature on Peer Support in Mental Health Services.” Journal of Mental Health, 20(4), 392–411.", u:"https://doi.org/10.3109/09638237.2011.583947"},
+  lloydevans:{cat:"Peer support", t:"Lloyd-Evans, B., Mayo-Wilson, E., Harrison, B., et al. (2014). “A Systematic Review and Meta-Analysis of Randomised Controlled Trials of Peer Support for People with Severe Mental Illness.” BMC Psychiatry, 14, 39.", u:"https://doi.org/10.1186/1471-244X-14-39"},
+  yalom:{cat:"Group practice", t:"Yalom, I. D., & Leszcz, M. (2020). The Theory and Practice of Group Psychotherapy (6th ed.). Basic Books."},
+  whosafemsg:{cat:"Safe communication", t:"World Health Organization (2023). Preventing Suicide: A Resource for Media Professionals, Update 2023. Geneva: World Health Organization.", u:"https://www.who.int/publications/i/item/9789240076846"},
+  lorencoliver:{cat:"Adverse effects", t:"Lorenc, T., & Oliver, K. (2014). “Adverse Effects of Public Health Interventions: A Conceptual Framework.” Journal of Epidemiology and Community Health, 68(3), 288–290.", u:"https://doi.org/10.1136/jech-2013-203118"},
+  bonelldark:{cat:"Adverse effects", t:"Bonell, C., Jamal, F., Melendez-Torres, G. J., & Cummins, S. (2015). “‘Dark Logic’: Theorising the Harmful Consequences of Public Health Interventions.” Journal of Epidemiology and Community Health, 69(1), 95–98.", u:"https://doi.org/10.1136/jech-2014-204671"},
+  whodigital:{cat:"Digital health", t:"World Health Organization (2019). WHO Guideline: Recommendations on Digital Interventions for Health System Strengthening. Geneva: World Health Organization.", u:"https://www.who.int/publications/i/item/9789241550505"},
+  expandnet:{cat:"Scale-up", t:"World Health Organization & ExpandNet (2010). Nine Steps for Developing a Scaling-Up Strategy. Geneva: World Health Organization.", u:"https://iris.who.int/handle/10665/44432"},
+  prasad:{cat:"De-implementation", t:"Prasad, V., & Ioannidis, J. P. A. (2014). “Evidence-Based De-Implementation for Contradicted, Unproven, and Aspiring Healthcare Practices.” Implementation Science, 9, 1.", u:"https://doi.org/10.1186/1748-5908-9-1"},
+  funnellrogers:{cat:"Programme theory", t:"Funnell, S. C., & Rogers, P. J. (2011). Purposeful Program Theory: Effective Use of Theories of Change and Logic Models. Jossey-Bass."},
+  wkkellogg:{cat:"Programme theory", t:"W. K. Kellogg Foundation (2004). Logic Model Development Guide. Battle Creek, MI: W. K. Kellogg Foundation."},
+  drummond:{cat:"Economic evaluation", t:"Drummond, M. F., Sculpher, M. J., Claxton, K., Stoddart, G. L., & Torrance, G. W. (2015). Methods for the Economic Evaluation of Health Care Programmes (4th ed.). Oxford University Press."},
+  levincost:{cat:"Economic evaluation", t:"Levin, H. M., McEwan, P. J., Belfield, C., Bowden, A. B., & Shand, R. (2018). Economic Evaluation in Education: Cost-Effectiveness and Benefit-Cost Analysis (3rd ed.). SAGE Publications."},
+  cosmin:{cat:"Measurement", t:"Mokkink, L. B., Terwee, C. B., Patrick, D. L., et al. (2010). “The COSMIN Study Reached International Consensus on Taxonomy, Terminology, and Definitions of Measurement Properties for Health-Related Patient-Reported Outcomes.” Journal of Clinical Epidemiology, 63(7), 737–745.", u:"https://doi.org/10.1016/j.jclinepi.2010.02.006"},
+  streiner:{cat:"Measurement", t:"Streiner, D. L., Norman, G. R., & Cairney, J. (2015). Health Measurement Scales: A Practical Guide to Their Development and Use (5th ed.). Oxford University Press."},
+  cochranehb:{cat:"Evidence synthesis", t:"Higgins, J. P. T., Thomas, J., Chandler, J., Cumpston, M., Li, T., Page, M. J., & Welch, V. A. (Eds.). (2019). Cochrane Handbook for Systematic Reviews of Interventions (2nd ed.). Wiley-Blackwell."},
+  prisma:{cat:"Evidence synthesis", t:"Page, M. J., McKenzie, J. E., Bossuyt, P. M., et al. (2021). “The PRISMA 2020 Statement: An Updated Guideline for Reporting Systematic Reviews.” BMJ, 372, n71.", u:"https://doi.org/10.1136/bmj.n71"},
+  goughthomas:{cat:"Evidence synthesis", t:"Gough, D., Oliver, S., & Thomas, J. (2017). An Introduction to Systematic Reviews (2nd ed.). SAGE Publications."},
+  barsalou:{cat:"Embodied cognition", t:"Barsalou, L. W. (2008). “Grounded Cognition.” Annual Review of Psychology, 59, 617–645.", u:"https://doi.org/10.1146/annurev.psych.59.103006.093639"},
+  merleauponty:{cat:"Embodiment", t:"Merleau-Ponty, M. (2012). Phenomenology of Perception (D. A. Landes, Trans.). Routledge. (Original work published 1945.)"},
+  eisnerarts:{cat:"Arts and cognition", t:"Eisner, E. W. (2002). The Arts and the Creation of Mind. Yale University Press."},
 };
 
 /* Which sources ground each contribution (cited by number on the node). */
@@ -714,12 +753,29 @@ const SRC_BY_ID = {
   ld37:["figley","edmondson","carellobutler"],
   km11:["leavy","fancourt","nutley"],
   km12:["leavy","ehn","grahamk2a","tcps2"],
+  area_hwe:["frenk","whohrh","whochw","singla"],
+  hw0:["singla","patelhap","rahmanthp","whomhgap","whochw"],
+  hw1:["carelloperilous","carellobutler","samhsa","whosafemsg","lorencoliver"],
+  hw2:["carrollfid","frame","cfir","epis"],
+  hw3:["murrayapp","kohrtenact","milne","beidas"],
+  hw4:["murrayapp","kohrtenact","whochw","beidas"],
+  hw5:["repper","lloydevans","whochw"],
+  hw6:["yalom","fancourt","carellobutler"],
+  hw7:["bernalevm","chowdhary","frame","kleinman"],
+  hw8:["whodigital","whomhgap","gottfredsonmosher"],
+  ev5:["funnellrogers","wkkellogg","patton","mayne"],
+  ev6:["drummond","levincost","patton"],
+  ev7:["cosmin","streiner","messick","borsboom"],
+  ev8:["bonelldark","lorencoliver","funnellrogers","tcps2"],
+  km13:["cochranehb","prisma","goughthomas"],
+  km14:["expandnet","prasad","cfir","march"],
+  lx19:["barsalou","merleauponty","polanyi","eisnerarts"],
 };
 
 const NODES = [
   /* ── CENTRE ── */
-  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped as a trunk and nine branches",
-   body:"A single practice that designs how people and organizations learn, expressed as a trunk of shared craft and nine connected branches of expertise — each with its own node and its own page. Every contribution below grows on one branch and links to the others it draws on, because the branches are not separate skills but one body of work seen from different perspectives.",
+  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped as a trunk and ten branches",
+   body:"A single practice that designs how people and organizations learn, expressed as a trunk of shared craft and ten connected branches of expertise — each with its own node and its own page. Every contribution below grows on one branch and links to the others it draws on, because the branches are not separate skills but one body of work seen from different perspectives.",
    ground:"Adult learning · learning sciences · human-centred design",link:"lxd",status:"dev",
    connects:["area_lxd","area_udl","area_kmb","area_lsd","area_access","area_epist"]},
 
@@ -1058,7 +1114,7 @@ const NODES = [
 
   /* ── TRUNK · LEARNING DESIGN CRAFT ──────────────────────────────────────
      The shared practice everything else grows from. Two concentric rings inside
-     the nine branches: the inner ring is about making the work, the outer ring
+     the ten branches: the inner ring is about making the work, the outer ring
      about the standards and obligations it answers to, and what sustains it. Depth here means how settled
      the contribution is in the field, not how built out it is here. */
 
@@ -1324,7 +1380,26 @@ const NODES = [
   {id:"ld36",cat:"trunk",ring:2,depth:3,name:"Describing Practice Within the Designation Held",sub:"Claiming the training one has, precisely",body:"Terms drawn from clinical and therapeutic practice describe regulated competencies, and using them to describe learning design invites reliance the role cannot support. Naming the actual qualification, describing the design commitments concretely rather than by label, and citing the framework being applied gives participants an accurate basis for the trust they extend.",ground:"Teaching trauma and trauma-informed teaching distinguished (Carello & Butler); scope of practice; professional designations",link:"trunk",status:"planned",added:true,connects:["ld35","ld15","ld24","ld19"]},
   {id:"ld37",cat:"trunk",ring:2,depth:2,name:"Sustaining the People Who Deliver Demanding Content",sub:"A scheduling and staffing decision",body:"Facilitators and designers who work repeatedly with accounts of harm carry a documented cumulative load. The effective responses are structural: rotation across a roster, limits on consecutive sessions, co-facilitation, scheduled debriefs, and access to support arranged before a programme begins rather than after a difficult session.",ground:"Compassion fatigue and secondary traumatic stress (Figley); vicarious exposure in practice; psychological safety (Edmondson)",link:"trunk",status:"planned",added:true,connects:["ld35","ld21","ld22","sd8"]},
   {id:"km11",cat:"kmb",depth:2,name:"Arts-Based Knowledge Products",sub:"Creative form as a route for evidence",body:"Exhibitions, performance, illustration, film and printed objects reach audiences that reports do not, and can hold complexity that a summary compresses. Designing them as knowledge products means keeping the underlying evidence traceable, stating what the work does and does not claim, and evaluating reach and use as with any other output.",ground:"Arts-based research practice (Leavy); arts and health evidence (Fancourt & Finn); knowledge product design",link:"kmb",status:"planned",added:true,connects:["area_kmb","km4","ld9","pl2","km5"]},
-  {id:"km12",cat:"kmb",depth:2,name:"Creative Practice as Inquiry with Knowledge Users",sub:"Making together as a method of finding out",body:"Structured making \u2014 mapping, model-building, drawing, object work \u2014 allows groups to express understanding that interviews reach less readily, and gives participants a shared artefact to reason from. Used within co-production it produces analysable material alongside the relationship, provided consent, authorship and the destination of the work are settled in advance.",ground:"Arts-based research (Leavy); participatory design (Ehn); integrated knowledge translation; research ethics (TCPS 2)",link:"kmb",status:"planned",added:true,connects:["area_kmb","km5","lx14","ep5","ld19"]}
+  {id:"km12",cat:"kmb",depth:2,name:"Creative Practice as Inquiry with Knowledge Users",sub:"Making together as a method of finding out",body:"Structured making \u2014 mapping, model-building, drawing, object work \u2014 allows groups to express understanding that interviews reach less readily, and gives participants a shared artefact to reason from. Used within co-production it produces analysable material alongside the relationship, provided consent, authorship and the destination of the work are settled in advance.",ground:"Arts-based research (Leavy); participatory design (Ehn); integrated knowledge translation; research ethics (TCPS 2)",link:"kmb",status:"planned",added:true,connects:["area_kmb","km5","lx14","ep5","ld19"]},
+
+  /* ── LATER ADDITIONS ── */
+  {id:"area_hwe",cat:"hwe",depth:4,name:"Health Workforce Education",sub:"Branch · learning for the people who deliver care, specialist and not",body:"The design of learning for everyone who delivers care — registered professionals, community health workers, peer workers, and volunteers. This branch gathers the contributions concerned with what a role can be prepared to do, what is held constant when a programme moves between settings, what supervision carries once initial training ends, and how a design stays usable where time, connectivity and resources are limited. It draws on the trunk for its craft, on Accessibility for how a programme meets the people it serves, and on Evaluation for the evidence it produces about itself.",ground:"Health professions education (Frenk et al.); health workforce policy (WHO); task-sharing and non-specialist delivery; implementation fidelity and adaptation",link:"hwe",status:"planned",added:true,added2:true,connects:["c0","hw0","hw1","hw2","sd16"]},
+  {id:"hw0",cat:"hwe",depth:4,name:"Designing for the Non-Specialist Workforce",sub:"The anchor · what a protocol can carry, and what judgment carries",body:"Care reaches most people through practitioners whose preparation is measured in weeks rather than years, and the design question is which decisions a written protocol can carry, which call for judgment developed through supervised practice, and which are referred onward. Trials of lay-counsellor-delivered treatment describe programmes built from a small set of specified elements, a decision aid used at the point of contact, and structured supervision running alongside delivery. Naming those three parts separately, and stating what each is responsible for, is what makes the design reviewable by the service that will hold it.",ground:"Task-sharing evidence (Singla et al.; Patel et al.; Rahman et al.); mhGAP Intervention Guide (WHO); community health worker programme guidance (WHO)",link:"hwe",status:"planned",added:true,added2:true,connects:["area_hwe","km3","sd16","ld26","ep6"]},
+  {id:"hw1",cat:"hwe",depth:3,name:"Teaching Mental Health Without Causing Harm",sub:"Content whose subject may be the participant’s own experience",body:"Material about mental health reaches participants for whom the subject is present rather than academic, and the design decisions that follow are specific: how a topic is introduced, what is described and in what detail, where someone can step out and return without account, and what the facilitator is prepared and authorised to do. Established safe-communication guidance, together with the distinction between teaching about a distressing subject and teaching in a way that accounts for distress, gives these decisions a documented basis that can be reviewed before delivery.",ground:"Trauma-informed educational practice (Carello & Butler); SAMHSA framework; safe communication guidance (WHO); adverse effects framework (Lorenc & Oliver)",link:"hwe",status:"planned",added:true,added2:true,connects:["area_hwe","hr3","ld34","ld35","sd8"]},
+  {id:"hw2",cat:"hwe",depth:3,name:"Fidelity, Adaptation and the Active Ingredient",sub:"What holds constant, and what may flex",body:"A programme that travels well states in advance which components carry its effect and which may vary with local conditions. Fidelity frameworks separate adherence, dose, quality of delivery and participant responsiveness so that each can be observed on its own; adaptation frameworks record what was changed, by whom, when, and for what reason. Documenting both as a programme moves lets a later reader distinguish an intended adaptation from unintended drift, and gives the next site something specific to work from.",ground:"Implementation fidelity (Carroll et al.); FRAME (Wiltsey Stirman et al.); implementation frameworks (CFIR; EPIS)",link:"hwe",status:"planned",added:true,added2:true,connects:["area_hwe","km3","ep8","sd_eval"]},
+  {id:"hw3",cat:"hwe",depth:3,name:"Designing Supervision and Case Consultation",sub:"The structure that carries competence once training ends",body:"Initial training establishes a starting point; supervision is where practice is observed, discussed and refined over time. Apprenticeship models in global mental health pair a short course with continuing group consultation, direct or recorded observation, and a competence scale applied consistently, so that capability is described rather than assumed. Designing supervision means settling its frequency, who provides it, what is reviewed, how the record is kept, and what happens when a practitioner asks for more support.",ground:"Apprenticeship model (Murray et al.); competence rating in global mental health (Kohrt et al.); evidence-based clinical supervision (Milne); training transfer (Beidas & Kendall)",link:"hwe",status:"planned",added:true,added2:true,connects:["area_hwe","lx16","sd16","ld21"]},
+  {id:"hw4",cat:"hwe",depth:3,name:"Cascade and Train-the-Trainer Design",sub:"What each generation of trainers carries forward",body:"Cascade models extend reach by preparing trainers who in turn prepare others, and the design question is what each successive generation is equipped to convey. Materials that carry their own structure, observation at every level, and a competence measure applied the same way throughout give the cascade something firm to hold to. Where a component depends on the judgment of the original trainer, the design either makes that judgment explicit and teachable or keeps the component with specialist staff.",ground:"Apprenticeship and cascade training (Murray et al.); competence rating (Kohrt et al.); community health worker programme guidance (WHO); training transfer (Beidas & Kendall)",link:"hwe",status:"planned",added:true,added2:true,connects:["area_hwe","hw3","ld23","km_cop"]},
+  {id:"hw5",cat:"hwe",depth:3,name:"Peer and Lived-Experience Delivery Roles",sub:"Preparation, scope and support for a distinct contribution",body:"Peer roles bring a form of knowledge the rest of a team does not hold, and they are strengthened by the same infrastructure any role requires: a described scope, preparation matched to it, supervision, and terms of employment. Trial evidence on peer-delivered support is developing and varies by model, which places the specification of the role — what it offers, and what it is expected to achieve — inside the design work rather than after it.",ground:"Peer support literature (Repper & Carter); trial evidence (Lloyd-Evans et al.); community health worker programme guidance (WHO); testimony as evidence",link:"hwe",status:"planned",added:true,added2:true,connects:["area_hwe","km5","ac9","ep1","ld36"]},
+  {id:"hw6",cat:"hwe",depth:3,name:"A Programme That Sits Beside Therapy, Not Inside It",sub:"Naming the boundary, and holding it in the design",body:"Structured group programmes that are educational or creative rather than therapeutic occupy a defined position beside clinical services, and the design states that position plainly: what the programme offers, what it does not, how a participant is supported toward clinical care when that is what is needed, and what the facilitator’s role includes. Group practice literature supplies the craft of holding a room; the boundary itself is held by the written description, the referral route, and the qualification the facilitator names.",ground:"Group practice (Yalom & Leszcz); creative health evidence (Fancourt & Finn); trauma-informed educational practice (Carello & Butler); scope of practice",link:"hwe",status:"planned",added:true,added2:true,connects:["area_hwe","lx4","ld36","km11","hw1"]},
+  {id:"hw7",cat:"hwe",depth:3,name:"Cultural Adaptation of a Programme",sub:"Surface and deep structure, and who holds the decision",body:"Adaptation ranges from language, examples and imagery through to the model of distress a programme assumes and the outcomes it treats as good. Frameworks developed for psychosocial interventions distinguish these levels and set out a process — consultation, revision, testing — in which the people the programme serves hold the decisions about what changes. Recording the adaptation alongside the original allows both versions to be read together, and gives the next adaptation a place to start.",ground:"Ecological validity model (Bernal et al.); cultural adaptation review (Chowdhary et al.); FRAME (Wiltsey Stirman et al.); category and idiom of distress (Kleinman)",link:"hwe",status:"planned",added:true,added2:true,connects:["area_hwe","hw2","ld20","ld27","ep8"]},
+  {id:"hw8",cat:"hwe",depth:3,name:"Designing for Low-Resource and Low-Connectivity Delivery",sub:"Paper, shared devices, intermittent power and short preparation time",body:"Where connectivity is intermittent, devices are shared and preparation time is short, the design carries its own conditions: a job aid that works on paper, a session that runs without a projector, a sequence that survives an interruption, and materials that can be reproduced locally at low cost. Digital components are chosen where they add something the paper version cannot, and the paper version stays complete on its own.",ground:"Digital interventions for health system strengthening (WHO); mhGAP Intervention Guide (WHO); performance support (Gottfredson & Mosher)",link:"hwe",status:"planned",added:true,added2:true,connects:["area_hwe","ld6","ld8","ac11","ac25"]},
+  {id:"ev5",cat:"eval",depth:3,name:"Theory of Change and Logic Models as Design Artifacts",sub:"The causal chain, written down and open to test",body:"A logic model sets out inputs, activities, outputs and outcomes; a theory of change states the reasoning connecting them and the conditions each link depends on. Written at the design stage rather than for a report, it names what would have to be true for the programme to work, which lets the measurement plan follow from the reasoning instead of the reverse, and gives a later reader a specific claim to examine.",ground:"Programme theory (Funnell & Rogers); logic model development (W. K. Kellogg Foundation); utilization-focused evaluation (Patton); contribution analysis (Mayne)",link:"eval",status:"planned",added:true,added2:true,connects:["area_eval","ev4","sd_eval","ld25"]},
+  {id:"ev6",cat:"eval",depth:3,name:"Cost as an Evaluation Question",sub:"What a programme takes, alongside what it returns",body:"Cost per participant, cost per completion, and the resources a programme needs in order to continue are answerable from records the work already produces. Economic evaluation methods in health and in education set out how these are assembled — the ingredients counted, the perspective declared, the time horizon stated — so that a comparison between options rests on one basis and the reader can see what was included and what was left out.",ground:"Economic evaluation of health care programmes (Drummond et al.); economic evaluation in education (Levin et al.); utilization-focused evaluation (Patton)",link:"eval",status:"planned",added:true,added2:true,connects:["area_eval","ev3","ld8","sd11"]},
+  {id:"ev7",cat:"eval",depth:3,name:"Choosing and Using Validated Outcome Measures",sub:"What an established instrument offers, and what it asks in return",body:"An established measure brings comparability, published psychometric properties, and a body of prior results to read against; it also brings its own construct, the population it was developed with, and its administration and licensing requirements. Measurement standards set out the properties to look for and the evidence supporting each, which turns the choice between adopting an instrument and developing one into a documented decision rather than a default.",ground:"COSMIN taxonomy (Mokkink et al.); health measurement scales (Streiner, Norman & Cairney); construct validity (Messick; Borsboom)",link:"eval",status:"planned",added:true,added2:true,connects:["area_eval","ep9","ev1","ud7"]},
+  {id:"ev8",cat:"eval",depth:3,name:"Evaluating for Harm",sub:"Unintended effects, anticipated in advance and looked for",body:"Programmes produce effects beyond the ones they intend, and those effects are found reliably only where they have been anticipated and measured. Dark logic models set out plausible harmful pathways at the design stage in the same form as the intended ones; conceptual frameworks for adverse effects supply categories to look across, including opportunity cost and effects on people the programme did not reach. Recording what was examined, including where nothing was found, is part of the result.",ground:"Dark logic models (Bonell et al.); adverse effects framework (Lorenc & Oliver); programme theory (Funnell & Rogers); research ethics (TCPS 2)",link:"eval",status:"planned",added:true,added2:true,connects:["area_eval","hw1","ld19","sd19","ep10"]},
+  {id:"km13",cat:"kmb",depth:3,name:"Evidence Synthesis as a Design Input",sub:"Reading, commissioning or conducting the review a design rests on",body:"Where a design rests on a body of evidence, the quality of that reading sets the limit on what the design can claim. Systematic review method — a stated question, a documented search, applied inclusion criteria, appraisal, and transparent reporting — is what distinguishes a synthesis from a selection. Registering the protocol before the search begins, and reporting to an established standard, lets an independent reader follow the same path and reach the same set of studies.",ground:"Cochrane Handbook (Higgins et al.); PRISMA 2020 (Page et al.); introduction to systematic reviews (Gough, Oliver & Thomas)",link:"kmb",status:"planned",added:true,added2:true,connects:["area_kmb","km4","ld14","ld15","ep7"]},
+  {id:"km14",cat:"kmb",depth:3,name:"Spread Beyond the Pilot, and De-implementation",sub:"What institutionalizing asks for, and what stopping asks for",body:"Moving from a successful pilot into routine practice is its own piece of design work: the innovation is specified, the organizations that will hold it are identified, and the budget, policy and training arrangements that sustain it are put in place. The same discipline applies to withdrawal — where a practice has been superseded, an explicit process for removing it, with its own communication and support, keeps the old and the new from running side by side.",ground:"Scaling-up strategy (WHO & ExpandNet); de-implementation (Prasad & Ioannidis); implementation frameworks (CFIR); exploration and exploitation (March)",link:"kmb",status:"planned",added:true,added2:true,connects:["area_kmb","km3","ld16","sd_org","ud9"]},
+  {id:"lx19",cat:"lxd",depth:3,name:"Designing for Embodied and Somatic Learning",sub:"The body as a site of the learning, not only its vehicle",body:"Some learning is held in movement, handling and sensation before it becomes available as description, and the design decisions follow from that: the room, the materials, the pacing, and how much is asked to be put into words at all. Work on grounded cognition, on the tacit dimension of knowing, and on what making does for thought gives this a basis, and connects the studio contributions on this branch to the trauma-informed practices held in the trunk.",ground:"Grounded cognition (Barsalou); phenomenology of perception (Merleau-Ponty); tacit knowing (Polanyi); the arts and the creation of mind (Eisner)",link:"lxd",status:"planned",added:true,added2:true,connects:["area_lxd","lx11","lx13","ld34","ep5"]}
 ];
 
 /* ============================================================
@@ -1468,6 +1543,23 @@ const TAGS_BY_ID = {
   ld37:["wellbeing","capacity","ethics"],
   km11:["research","visual","implementation"],
   km12:["research","community","making"],
+  area_hwe:["capacity","systems","implementation"],
+  hw0:["capacity","scale","implementation"],
+  hw1:["wellbeing","ethics","safety"],
+  hw2:["implementation","evaluation","scale"],
+  hw3:["capacity","workplace","assessment"],
+  hw4:["capacity","scale","transfer"],
+  hw5:["community","capacity","equity"],
+  hw6:["community","wellbeing","making"],
+  hw7:["equity","implementation","indigenous"],
+  hw8:["access","scale","equity"],
+  ev5:["evaluation","alignment","systems"],
+  ev6:["evaluation","systems","evidence"],
+  ev7:["evaluation","assessment","evidence"],
+  ev8:["evaluation","ethics","safety"],
+  km13:["evidence","research","implementation"],
+  km14:["scale","implementation","systems"],
+  lx19:["experiential","making","reflection"],
 };
 NODES.forEach(n => { n.tags = TAGS_BY_ID[n.id] || []; });
 
@@ -1493,9 +1585,10 @@ const usedKeys = [];
 /* Two passes: the contributions present before the later additions are numbered
    first, so every reference number already cited on a published page keeps its
    value; the later additions then append after them. */
-[false, true].forEach(isAdded => {
+const srcWave = n => n.added2 ? 2 : (n.added ? 1 : 0);
+[0, 1, 2].forEach(wave => {
   CAT_ORDER_BIB.forEach(c => {
-    NODES.filter(n => n.cat===c && Boolean(n.added)===isAdded)
+    NODES.filter(n => n.cat===c && srcWave(n)===wave)
          .forEach(n => n.src.forEach(k => { if(!usedKeys.includes(k)) usedKeys.push(k); }));
   });
 });
