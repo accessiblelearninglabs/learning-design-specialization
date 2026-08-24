@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evaluation · Learning Design Landscape</title>
+  <meta name="description" content="A compact reading-order version of the Evaluation contributions within a learning design practice." />
+  <link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f6f7;
+      --ink: #303e44;
+      --ink-mid: #4f6068;
+      --ink-muted: #5f7078;
+      --accent: #475f6a;
+      --accent-light: #e4eaed;
+      --border: #d5dde1;
+      --font: 'Asap', system-ui, sans-serif;
+      --max: 740px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: var(--bg); color: var(--ink); font-size: 16px; line-height: 1.7; }
+
+    a { color: var(--accent); }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+    .skip-link { position: absolute; top: -100px; left: 1rem; background: var(--accent); color: #fff; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; z-index: 999; }
+    .skip-link:focus { top: 1rem; }
+
+    header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 0 2rem; }
+    .header-inner { max-width: var(--max); margin: 0 auto; padding: 2.25rem 0 2rem; }
+    .site-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+    header h1 { font-size: 1.9rem; font-weight: 700; line-height: 1.2; color: var(--ink); }
+    .header-sub { font-size: 0.95rem; color: var(--ink-mid); margin-top: 0.6rem; line-height: 1.6; }
+    .version-note { background: var(--accent-light); border-left: 3px solid var(--accent); margin-top: 1.25rem; padding: 0.7rem 1rem; font-size: 0.84rem; color: var(--ink-mid); border-radius: 0 4px 4px 0; line-height: 1.6; }
+
+    main { max-width: var(--max); margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+
+    #toc { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem 1.75rem; margin-bottom: 3rem; }
+    #toc h2 { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 1rem; }
+    #toc ol { padding-left: 1.25rem; }
+    #toc > ol > li { margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; }
+    #toc ul { padding-left: 1.1rem; margin-top: 0.3rem; list-style: disc; }
+    #toc ul li { margin-bottom: 0.25rem; font-size: 0.85rem; font-weight: 400; }
+
+    .section-marker { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); display: block; margin-bottom: 0.5rem; }
+
+    h2 { font-size: 1.55rem; font-weight: 700; color: var(--ink); margin-bottom: 0.65rem; line-height: 1.25; }
+    h3 { font-size: 1.15rem; font-weight: 700; color: var(--ink); margin: 2.25rem 0 0.5rem; }
+    h4 { font-size: 1rem; font-weight: 600; color: var(--ink); margin: 0 0 0.15rem; }
+
+    .section-block { border-top: 2px solid var(--border); padding-top: 2.5rem; margin-top: 3rem; }
+    .section-block:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+
+    p { font-size: 0.925rem; color: var(--ink-mid); line-height: 1.75; margin-bottom: 0.85rem; }
+    p strong { color: var(--ink); }
+    ul, ol { padding-left: 1.3rem; margin: 0.6rem 0 1rem; }
+    li { font-size: 0.925rem; color: var(--ink-mid); line-height: 1.7; margin-bottom: 0.35rem; }
+    li strong { color: var(--ink); }
+
+    .entry { border-top: 1px solid var(--border); padding-top: 1.5rem; margin-top: 1.75rem; }
+    .entry:target { background: var(--accent-light); outline: 3px solid var(--accent); outline-offset: 8px; border-radius: 2px; }
+    .entry-sub { font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 0.5rem; }
+    .entry-status { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-light); padding: 0.2rem 0.6rem; border-radius: 999px; display: inline-block; margin-bottom: 0.7rem; }
+    .entry-status.dev { color: var(--ink-mid); background: var(--surface); }
+    .meta { font-size: 0.85rem; color: var(--ink-muted); margin: 0.75rem 0 0; }
+    .meta strong { color: var(--ink); font-weight: 600; }
+    .dual { font-size: 0.85rem; color: var(--ink-mid); background: var(--surface); border-left: 3px solid var(--border); padding: 0.55rem 0.85rem; margin: 0.75rem 0 0; }
+    .sublist-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin: 1rem 0 0.35rem; }
+    .sublist { margin: 0 0 0; padding-left: 1.3rem; }
+    .sublist li { font-size: 0.875rem; }
+    .basis { color: var(--ink-muted); }
+
+    .callout { background: var(--accent-light); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+    .callout-label { font-size: 0.67rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.4rem; }
+    .callout p:last-child { margin-bottom: 0; }
+
+    .summary-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.875rem; }
+    .summary-table caption { text-align: left; font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 0.5rem; }
+    .summary-table th { text-align: left; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-mid); padding: 0.6rem 0.85rem; background: var(--surface); border: 1px solid var(--border); }
+    .summary-table td { padding: 0.7rem 0.85rem; border: 1px solid var(--border); vertical-align: top; color: var(--ink-mid); }
+
+    .refs { list-style: none; padding: 0; margin: 1.25rem 0 0; counter-reset: r; }
+    .refs li { border: 1px solid var(--border); border-radius: 6px; background: var(--surface); padding: 0.8rem 1rem; margin-bottom: 0.45rem; font-size: 0.85rem; }
+    .refs li:target { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .refs .num { font-weight: 700; color: var(--ink); }
+    .refs .cat { display: block; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.2rem; }
+    .refs a { font-size: 0.82rem; display: inline-block; margin-top: 0.25rem; word-break: break-word; }
+
+    .back-to-top { display: inline-block; margin-top: 2.5rem; font-size: 0.85rem; }
+    .page-credit { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.83rem; color: var(--ink-muted); line-height: 1.65; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); padding: 1.5rem 2rem; text-align: center; font-size: 0.78rem; color: var(--ink-muted); }
+
+    @media (max-width: 640px) {
+      main { padding: 1.5rem 1rem 4rem; }
+      header { padding: 0 1rem; }
+      header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<a href="#toc" class="skip-link" style="left: 12rem;">Skip to contents</a>
+
+<header>
+  <div class="header-inner">
+    <p class="site-label">Learning Design Specialization</p>
+    <h1>Evaluation</h1>
+    <p class="header-sub">Whether it worked, and how anyone would know. Every resource in this branch, with its grounding, sources, and relationships, set out in reading order.</p>
+    <p class="version-note"><strong>Screen reader and keyboard optimised version.</strong> All content is presented in reading order, with no diagram, tabs, or scripting. An <a href="area-map.html?area=eval">interactive version of this area map</a> is also available.</p>
+  </div>
+</header>
+
+<main id="main-content">
+  <nav id="toc" aria-label="Contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#about">About this branch</a></li>
+      <li><a href="#resources">The 6 resources in this branch</a>
+        <ul>
+          <li><a href="#node-ev0">Standing Up an Evaluation Function</a></li>
+          <li><a href="#node-ev1">Evaluating at Small Numbers</a></li>
+          <li><a href="#node-ev2">Evaluating a Portfolio Larger Than Its Measurement Capacity</a></li>
+          <li><a href="#node-ev3">Reporting to Funders Alongside Learning from the Work</a></li>
+          <li><a href="#node-ev4">Designing Evaluation Backwards from the Decision</a></li>
+          <li><a href="#node-pl9">Evaluating an Anonymous Encounter</a></li>
+        </ul>
+      </li>
+      <li><a href="#references">References and resources</a></li>
+    </ol>
+  </nav>
+
+  <section class="section-block" id="about">
+    <span class="section-marker">Section 1</span>
+    <h2>About this branch</h2>
+    <p>The design of the evidence a learning programme produces about itself. This branch gathers the contributions that build measurement into practice from the first cycle rather than adding it at the end: what can be established when there is no baseline, what can be claimed at small numbers, how a portfolio is measured when capacity covers only part of it, and how findings are shaped so that a decision can rest on them. It draws on the evaluation contributions held elsewhere on the map and situates them in a shared method.</p>
+    <p class="meta"><strong>Grounding.</strong> Evaluation design; contribution analysis; utilization-focused evaluation; measurement validity</p>
+    <table class="summary-table">
+      <caption>This set at a glance</caption>
+      <tbody>
+        <tr><th scope="row">Resources in this branch</th><td>6</td></tr>
+        <tr><th scope="row">With a live page</th><td>0</td></tr>
+        <tr><th scope="row">In development or planned</th><td>6</td></tr>
+      </tbody>
+    </table>
+    <p class="meta"><a href="https://www.andrearobin.com/evaluation">Visit the Evaluation page</a> · <a href="landscape-linear.html">See this set in the context of the whole practice</a>.</p>
+  </section>
+
+  <section class="section-block" id="resources">
+    <span class="section-marker">Section 2</span>
+    <h2>The 6 resources in this branch</h2>
+    <p>Each entry states what the resource contributes, what grounds it, whether a live page exists, the resources most like it within this set, and the connections that run beyond it.</p>
+      <article class="entry" id="node-ev0">
+        <h3>Standing Up an Evaluation Function</h3>
+        <p class="entry-sub">The first cycle, before there is anything to compare against</p>
+        <p class="entry-status planned">Planned</p>
+        <p>Establishing evaluation in an organization that has not carried it before: deciding what can be instrumented immediately, what is worth waiting a cycle to measure well, and what can be reconstructed from records already held. The sequence matters, because the first cycle sets the baseline every later cycle will read against, and because consent, retention and reporting arrangements are easier to establish at the outset than to retrofit.</p>
+        <p class="meta"><strong>Grounding.</strong> Evaluation design; programme theory; baseline and instrumentation planning</p>
+        <p class="sublist-label">Sources</p>
+        <ul class="sublist">
+          <li><a href="#ref-1">Reference 1</a>: Patton, M. Q. (2008). Utilization-Focused Evaluation (4th ed.). SAGE Publications.</li>
+          <li><a href="#ref-2">Reference 2</a>: Weiss, C. H. (1998). Evaluation: Methods for Studying Programs and Policies (2nd ed.). Prentice Hall.</li>
+          <li><a href="#ref-3">Reference 3</a>: Kirkpatrick, D. L., &amp; Kirkpatrick, J. D. (2006). Evaluating Training Programs: The Four Levels (3rd ed.). Berrett-Koehler.</li>
+        </ul>
+        <p class="sublist-label">Most related, by shared theory and theme</p>
+        <ul class="sublist">
+          <li><a href="#node-ev4">Designing Evaluation Backwards from the Decision</a> <span class="basis">— Evaluation, Process, Systems · 2 shared sources</span></li>
+          <li><a href="#node-ev2">Evaluating a Portfolio Larger Than Its Measurement Capacity</a> <span class="basis">— Evaluation · 2 shared sources</span></li>
+          <li><a href="#node-ev3">Reporting to Funders Alongside Learning from the Work</a> <span class="basis">— Evaluation · 1 shared source</span></li>
+          <li><a href="#node-ev1">Evaluating at Small Numbers</a> <span class="basis">— Evaluation</span></li>
+        </ul>
+        <p class="sublist-label">Connected contributions</p>
+        <ul class="sublist">
+          <li><a href="#node-ev4">Designing Evaluation Backwards from the Decision</a></li>
+        </ul>
+        <p class="sublist-label">Where this work leads</p>
+        <ul class="sublist">
+          <li>Evaluation, on the <a href="https://www.andrearobin.com/evaluation">Evaluation page</a></li>
+          <li>Learning Evaluation Framework Design, on the <a href="https://www.andrearobin.com/learning-systems-design">Learning Systems Design page</a></li>
+          <li>Organizational Learning Design, on the <a href="https://www.andrearobin.com/learning-systems-design">Learning Systems Design page</a></li>
+          <li>Learner Data, Privacy and Analytics Ethics, on the <a href="https://www.andrearobin.com/learning-design">Learning Design page</a></li>
+        </ul>
+      </article>
+      <article class="entry" id="node-ev1">
+        <h3>Evaluating at Small Numbers</h3>
+        <p class="entry-sub">Sound inference without a comparison group</p>
+        <p class="entry-status planned">Planned</p>
+        <p>Most evaluation method assumes a scale that many learning programmes will never reach. Single-case and n-of-1 designs, contribution analysis, most-significant-change, and information power as an alternative to a target sample size each support a defensible claim from a single cohort. The corresponding discipline is knowing which claims the design can carry and stating the rest as description.</p>
+        <p class="meta"><strong>Grounding.</strong> Contribution analysis (Mayne); single-case design (Kazdin); information power (Malterud); most significant change (Davies &amp; Dart)</p>
+        <p class="sublist-label">Sources</p>
+        <ul class="sublist">
+          <li><a href="#ref-4">Reference 4</a>: Mayne, J. (2012). “Contribution Analysis: Coming of Age?” Evaluation, 18(3), 270–280.</li>
+          <li><a href="#ref-5">Reference 5</a>: Kazdin, A. E. (2011). Single-Case Research Designs: Methods for Clinical and Applied Settings (2nd ed.). Oxford University Press.</li>
+          <li><a href="#ref-6">Reference 6</a>: Malterud, K., Siersma, V. D., &amp; Guassora, A. D. (2016). “Sample Size in Qualitative Interview Studies: Guided by Information Power.” Qualitative Health Research, 26(13), 1753–1760.</li>
+          <li><a href="#ref-7">Reference 7</a>: Davies, R., &amp; Dart, J. (2005). The ‘Most Significant Change’ (MSC) Technique: A Guide to Its Use.</li>
+        </ul>
+        <p class="sublist-label">Most related, by shared theory and theme</p>
+        <ul class="sublist">
+          <li><a href="#node-pl9">Evaluating an Anonymous Encounter</a> <span class="basis">— Evaluation, Learner research · 1 shared source</span></li>
+          <li><a href="#node-ev4">Designing Evaluation Backwards from the Decision</a> <span class="basis">— Evaluation</span></li>
+          <li><a href="#node-ev3">Reporting to Funders Alongside Learning from the Work</a> <span class="basis">— Evaluation, Evidence</span></li>
+          <li><a href="#node-ev0">Standing Up an Evaluation Function</a> <span class="basis">— Evaluation</span></li>
+          <li><a href="#node-ev2">Evaluating a Portfolio Larger Than Its Measurement Capacity</a> <span class="basis">— Evaluation</span></li>
+        </ul>
+        <p class="sublist-label">Connected contributions</p>
+        <ul class="sublist">
+          <li><a href="#node-ev4">Designing Evaluation Backwards from the Decision</a></li>
+        </ul>
+        <p class="sublist-label">Where this work leads</p>
+        <ul class="sublist">
+          <li>Evaluation, on the <a href="https://www.andrearobin.com/evaluation">Evaluation page</a></li>
+          <li>KMb Evaluation Design, on the <a href="https://www.andrearobin.com/knowledge-mobilization">Knowledge Mobilization page</a></li>
+          <li>The Construct Inside the Measure, on the <a href="https://www.andrearobin.com/epistemology">Epistemology page</a></li>
+          <li>Equity Evaluation Framework Design, on the <a href="https://www.andrearobin.com/learning-systems-design">Learning Systems Design page</a></li>
+        </ul>
+      </article>
+      <article class="entry" id="node-ev2">
+        <h3>Evaluating a Portfolio Larger Than Its Measurement Capacity</h3>
+        <p class="entry-sub">A stated rule for where the evidence effort goes</p>
+        <p class="entry-status planned">Planned</p>
+        <p>When an organization runs more programmes than it can evaluate, measurement is tiered rather than uniform: full evaluation for a named few, a single agreed signal for many, and periodic sampling across the rest. Setting the tiering rule in advance, and recording it, makes the coverage legible to everyone whose work sits inside it and gives the portfolio a defensible account of what it knows and where.</p>
+        <p class="meta"><strong>Grounding.</strong> Evaluation planning; portfolio sampling; exploration and exploitation (March)</p>
+        <p class="sublist-label">Sources</p>
+        <ul class="sublist">
+          <li><a href="#ref-1">Reference 1</a>: Patton, M. Q. (2008). Utilization-Focused Evaluation (4th ed.). SAGE Publications.</li>
+          <li><a href="#ref-8">Reference 8</a>: March, J. G. (1991). “Exploration and Exploitation in Organizational Learning.” Organization Science, 2(1), 71–87.</li>
+          <li><a href="#ref-3">Reference 3</a>: Kirkpatrick, D. L., &amp; Kirkpatrick, J. D. (2006). Evaluating Training Programs: The Four Levels (3rd ed.). Berrett-Koehler.</li>
+        </ul>
+        <p class="sublist-label">Most related, by shared theory and theme</p>
+        <ul class="sublist">
+          <li><a href="#node-ev0">Standing Up an Evaluation Function</a> <span class="basis">— Evaluation · 2 shared sources</span></li>
+          <li><a href="#node-ev4">Designing Evaluation Backwards from the Decision</a> <span class="basis">— Evaluation · 1 shared source</span></li>
+          <li><a href="#node-ev3">Reporting to Funders Alongside Learning from the Work</a> <span class="basis">— Evaluation · 1 shared source</span></li>
+          <li><a href="#node-ev1">Evaluating at Small Numbers</a> <span class="basis">— Evaluation</span></li>
+        </ul>
+        <p class="sublist-label">Where this work leads</p>
+        <ul class="sublist">
+          <li>Evaluation, on the <a href="https://www.andrearobin.com/evaluation">Evaluation page</a></li>
+          <li>Triage When Demand Exceeds Capacity, on the <a href="https://www.andrearobin.com/learning-systems-design">Learning Systems Design page</a></li>
+          <li>Learning Evaluation Framework Design, on the <a href="https://www.andrearobin.com/learning-systems-design">Learning Systems Design page</a></li>
+          <li>Quality Assurance as a Documented Practice, on the <a href="https://www.andrearobin.com/learning-design">Learning Design page</a></li>
+        </ul>
+      </article>
+      <article class="entry" id="node-ev3">
+        <h3>Reporting to Funders Alongside Learning from the Work</h3>
+        <p class="entry-sub">Two purposes, each served properly</p>
+        <p class="entry-status planned">Planned</p>
+        <p>Accountability reporting and improvement evaluation answer to different readers and reward different things, and a single instrument asked to do both tends to serve one well. Designing them as a related pair — shared data collection, distinct analyses and outputs — lets a grant report stand up to scrutiny while the programme retains evidence it can act on. It also keeps what is promised in an application within what the design will be able to evidence later.</p>
+        <p class="meta"><strong>Grounding.</strong> Accountability and organizational learning (Ebrahim); measurement effects on programmes (Campbell)</p>
+        <p class="sublist-label">Sources</p>
+        <ul class="sublist">
+          <li><a href="#ref-9">Reference 9</a>: Ebrahim, A. (2005). “Accountability Myopia: Losing Sight of Organizational Learning.” Nonprofit and Voluntary Sector Quarterly, 34(1), 56–87.</li>
+          <li><a href="#ref-10">Reference 10</a>: Campbell, D. T. (1979). “Assessing the Impact of Planned Social Change.” Evaluation and Program Planning, 2(1), 67–90.</li>
+          <li><a href="#ref-1">Reference 1</a>: Patton, M. Q. (2008). Utilization-Focused Evaluation (4th ed.). SAGE Publications.</li>
+        </ul>
+        <p class="sublist-label">Most related, by shared theory and theme</p>
+        <ul class="sublist">
+          <li><a href="#node-ev4">Designing Evaluation Backwards from the Decision</a> <span class="basis">— Evaluation · 1 shared source</span></li>
+          <li><a href="#node-ev1">Evaluating at Small Numbers</a> <span class="basis">— Evaluation, Evidence</span></li>
+          <li><a href="#node-ev0">Standing Up an Evaluation Function</a> <span class="basis">— Evaluation · 1 shared source</span></li>
+          <li><a href="#node-ev2">Evaluating a Portfolio Larger Than Its Measurement Capacity</a> <span class="basis">— Evaluation · 1 shared source</span></li>
+        </ul>
+        <p class="sublist-label">Connected contributions</p>
+        <ul class="sublist">
+          <li><a href="#node-ev4">Designing Evaluation Backwards from the Decision</a></li>
+        </ul>
+        <p class="sublist-label">Where this work leads</p>
+        <ul class="sublist">
+          <li>Evaluation, on the <a href="https://www.andrearobin.com/evaluation">Evaluation page</a></li>
+          <li>KMb Evaluation Design, on the <a href="https://www.andrearobin.com/knowledge-mobilization">Knowledge Mobilization page</a></li>
+          <li>Arguing for the Work Before the Constraint Is Set, on the <a href="https://www.andrearobin.com/learning-design">Learning Design page</a></li>
+          <li>Making the Case for Public Learning Outcomes, on the <a href="https://www.andrearobin.com/public-learning">Public Learning page</a></li>
+        </ul>
+      </article>
+      <article class="entry" id="node-ev4">
+        <h3>Designing Evaluation Backwards from the Decision</h3>
+        <p class="entry-sub">Naming the decision each measure informs</p>
+        <p class="entry-status planned">Planned</p>
+        <p>Evaluation earns its cost when each measure is attached to a decision someone is already committed to making, with the threshold agreed in advance and the route to acting on the result identified before data collection begins. Utilization-focused design starts from intended use by intended users, which places the question of who will act, and on what, at the beginning rather than at the report stage.</p>
+        <p class="meta"><strong>Grounding.</strong> Utilization-focused evaluation (Patton); evaluation use (Weiss)</p>
+        <p class="sublist-label">Sources</p>
+        <ul class="sublist">
+          <li><a href="#ref-1">Reference 1</a>: Patton, M. Q. (2008). Utilization-Focused Evaluation (4th ed.). SAGE Publications.</li>
+          <li><a href="#ref-2">Reference 2</a>: Weiss, C. H. (1998). Evaluation: Methods for Studying Programs and Policies (2nd ed.). Prentice Hall.</li>
+        </ul>
+        <p class="sublist-label">Most related, by shared theory and theme</p>
+        <ul class="sublist">
+          <li><a href="#node-ev0">Standing Up an Evaluation Function</a> <span class="basis">— Evaluation, Systems, Process · 2 shared sources</span></li>
+          <li><a href="#node-ev3">Reporting to Funders Alongside Learning from the Work</a> <span class="basis">— Evaluation · 1 shared source</span></li>
+          <li><a href="#node-ev1">Evaluating at Small Numbers</a> <span class="basis">— Evaluation</span></li>
+          <li><a href="#node-ev2">Evaluating a Portfolio Larger Than Its Measurement Capacity</a> <span class="basis">— Evaluation · 1 shared source</span></li>
+        </ul>
+        <p class="sublist-label">Connected contributions</p>
+        <ul class="sublist">
+          <li><a href="#node-ev0">Standing Up an Evaluation Function</a></li>
+          <li><a href="#node-ev1">Evaluating at Small Numbers</a></li>
+        </ul>
+        <p class="sublist-label">Where this work leads</p>
+        <ul class="sublist">
+          <li>Evaluation, on the <a href="https://www.andrearobin.com/evaluation">Evaluation page</a></li>
+          <li>Learning Evaluation Framework Design, on the <a href="https://www.andrearobin.com/learning-systems-design">Learning Systems Design page</a></li>
+          <li>Arguing for the Work Before the Constraint Is Set, on the <a href="https://www.andrearobin.com/learning-design">Learning Design page</a></li>
+          <li>Reading Course Signals Without Overreading Them, on the <a href="https://www.andrearobin.com/learning-design">Learning Design page</a></li>
+        </ul>
+      </article>
+      <article class="entry" id="node-pl9">
+        <h3>Evaluating an Anonymous Encounter</h3>
+        <p class="entry-sub">No roster, no follow-up, and evidence all the same</p>
+        <p class="entry-status planned">Planned</p>
+        <p>Public settings rarely permit named participants or later contact, so evaluation is built from what can be observed and asked in the moment: tracking and timing, structured observation, brief exit conversations, and repeat cross-sectional sampling across a season. Each method answers a narrow question well, and stating which question it answers keeps the resulting claims proportionate.</p>
+        <p class="dual">A resource in two areas. Its home is Public Learning, and it is also part of the Evaluation set.</p>
+        <p class="meta"><strong>Grounding.</strong> Tracking and timing (Serrell); visitor studies methods; informal learning evaluation</p>
+        <p class="sublist-label">Sources</p>
+        <ul class="sublist">
+          <li><a href="#ref-11">Reference 11</a>: Serrell, B. (1997). “Paying Attention: The Duration and Allocation of Visitors’ Time in Museum Exhibitions.” Curator: The Museum Journal, 40(2), 108–125.</li>
+          <li><a href="#ref-12">Reference 12</a>: National Research Council (2009). Learning Science in Informal Environments: People, Places, and Pursuits. National Academies Press.</li>
+          <li><a href="#ref-4">Reference 4</a>: Mayne, J. (2012). “Contribution Analysis: Coming of Age?” Evaluation, 18(3), 270–280.</li>
+        </ul>
+        <p class="sublist-label">Most related, by shared theory and theme</p>
+        <ul class="sublist">
+          <li><a href="#node-ev1">Evaluating at Small Numbers</a> <span class="basis">— Evaluation, Learner research · 1 shared source</span></li>
+        </ul>
+        <p class="sublist-label">Connected contributions</p>
+        <ul class="sublist">
+          <li><a href="#node-ev1">Evaluating at Small Numbers</a></li>
+        </ul>
+        <p class="sublist-label">Where this work leads</p>
+        <ul class="sublist">
+          <li>Public Learning, on the <a href="https://www.andrearobin.com/public-learning">Public Learning page</a></li>
+          <li>Learning Nobody Is Required to Do, on the <a href="https://www.andrearobin.com/public-learning">Public Learning page</a></li>
+          <li>Making the Case for Public Learning Outcomes, on the <a href="https://www.andrearobin.com/public-learning">Public Learning page</a></li>
+          <li>Reading Course Signals Without Overreading Them, on the <a href="https://www.andrearobin.com/learning-design">Learning Design page</a></li>
+        </ul>
+      </article>
+  </section>
+
+  <section class="section-block" id="references">
+    <span class="section-marker">Section 3</span>
+    <h2>References and resources</h2>
+    <p>The theory, law, and standards these contributions are rooted in, listed once and cited by number above. Peer-reviewed, statutory, and institutional sources link directly. Books, reports, and legislation are cited in full so they can be found in any library catalogue or official register.</p>
+
+      <ol class="refs">
+        <li id="ref-1"><span class="cat">Evaluation</span><span class="num">1.</span> Patton, M. Q. (2008). Utilization-Focused Evaluation (4th ed.). SAGE Publications.</li>
+        <li id="ref-2"><span class="cat">Evaluation</span><span class="num">2.</span> Weiss, C. H. (1998). Evaluation: Methods for Studying Programs and Policies (2nd ed.). Prentice Hall.</li>
+        <li id="ref-3"><span class="cat">Evaluation</span><span class="num">3.</span> Kirkpatrick, D. L., &amp; Kirkpatrick, J. D. (2006). Evaluating Training Programs: The Four Levels (3rd ed.). Berrett-Koehler.</li>
+        <li id="ref-4"><span class="cat">Evaluation</span><span class="num">4.</span> Mayne, J. (2012). “Contribution Analysis: Coming of Age?” Evaluation, 18(3), 270–280.<br /><a href="https://doi.org/10.1177/1356389012451663">https://doi.org/10.1177/1356389012451663</a></li>
+        <li id="ref-5"><span class="cat">Research design</span><span class="num">5.</span> Kazdin, A. E. (2011). Single-Case Research Designs: Methods for Clinical and Applied Settings (2nd ed.). Oxford University Press.</li>
+        <li id="ref-6"><span class="cat">Research design</span><span class="num">6.</span> Malterud, K., Siersma, V. D., &amp; Guassora, A. D. (2016). “Sample Size in Qualitative Interview Studies: Guided by Information Power.” Qualitative Health Research, 26(13), 1753–1760.<br /><a href="https://doi.org/10.1177/1049732315617444">https://doi.org/10.1177/1049732315617444</a></li>
+        <li id="ref-7"><span class="cat">Evaluation</span><span class="num">7.</span> Davies, R., &amp; Dart, J. (2005). The ‘Most Significant Change’ (MSC) Technique: A Guide to Its Use.</li>
+        <li id="ref-8"><span class="cat">Organizational learning</span><span class="num">8.</span> March, J. G. (1991). “Exploration and Exploitation in Organizational Learning.” Organization Science, 2(1), 71–87.<br /><a href="https://doi.org/10.1287/orsc.2.1.71">https://doi.org/10.1287/orsc.2.1.71</a></li>
+        <li id="ref-9"><span class="cat">Accountability</span><span class="num">9.</span> Ebrahim, A. (2005). “Accountability Myopia: Losing Sight of Organizational Learning.” Nonprofit and Voluntary Sector Quarterly, 34(1), 56–87.<br /><a href="https://doi.org/10.1177/0899764004269430">https://doi.org/10.1177/0899764004269430</a></li>
+        <li id="ref-10"><span class="cat">Evaluation</span><span class="num">10.</span> Campbell, D. T. (1979). “Assessing the Impact of Planned Social Change.” Evaluation and Program Planning, 2(1), 67–90.</li>
+        <li id="ref-11"><span class="cat">Visitor studies</span><span class="num">11.</span> Serrell, B. (1997). “Paying Attention: The Duration and Allocation of Visitors’ Time in Museum Exhibitions.” Curator: The Museum Journal, 40(2), 108–125.<br /><a href="https://doi.org/10.1111/j.2151-6952.1997.tb01292.x">https://doi.org/10.1111/j.2151-6952.1997.tb01292.x</a></li>
+        <li id="ref-12"><span class="cat">Informal science education</span><span class="num">12.</span> National Research Council (2009). Learning Science in Informal Environments: People, Places, and Pursuits. National Academies Press.<br /><a href="https://nap.nationalacademies.org/catalog/12190/learning-science-in-informal-environments-people-places-and-pursuits">https://nap.nationalacademies.org/catalog/12190/learning-science-in-informal-environments-people-places-and-pursuits</a></li>
+      </ol>
+  </section>
+
+  <p><a href="#toc" class="back-to-top">Back to contents</a></p>
+
+  <div class="page-credit">
+    <p>Every contribution on this page reflects applied work carried out with learners, design teams, and partner organizations, and is grounded in the scholarship listed above. An <a href="area-map.html?area=eval">interactive version of this map</a> presents the same content as a navigable diagram.</p>
+  </div>
+</main>
+
+<footer>
+  <p>Learning Design Specialization · Andrea Robin</p>
+</footer>
+
+</body>
+</html>
