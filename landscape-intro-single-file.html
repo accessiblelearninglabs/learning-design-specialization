@@ -87,14 +87,23 @@
     letter-spacing:-.02em; color:var(--ink-strong); margin:0;}
   .ldi-outro .s{font-size:clamp(13px,1.45vw,16px); color:var(--ink); margin:0;
     max-width:24em; line-height:1.5;}
-  .ldi-outro a{
+  .ldi-outro .cta{
     font-size:clamp(11.5px,1.16vw,13px); letter-spacing:.16em; text-transform:uppercase;
-    font-weight:600; color:var(--ink-strong); text-decoration:none;
-    border-bottom:1px solid var(--muted); padding-bottom:3px; margin-top:.4em;
-    transition:border-color .2s var(--ease);
+    font-weight:600; color:var(--ink-strong); margin:.4em 0 0;
+    border-bottom:1px solid var(--muted); padding-bottom:3px;
+    display:inline-flex; align-items:center; gap:.7em;
   }
-  .ldi-outro a:hover{border-color:var(--ink-strong);}
-  .ldi-outro a:focus-visible{outline:2px solid var(--ink-strong); outline-offset:3px;}
+  .ldi-outro .cta .arrow{
+    font-size:1.15em; letter-spacing:0; line-height:1;
+    animation:ldi-nudge 2.2s var(--ease) infinite;
+  }
+  @keyframes ldi-nudge{
+    0%,100%{transform:translateY(0); opacity:.55;}
+    50%{transform:translateY(4px); opacity:1;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .ldi-outro .cta .arrow{animation:none; opacity:.8;}
+  }
 
   .ldi-bar{display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:12px 2px 0;}
   .ldi-prog{flex:1 1 160px; height:2px; background:var(--hair-soft);
@@ -164,7 +173,7 @@
       <div class="card">
         <p class="n">173 contributions.</p>
         <p class="s">Shaped by the learners, teams, and organizations this work was built with.</p>
-        <a href="https://accessiblelearninglabs.github.io/learning-design-specialization/landscape.html" target="_blank" rel="noopener">Explore the map</a>
+        <p class="cta">Scroll down to explore the map <span class="arrow" aria-hidden="true">↓</span></p>
       </div>
     </div>
   </div>
@@ -206,7 +215,7 @@
     </ul>
     <p>Not ten separate skills — one practice, seen from ten perspectives.</p>
     <p>173 contributions, shaped by the learners, teams, and organizations this work was
-       built with. <a href="https://accessiblelearninglabs.github.io/learning-design-specialization/landscape.html" target="_blank" rel="noopener">Explore the map.</a></p>
+       built with. Scroll down to explore the map.</p>
   </div>
 </details>
 </div>
