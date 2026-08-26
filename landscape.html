@@ -281,7 +281,8 @@ const CATS = {
 const CAT_ORDER = ["lxd","public","udl","kmb","eval","lsd","hr","hwe","access","epist"];
 // Alphabetical order for reader-facing surfaces (tabs, legend, list, area links).
 // The map's spatial layout keeps CAT_ORDER; only the display lists are alphabetised.
-const CAT_ORDER_DISPLAY = ["access","epist","eval","hr","hwe","kmb","lxd","lsd","public","udl"];
+// Branch-only list; the trunk is interleaved alphabetically in CAT_ORDER_READ below.
+const CAT_ORDER_DISPLAY = ["access","epist","eval","hwe","hr","kmb","lxd","lsd","public","udl"];
 
 /* The trunk is the shared learning-design craft the ten branches all grow from.
    It sits INSIDE the branches rather than beside them, so it is deliberately
@@ -294,8 +295,11 @@ const TRUNK = "trunk";
 // so existing citation numbers on published pages do not shift. The order is
 // therefore written out rather than derived from CAT_ORDER.
 const CAT_ORDER_BIB = ["core","lxd","udl","kmb","lsd","access",TRUNK,"epist","eval","public","hr","hwe"];
-// Reader-facing lists lead with the trunk, because it is what the branches grow from.
-const CAT_ORDER_READ = [TRUNK].concat(CAT_ORDER_DISPLAY);
+// Reader-facing lists sort the trunk in alphabetically alongside the branches, under
+// its label "Learning Design" — so it falls between Knowledge Mobilization and
+// Learning Experience Design. A reader scanning for a name finds it where they
+// expect it, rather than having to know the trunk is pinned first.
+const CAT_ORDER_READ = ["access","epist","eval","hwe","hr","kmb",TRUNK,"lxd","lsd","public","udl"];
 
 const LINKS = {
   lxd:    "https://www.andrearobin.com/learning-experience-design",
