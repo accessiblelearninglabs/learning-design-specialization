@@ -182,12 +182,13 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="note"><strong>How to read this.</strong> <strong>By branch</strong> shows where each contribution sits: the trunk at the centre, the ten branches beyond it. <strong>By affinity</strong> repositions the same circles by likeness, so relationships across branches surface. Select any circle to read it. A few contributions belong to two branches; each appears once, in its home colour, and says so when selected.</div>
+    <div class="note"><strong>How to read this.</strong> <strong>By branch</strong> shows where each contribution sits: the trunk at the centre, the ten branches beyond it. <strong>By affinity</strong> repositions the same circles by likeness, so relationships across branches surface. Select any circle to read it. A few contributions belong to two branches; each appears once, in its home colour, and says so when selected. Every contribution on this map is practised; the status on each shows whether a public resource about it exists yet. The published resources and the case studies are the record of the practice; the map is its shape.</div>
 
     <div class="altspacer" aria-hidden="true"></div>
 
     <div class="controls" role="region" aria-label="Map controls">
       <div class="tf" id="filters" role="group" aria-label="Filter by branch of expertise"></div>
+      <div class="vtoggle" id="sectors" role="group" aria-label="Filter by sector practised in" hidden></div>
       <span class="spacer"></span>
       <button class="linkbtn" id="reset" type="button">Reset view</button>
       <div class="vtoggle" role="group" aria-label="Arrange nodes">
@@ -217,7 +218,7 @@
           <span class="li"><span class="sz" style="width:18px;height:18px"></span>Core</span>
           <span class="li"><span class="sz" style="width:14px;height:14px"></span>Long-settled practice</span>
           <span class="li"><span class="sz" style="width:11px;height:11px"></span>Well-established</span>
-          <span class="li"><span class="sz" style="width:8px;height:8px"></span>Newer or contested</span>
+          <span class="li"><span class="sz" style="width:8px;height:8px"></span>Emerging</span>
         </div>
       </div>
       <div class="grp">
@@ -236,7 +237,7 @@
 
     <div class="section">
       <h2>The trunk and the branches</h2>
-      <p style="font-size:13.5px;color:var(--ink);margin:0 0 4px;max-width:720px;">The trunk and each branch have their own page; the accessibility work is offered through Accessible Learning Labs. Individual contributions link to the branch they grow on.</p>
+      <p style="font-size:13.5px;color:var(--ink);margin:0 0 4px;max-width:720px;">The trunk and each branch have their own page. The trunk is Groundwork, the learning design method; the Accessibility and Universal Design for Learning branches are developed further through Fieldwork, the research method practised at <a href="https://www.accessiblelearninglabs.com" target="_blank" rel="noopener">Accessible Learning Labs</a>. Individual contributions link to the branch they grow on.</p>
       <ul class="areas" id="arealinks"></ul>
     </div>
 
@@ -314,17 +315,18 @@ const LINKS = {
   hr:     "https://www.andrearobin.com/human-rights-education",
   hwe:    "https://www.andrearobin.com/health-workforce-education",
 };
+const SECTORS = {health:"Health", he:"Higher education", research:"Research", public:"Public sector"};
 const STATUS = {
   built:   "Published resource",
-  partial: "In development · evidence in hand",
+  partial: "Practised · resource in development · evidence in hand",
   service: "Offered as a service",
-  dev:     "In development",
-  planned: "Planned",
+  dev:     "Practised · resource in development",
+  planned: "Practised · resource not yet written",
 };
 
 /* Specific live subpage per contribution. A node listed here is a PUBLISHED
    resource and shows "View the live page"; any node NOT listed here is treated
-   as in development and shows "Live page coming soon". The central node is
+   as in development and shows "Resource in development". The central node is
    handled separately (no call to action). */
 const PAGES = {
   // Area nodes (each links to its area page)
@@ -778,7 +780,7 @@ const SRC_BY_ID = {
 
 const NODES = [
   /* ── CENTRE ── */
-  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped as a trunk and ten branches",
+  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped as a trunk and ten branches. The trunk is Groundwork, the learning design method.",
    body:"A single practice that designs how people and organizations learn, expressed as a trunk of shared craft and ten connected branches of expertise — each with its own node and its own page. Every contribution below grows on one branch and links to the others it draws on, because the branches are not separate skills but one body of work seen from different perspectives.",
    ground:"Adult learning · learning sciences · human-centred design",link:"lxd",status:"dev",
    connects:["area_lxd","area_udl","area_kmb","area_lsd","area_access","area_epist"]},
@@ -1666,14 +1668,14 @@ function boot(){
       const page = PAGES[n.id] || null;
       const live = !!page;
       const st = isCore ? "" : (n.status==="planned" ? STATUS.planned
-                        : (live ? "Published resource" : "In development"));
+                        : (live ? STATUS.built : STATUS[n.status] || STATUS.dev));
       const cites = n.src.map(k => {
         const s = SOURCES[k]; const num = srcNum[k]; if(!s) return "";
         return s.u ? '<a href="'+s.u+'" target="_blank" rel="noopener">['+num+']</a>' : '['+num+']';
       }).filter(Boolean).join(" ");
       const cta = isCore || n.status==="planned" ? "" : (live
         ? ' · <a href="'+page+'" target="_blank" rel="noopener">View the live page →</a>'
-        : ' · Live page coming soon');
+        : ' · Resource in development');
       const also = n.alsoIn ? ' · Also grows on the '+CATS[n.alsoIn].label+' branch' : "";
       const meta = (n.ground ? n.ground : "") +
         (st ? (n.ground? " · " : "") + st : "") +
@@ -1845,7 +1847,12 @@ function boot(){
     targetPanX = -r.x; targetPanY = -r.y;
   }
 
-  function visible(n){ return n.cat==="core" || filter==="all" || n.cat===filter; }
+  let sector="all";
+  function visible(n){
+    if(n.cat==="core") return true;
+    if(!(filter==="all" || n.cat===filter)) return false;
+    return sector==="all" || (n.sectors && n.sectors.indexOf(sector)>=0);
+  }
 
   function draw(){
     ctx.clearRect(0,0,W,H);
@@ -2051,10 +2058,12 @@ function boot(){
       (n.alsoIn? '<p class="p-note">A resource growing on two branches. Its home is '+CATS[n.cat].label+
         ', and it is also part of the '+CATS[n.alsoIn].label+' set.</p>':'')+
       (n.ground? '<p class="p-ground"><span>Grounding.</span> '+n.ground+'</p>':'')+
+      (n.practised && n.practised.length ? '<p class="p-ground"><span>Practised in.</span> '+n.practised.map(p=>'<a href="'+p.u+'" target="_blank" rel="noopener">'+p.t+'</a>').join(' · ')+'</p>':'')+
+      (n.sectors && n.sectors.length ? '<p class="p-note">Sectors: '+n.sectors.map(s=>SECTORS[s]||s).join(', ')+'</p>':'')+
       (n.note? '<p class="p-note">'+n.note+'</p>':'')+
       (isCore || n.status==="planned" ? "" : (live
         ? '<a class="p-cta" href="'+page+'" target="_blank" rel="noopener">View the live page →</a>'
-        : '<span class="p-soon">Live page coming soon</span>'))+
+        : '<span class="p-soon">Resource in development</span>'))+
       (srcHtml? '<div class="p-label">Sources</div><ul class="p-src">'+srcHtml+'</ul>':'')+
       (relHtml? '<div class="p-label">Most related · by shared theory &amp; theme</div><div class="p-rel">'+relHtml+'</div>':'')+
       '<div class="p-label">Connected contributions · editorial links</div><div class="p-conns">'+conns+'</div>';
@@ -2098,6 +2107,26 @@ function boot(){
     if(!is3D){ rotX=-0.35; rotY=0.5; }
   }
   document.getElementById("reset").addEventListener("click",()=>{ resetView(); closePanel(); });
+  (function(){
+    const box=document.getElementById("sectors");
+    const any=NODES.some(n=>n.sectors && n.sectors.length);
+    if(!box || !any) return;
+    box.hidden=false;
+    const keys=["all"].concat(Object.keys(SECTORS));
+    keys.forEach(k=>{
+      const b=document.createElement("button"); b.type="button"; b.className="vbtn"; b.dataset.k=k;
+      b.textContent = k==="all" ? "All sectors" : SECTORS[k];
+      b.setAttribute("aria-pressed", k==="all" ? "true" : "false");
+      b.addEventListener("click",()=>{
+        sector=k;
+        box.querySelectorAll(".vbtn").forEach(x=>x.setAttribute("aria-pressed", x.dataset.k===k ? "true":"false"));
+        if(selected && !visible(nodeMap[selected])) closePanel();
+        try{ const u=new URL(location.href); if(k==="all") u.searchParams.delete("sector"); else u.searchParams.set("sector",k); history.replaceState(null,"",u); }catch(e){}
+      });
+      box.appendChild(b);
+    });
+    try{ const q=new URL(location.href).searchParams.get("sector"); if(q && SECTORS[q]){ box.querySelector('[data-k="'+q+'"]').click(); } }catch(e){}
+  })();
 
   resize();
   requestAnimationFrame(tick);

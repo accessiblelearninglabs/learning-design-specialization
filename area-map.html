@@ -204,17 +204,18 @@ const LINKS = {
   hr:     "https://www.andrearobin.com/human-rights-education",
   hwe:    "https://www.andrearobin.com/health-workforce-education",
 };
+const SECTORS = {health:"Health", he:"Higher education", research:"Research", public:"Public sector"};
 const STATUS = {
   built:   "Published resource",
-  partial: "In development · evidence in hand",
+  partial: "Practised · resource in development · evidence in hand",
   service: "Offered as a service",
-  dev:     "In development",
-  planned: "Planned",
+  dev:     "Practised · resource in development",
+  planned: "Practised · resource not yet written",
 };
 
 /* Specific live subpage per contribution. A node listed here is a PUBLISHED
    resource and shows "View the live page"; any node NOT listed here is treated
-   as in development and shows "Live page coming soon". The central node is
+   as in development and shows "Resource in development". The central node is
    handled separately (no call to action). */
 const PAGES = {
   // Area nodes (each links to its area page)
@@ -668,7 +669,7 @@ const SRC_BY_ID = {
 
 const NODES = [
   /* ── CENTRE ── */
-  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped as a trunk and ten branches",
+  {id:"c0",cat:"core",depth:5,name:"Learning Design Specialization",sub:"One practice, mapped as a trunk and ten branches. The trunk is Groundwork, the learning design method.",
    body:"A single practice that designs how people and organizations learn, expressed as a trunk of shared craft and ten connected branches of expertise — each with its own node and its own page. Every contribution below grows on one branch and links to the others it draws on, because the branches are not separate skills but one body of work seen from different perspectives.",
    ground:"Adult learning · learning sciences · human-centred design",link:"lxd",status:"dev",
    connects:["area_lxd","area_udl","area_kmb","area_lsd","area_access","area_epist"]},
@@ -1973,7 +1974,7 @@ function boot(){
       (n.note ? '<p class="p-note">'+n.note+'</p>' : '')+
       (isArea ? '' : (live
         ? '<a class="p-cta" href="'+page+'" target="_blank" rel="noopener">View the live page \u2192</a>'
-        : '<span class="p-soon">Live page coming soon</span>'))+
+        : '<span class="p-soon">Resource in development</span>'))+
       (srcHtml ? '<div class="p-label">Sources</div><ul class="p-src">'+srcHtml+'</ul>' : '')+
       (relHtml ? '<div class="p-label">Most related here \u00b7 by shared theory &amp; theme</div>'+
                  '<div class="p-rel">'+relHtml+'</div>' : '')+
