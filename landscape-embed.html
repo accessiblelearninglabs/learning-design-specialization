@@ -611,6 +611,22 @@ const SOURCES = {
   barsalou:{cat:"Embodied cognition", t:"Barsalou, L. W. (2008). “Grounded Cognition.” Annual Review of Psychology, 59, 617–645.", u:"https://doi.org/10.1146/annurev.psych.59.103006.093639"},
   merleauponty:{cat:"Embodiment", t:"Merleau-Ponty, M. (2012). Phenomenology of Perception (D. A. Landes, Trans.). Routledge. (Original work published 1945.)"},
   eisnerarts:{cat:"Arts and cognition", t:"Eisner, E. W. (2002). The Arts and the Creation of Mind. Yale University Press."},
+  // further Accessibility and Universal Design for Learning contributions
+  renaud:{cat:"Human rights law", t:"Central Okanagan School District No. 23 v. Renaud, 1992 CanLII 81 (SCC), [1992] 2 S.C.R. 970 — the shared responsibility of every party to the accommodation process.", u:"https://www.canlii.org/en/ca/scc/doc/1992/1992canlii81/1992canlii81.html"},
+  ahead:{cat:"Disability services in higher education", t:"Association on Higher Education And Disability (AHEAD). Program Domains, Standards, and Performance Indicators.", u:"https://www.ahead.org/professional-resources/program-standards-ethics"},
+  pdfua:{cat:"Accessibility standards", t:"ISO 14289-1:2014. Document Management Applications — Electronic Document File Format Enhancement for Accessibility — Part 1: Use of ISO 32000-1 (PDF/UA-1). International Organization for Standardization."},
+  maur:{cat:"Accessibility standards", t:"W3C (2015). Media Accessibility User Requirements. W3C Working Group Note.", u:"https://www.w3.org/TR/media-accessibility-reqs/"},
+  aoda:{cat:"Accessibility law", t:"Accessibility for Ontarians with Disabilities Act, 2005, S.O. 2005, c. 11. Province of Ontario."},
+  canasc301549:{cat:"Accessibility standards", t:"CAN/ASC-EN 301 549:2024. Accessibility Requirements for ICT Products and Services (EN 301 549:2021, IDT). Accessibility Standards Canada, published 31 May 2024, available free of charge.", u:"https://accessible.canada.ca/creating-accessibility-standards/canasc-en-301-5492024-accessibility-requirements-ict-products-and-services"},
+  sinsinvalid:{cat:"Disability justice", t:"Sins Invalid (2019). Skin, Tooth, and Bone: The Basis of Movement is Our People — A Disability Justice Primer (2nd ed.). Berkeley, CA: Sins Invalid. ISBN 9781647133658 — the source text of the ten principles, based in the work of Patty Berne."},
+  berne10:{cat:"Disability justice", t:"Berne, P., & Sins Invalid. 10 Principles of Disability Justice (2nd ed.). Design by Nomy Lamm. Sins Invalid.", u:"https://www.sinsinvalid.org/disability-justice-primer"},
+  mingus:{cat:"Disability justice", t:"Mingus, M. (2011). “Access Intimacy: The Missing Link.” Leaving Evidence, 5 May 2011 — where access intimacy is named.", u:"https://leavingevidence.wordpress.com/2011/05/05/access-intimacy-the-missing-link/"},
+  milbern:{cat:"Disability justice", t:"Milbern, S. P. (2019). “On the Ancestral Plane: Crip Hand Me Downs and the Legacy of Our Movements.” Disability Visibility Project, 10 March 2019. Reprinted in A. Wong (Ed.), Disability Visibility: First-Person Stories from the Twenty-First Century (Vintage Books, 2020).", u:"https://disabilityvisibilityproject.com/2019/03/10/on-the-ancestral-plane-crip-hand-me-downs-and-the-legacy-of-our-movements/"},
+  clare:{cat:"Disability justice", t:"Clare, E. (2015). Exile and Pride: Disability, Queerness, and Liberation. Duke University Press. Originally published 1999."},
+  moorebdah:{cat:"Disability justice", t:"Moore, L. F., Jr., McClung, N. A., & Nusbaum, E. A. (2017). Black Disabled Art History 101. Xóchitl Justice Press. ISBN 9781942001577."},
+  topping:{cat:"Peer learning", t:"Topping, K. J. (2005). “Trends in Peer Learning.” Educational Psychology, 25(6), 631–645."},
+  meltzer:{cat:"Learning sciences", t:"Meltzer, L. (Ed.). (2018). Executive Function in Education: From Theory to Practice (2nd ed.). Guilford Press."},
+  davidson:{cat:"Sensory access", t:"Davidson, J. (2010). “‘It cuts both ways’: A relational approach to access and accommodation for autism.” Social Science & Medicine, 70(2), 305–312."},
 };
 
 /* Which sources ground each contribution (cited by number on the node). */
@@ -776,6 +792,26 @@ const SRC_BY_ID = {
   km13:["cochranehb","prisma","goughthomas"],
   km14:["expandnet","prasad","cfir","march"],
   lx19:["barsalou","merleauponty","polanyi","eisnerarts"],
+  // further Accessibility and Universal Design for Learning contributions
+  ud11:["castudl","messick","obrien"],
+  ac38:["mertens","castudl","kirkpatrick"],
+  ac41:["obrien","castudl","meltzer"],
+  ac26:["ahead","meiorin","meeksjain","dolmage"],
+  ac27:["renaud","meiorin","bchrc"],
+  ac28:["goffman","fippa","dolmage","obrien"],
+  ac29:["pdfua","wcag","canasc301549"],
+  ac30:["maur","wcag","mayer"],
+  ac31:["vpat","canasc301549","en301549"],
+  ac32:["aca","whowrd","kotter"],
+  ac33:["aca","abca","bchrc","meiorin","aoda","canasc301549"],
+  ac34:["sinsinvalid","berne10","mingus","milbern","clare","moorebdah"],
+  ac35:["meeksjain","cud","meiorin"],
+  ac36:["topping","ahead","wenger"],
+  ac37:["messick","meiorin","goffman"],
+  ac39:["wcag","en301549","canasc301549"],
+  ac40:["wcag","maur","knowles"],
+  ac42:["csab651","cud","davidson"],
+  ac43:["mertens","charlton"],
 };
 
 const NODES = [
@@ -875,6 +911,17 @@ const NODES = [
   {id:"ud10",cat:"udl",depth:3,name:"Evaluating Whether Design Reduced Barriers",sub:"Closing the UDL cycle with evidence",
    body:"Measuring whether an inclusive design actually lowered barriers, rather than assuming that it did — ending on rigor rather than aspiration. It belongs to the shared evaluation family that runs across the practice.",
    ground:"Evaluation design; Universal Design for Learning",link:"udl",status:"dev",alsoIn:"access",connects:["ud1","lx9","sd3","ac16"]},
+
+  /* ── UNIVERSAL DESIGN FOR LEARNING — further contributions ── */
+  {id:"ud11",cat:"udl",depth:2,name:"Time, Pacing and Deadlines as Design Variables",sub:"Where a time limit is measured, and where it is inherited",
+   body:"Time limits, deadline policy, pacing and cumulative workload across a program, treated as design decisions. A time limit is either part of what an assessment measures or an inherited convention, and the two call for different responses. Generous time as a design choice does not reach every case, so extended time as an individual accommodation remains necessary alongside it.",
+   ground:"UDL Guidelines (CAST); validity theory (Messick); episodic disability framework",link:"udl",status:"dev",added3:true,connects:["ud1","ud7","ac13"]},
+  {id:"ac38",cat:"udl",depth:3,name:"Equity Evaluation of Experiential Learning Programs",sub:"Were disabled students included, and did they stay?",
+   body:"Placement programs report participation; they rarely report who was excluded at the gate or who left in the first month. This resource builds evaluation that asks the equity question directly — inclusion and retention of disabled students and students from historically, persistently, or systemically marginalised groups, by employer and by program — and uses funding conditions as the lever that makes employers answer it. It closes the UDL cycle at the scale of a whole institution's placements rather than a single course.",
+   ground:"Transformative evaluation (Mertens); UDL evaluation; grant governance",link:"udl",status:"dev",added3:true,connects:["ud10","ac16","ac37"]},
+  {id:"ac41",cat:"udl",depth:2,name:"Access in Intensive, Time-Compressed Programs",sub:"When the schedule is the barrier",
+   body:"Bootcamps, residencies, and accelerated credentials compress learning into weeks and assume a body and a mind that can hold that pace without interruption. This resource designs for the learners the format excludes first — asynchronous alternatives, executive-functioning scaffolds, flexible assessment timing, and explicit rules for what happens when someone cannot keep the pace — without pretending the intensity is not the point.",
+   ground:"Time and pacing as design variables; episodic disability framework; executive function in education (Meltzer)",link:"udl",status:"dev",added3:true,connects:["ud11","ac13","ud9"]},
 
   /* ── KNOWLEDGE MOBILIZATION ── */
   {id:"km1",cat:"kmb",depth:3,name:"Research-to-Practice Learning Systems",sub:"The master framework for moving evidence",
@@ -1032,6 +1079,56 @@ const NODES = [
    body:"The seven principles of universal design as they were originally written — for buildings, spaces, and products — and what they require of a classroom, a laboratory, a placement site, and the hybrid arrangements that now carry a large share of teaching. It is the part of universal design that learning designers most often hand to facilities management, and the part that determines whether a person can be present in the room at all.",
    ground:"Principles of Universal Design (Connell et al., 1997); CSA B651; Accessible Canada Act",link:"access",status:"dev",
    connects:["ac4","ac14","ud6"]},
+
+  /* ── ACCESSIBILITY — further knowledge resources ── */
+  {id:"ac26",cat:"access",depth:3,name:"Working with Accommodation Offices and Access Advisors",sub:"Who decides, and what a referral has to carry",
+   body:"What an accommodation office decides, what it requires from an instructor or a designer, and what a referral has to contain to be usable. It covers the implementation gap in which an approved accommodation is recorded and then not delivered, and the boundary between designing conditions and adjudicating an individual case. The second belongs to the advisors and accommodation professionals who hold that work.",
+   ground:"AHEAD program standards; Canadian human rights jurisprudence; disability in higher education",link:"access",status:"dev",added3:true,connects:["ac4","ac5","ac27"]},
+  {id:"ac27",cat:"access",depth:3,name:"The Interactive Process in Learning Settings",sub:"A shared duty, not a request and a ruling",
+   body:"Canadian human rights law treats accommodation as a process with obligations on every party to it, including the person seeking accommodation, and it sets limits on what may be asked of them. This resource covers who initiates, what good faith requires on each side, what documentation of the process is distinct from documentation of the person, and the points at which the process stalls: no response, an unworkable offer, or a request handled as a complaint.",
+   ground:"Renaud (SCC, 1992); Meiorin (SCC, 1999); BC Human Rights Code",link:"access",status:"dev",added3:true,connects:["ac5","ac26","ac28"]},
+  {id:"ac28",cat:"access",depth:2,name:"Documentation Requirements and Medical Gatekeeping",sub:"What is asked of a person before they are believed",
+   body:"What documentation is actually required, set against what institutions routinely request. Cost, waiting time and access to diagnosis are barriers in their own right, and requirements written for stable, diagnosed conditions operate differently for undiagnosed, episodic and fluctuating ones. It covers privacy and custody of records, and the conditions under which self-report is sufficient.",
+   ground:"Disability studies; stigma and disclosure (Goffman); BC information governance",link:"access",status:"dev",added3:true,connects:["ac8","ac13","ac27"]},
+  {id:"ac29",cat:"access",depth:3,name:"Accessible Documents as Everyday Practice",sub:"Structure at the point of authoring, not repair",
+   body:"Headings, reading order, tables, alternative text and contrast across word processing files, presentations, spreadsheets and PDF, treated as authoring practice. Remediation costs more than creation, which places institutional templates among the highest-leverage points of intervention. It also covers what an automated checker establishes and what it leaves untested.",
+   ground:"PDF/UA (ISO 14289-1); WCAG 2.2; CAN/ASC-EN 301 549:2024",link:"access",status:"dev",added3:true,connects:["ac10","ud6","ac11"]},
+  {id:"ac30",cat:"access",depth:3,name:"Captions, Transcripts and Audio Description",sub:"Three artefacts, three sets of users",
+   body:"Captions, transcripts and audio description serve different users and do not substitute for one another. This resource covers caption accuracy and the degradation of automatic captioning on the specialist vocabulary that carries the most meaning, the transcript as an independently useful artefact, standard and extended audio description, and where each belongs in a production workflow and a budget.",
+   ground:"W3C Media Accessibility User Requirements; WCAG 2.2; multimedia learning research",link:"access",status:"dev",added3:true,connects:["ac29","ac11","ud6"]},
+  {id:"ac31",cat:"access",depth:2,name:"Selecting Materials, Textbooks and Platforms",sub:"Reading a conformance claim against what a person meets",
+   body:"Publisher platforms, courseware, library resources and open educational resources, and the accessibility settled at the point of selection. It covers reading an Accessibility Conformance Report against what a person using the product encounters, what to ask a vendor, what to ask a colleague already using the tool, and the options remaining when an inaccessible product is already in service.",
+   ground:"VPAT and Accessibility Conformance Reports; EN 301 549; CAN/ASC-EN 301 549:2024",link:"access",status:"dev",added3:true,connects:["ac12","ac10","ac29"]},
+  {id:"ac32",cat:"access",depth:2,name:"Making the Case for Resourcing Accessibility Work",sub:"The argument after the numbers, and its limits",
+   body:"The arguments available for resourcing this work, and the evidentiary weight each carries: legal obligation, enrolment and retention, institutional reputation, and mission. It covers the cost of retrofit set against the cost of designing for access at the outset, who signs and what they need to see, and the point at which an instrumental case begins to displace the obligation it was assembled to support.",
+   ground:"Accessible Canada Act; WHO and World Bank disability data; change management scholarship",link:"access",status:"dev",added3:true,connects:["ac22","ac16","ud4"]},
+  {id:"ac33",cat:"access",depth:3,name:"Canadian Accessibility and Accommodation Law for Learning Designers",sub:"Two separate instruments, in plain language",
+   body:"The Accessible Canada Act, the Accessible British Columbia Act and the BC Human Rights Code duty to accommodate, written for learning designers and faculty. Human rights law and accessibility legislation are separate instruments with different mechanisms, different scope and different remedies, and the distinction determines what an institution owes and to whom. It sets out what binds a public post-secondary institution in British Columbia, where obligations differ for private training providers, and includes the Ontario legislation for comparison.",
+   ground:"Accessible Canada Act; Accessible British Columbia Act; BC Human Rights Code; CRPD",link:"access",status:"dev",added3:true,connects:["ac5","ac24","ac16"]},
+  {id:"ac34",cat:"access",depth:3,name:"Disability Justice and Where It Came From",sub:"A framework with named authors, and where to read them",
+   body:"Disability justice was created in 2005 and 2006 by the Disability Justice Collective, a group of disabled activists, primarily queer and trans disabled people of colour, working in the San Francisco Bay Area. Patty Berne, Stacey Park Milbern, Mia Mingus, Leroy F. Moore Jr., Eli Clare and Sebastian Margaret are among its architects, and the ten principles were set out by Berne and Sins Invalid. It is a distinct framework rather than a further stage of disability rights: it holds that single-issue organising leaves the most marginalised behind, and it originates in performance, mutual aid and community organising rather than in the academy. This resource states that history and sends the reader to the primary texts. The framework is not summarised here in place of its authors, and the sources below are theirs.",
+   ground:"Sins Invalid; the ten principles of disability justice (Berne); Black disability studies",link:"access",status:"dev",added3:true,connects:["ac7","ac9","ac19"]},
+  {id:"ac35",cat:"access",depth:3,name:"Access in Studio, Shop and Lab-Based Learning",sub:"Safety-sensitive learning that is not clinical",
+   body:"Shops, studios, and laboratories are where hands-on learning meets real hazard, and where access decisions get made at the bench rather than in an office: which tool, at what pace, with what supervision, in which layout. This resource treats equipment-based learning the way the clinical-placement resource treats wards — protecting genuine safety requirements while examining the ones that are only habit — and covers adaptive tooling, paced instruction, workstation design, and the peer and technician roles that make access daily rather than exceptional.",
+   ground:"Essential requirements in safety-sensitive environments; universal design of physical space; technical standards in professional education (Meeks & Jain, by analogy)",link:"access",status:"dev",added3:true,connects:["ac14","ac25","ac21"]},
+  {id:"ac36",cat:"access",depth:2,name:"Peer Mentorship as Access Infrastructure",sub:"Trained peers between the student and the office",
+   body:"Most accommodation systems have two parties, the student and the office; the daily work of access happens between them, often with no one assigned to it. This resource designs the middle: peer mentors trained in integrated learning and technical support, matched to incoming students with accommodations, with clear limits on what a peer decides and a route back to the advisor for what a peer cannot. It is the peer-based support that current accessibility-office role descriptions ask for, written as program architecture.",
+   ground:"Peer-assisted learning (Topping); accommodation practice standards (AHEAD); communities of practice",link:"access",status:"dev",added3:true,connects:["ac26","ac27","ac35"]},
+  {id:"ac37",cat:"access",depth:3,name:"Accessible Job Design for Student and Early-Career Employment",sub:"Essential requirements, applied to postings",
+   body:"A job posting is an essential-requirements document for employment, and it excludes in the same ways admissions documents do: bodily methods written where capabilities were meant, availability clauses nobody has justified, credentials standing in for skills. This resource works with the people who write postings — supervisors, hiring managers, program staff — to revise expectations toward what the role genuinely requires, and pairs the revision with the onboarding and supervision supports that make the revised role real.",
+   ground:"Construct validity (Messick); the bona fide requirement test (Meiorin); disclosure burden",link:"access",status:"dev",added3:true,connects:["ac6","ac5","ac13"]},
+  {id:"ac39",cat:"access",depth:3,name:"Accessibility Remediation of Mandatory Training at Organisational Scale",sub:"The compliance training everyone must take, made usable by everyone",
+   body:"Required training is the one learning experience every employee meets, and it is usually the least accessible thing the organisation owns. This resource covers auditing high-volume mandatory modules against screen-reader and keyboard use, redesigning them, building the templates that keep the next version accessible, and advising the departments that own the content on what conformance actually requires of them. It is the worked example behind the triage protocol.",
+   ground:"WCAG 2.1/2.2; EN 301 549 and CAN/ASC-EN 301 549; remediation prioritisation",link:"access",status:"dev",added3:true,connects:["ac10","ac11","ac29"]},
+  {id:"ac40",cat:"access",depth:3,name:"Accessible Live and Virtual Facilitation",sub:"Access in the room, and in the room that is a screen",
+   body:"Facilitation is where accessibility standards meet a person in real time: captions that lag, a chat that a screen reader cannot follow, a breakout that leaves someone behind, a slide that only works in colour. This resource covers accessible design of live and virtual sessions — platform settings, materials, pacing, participation modes, and in-session audits — so that facilitation is accessible by default rather than repaired on request.",
+   ground:"WCAG for live content; Media Accessibility User Requirements; adult learning practice",link:"access",status:"dev",added3:true,connects:["ac3","ac30","ac23"]},
+  {id:"ac42",cat:"access",depth:2,name:"Sensory Access in Learning Environments",sub:"Noise, light, crowding, and the right to leave",
+   body:"Physical accessibility standards address doors, ramps, and reach ranges; they say little about sound, light, density, and the availability of a place to withdraw. This resource covers sensory-informed design of learning spaces and events — quiet hours, noise indicators, lighting options, rest areas, tactile and non-verbal modes — and the piloting that shows which measures the people concerned actually use.",
+   ground:"Relational approaches to access and autism (Davidson); universal design of space; co-design",link:"access",status:"dev",added3:true,connects:["ac25","ac20","ac35"]},
+  {id:"ac43",cat:"access",depth:2,name:"Funding Design for Accessible Learning Programs",sub:"Writing the grant so access is the deliverable",
+   body:"Accessibility is often funded as an add-on to a program that was designed without it. This resource covers designing funding applications and grant programs in which access to learning by disabled people and people from historically, persistently, or systemically marginalised groups is the funded outcome — the framing, the evidence, the partnerships, and the conditions that carry through to delivery — and administering funds so that the condition is enforced.",
+   ground:"Transformative evaluation (Mertens); nothing about us without us (Charlton); funding conditions as governance",link:"access",status:"dev",added3:true,connects:["ac32","ac16","ac38"]},
 
   /* ── ACCESSIBILITY SERVICES · Accessible Learning Labs ── */
   {id:"ac1",cat:"access",depth:3,name:"Accessibility Review",sub:"Service · Accessible Learning Labs",
@@ -1566,6 +1663,26 @@ const TAGS_BY_ID = {
   km13:["evidence","research","implementation"],
   km14:["scale","implementation","systems"],
   lx19:["experiential","making","reflection"],
+  // further Accessibility and Universal Design for Learning contributions
+  ud11:["variability","assessment","accommodation"],
+  ac38:["evaluation","equity","scale"],
+  ac41:["variability","access","wellbeing"],
+  ac26:["accommodation","policy","access"],
+  ac27:["accommodation","policy","access"],
+  ac28:["accommodation","disability","equity"],
+  ac29:["standards","access","evaluation"],
+  ac30:["standards","access"],
+  ac31:["standards","policy","access"],
+  ac32:["policy","change","systems"],
+  ac33:["policy","access","accommodation"],
+  ac34:["disability","community","equity"],
+  ac35:["access","disability","standards"],
+  ac36:["accommodation","community","capacity"],
+  ac37:["access","equity","assessment"],
+  ac39:["standards","access","scale"],
+  ac40:["access","standards","capacity"],
+  ac42:["access","standards","disability"],
+  ac43:["policy","equity","systems"],
 };
 NODES.forEach(n => { n.tags = TAGS_BY_ID[n.id] || []; });
 
@@ -1591,8 +1708,8 @@ const usedKeys = [];
 /* Two passes: the contributions present before the later additions are numbered
    first, so every reference number already cited on a published page keeps its
    value; the later additions then append after them. */
-const srcWave = n => n.added2 ? 2 : (n.added ? 1 : 0);
-[0, 1, 2].forEach(wave => {
+const srcWave = n => n.added3 ? 3 : (n.added2 ? 2 : (n.added ? 1 : 0));
+[0, 1, 2, 3].forEach(wave => {
   CAT_ORDER_BIB.forEach(c => {
     NODES.filter(n => n.cat===c && srcWave(n)===wave)
          .forEach(n => n.src.forEach(k => { if(!usedKeys.includes(k)) usedKeys.push(k); }));
