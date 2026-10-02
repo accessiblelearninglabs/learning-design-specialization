@@ -230,6 +230,7 @@ const PAGES = {
   ac1:"https://www.accessiblelearninglabs.com/accessibility-review",
   ac2:"https://www.accessiblelearninglabs.com/course-and-curriculum-design",
   ac3:"https://www.accessiblelearninglabs.com/facilitation-and-capacity-building",
+  ac46:"https://www.accessiblelearninglabs.com/services",
   // Knowledge Mobilization
   km1:"https://www.andrearobin.com/research-to-practice-learning-systems",
   km2:"https://www.andrearobin.com/kmb-evaluation-design-framework",
@@ -534,6 +535,7 @@ const SRC_BY_ID = {
   sd4:["senge"], sd1:["rossett"], sd2:["kotter","senge"], sd3:["mertens"],
   sd5:["lavewenger"], sd6:["norman"], sd8:["fancourt","whocsdh"], sd9:["snowden"],
   ac1:["wcag","castudl"], ac2:["castudl","wigginsmctighe"], ac3:["knowles","wenger"],
+  ac46:["messick","castudl","meiorin"],
   // Accessibility, Disability & Accommodation \u2014 knowledge resources
   ac4:["idrc","cud","meiorin","messick","castudl"],
   ac5:["meiorin","aca","bchrc","abca","usaccess"],
@@ -1019,16 +1021,19 @@ const NODES = [
    body:"Accessibility is often funded as an add-on to a program that was designed without it. This resource covers designing funding applications and grant programs in which access to learning by disabled people and people from historically, persistently, or systemically marginalised groups is the funded outcome — the framing, the evidence, the partnerships, and the conditions that carry through to delivery — and administering funds so that the condition is enforced.",
    ground:"Transformative evaluation (Mertens); nothing about us without us (Charlton); funding conditions as governance",link:"access",status:"dev",added3:true,connects:["ac32","ac16","ac38"]},
 
-  /* ── ACCESSIBILITY SERVICES · Accessible Learning Labs ── */
-  {id:"ac1",cat:"access",depth:3,name:"Accessibility Review",sub:"Service · Accessible Learning Labs",
-   body:"A rigorous review of learning environments that holds four interconnected bodies of knowledge in view at once, producing findings a surface-level compliance check cannot. It is offered as a specific, scoped service.",
-   ground:"WCAG; UDL; disability studies; systems knowledge",link:"acc_review",status:"service",connects:["c0","ud6","lx7","ac2","ac10"]},
-  {id:"ac2",cat:"access",depth:3,name:"Inclusive Course & Curriculum Design",sub:"Service · Accessible Learning Labs",
-   body:"Inclusive design of courses and curricula for faculty, designers, and curriculum committees — integrating design frameworks, pedagogy, and the systems knowledge that makes change endure. It is offered as a specific service.",
-   ground:"UDL; backward design; assessment equity; systems knowledge",link:"acc_curric",status:"service",connects:["ac1","ud6","lx8","ac6"]},
-  {id:"ac3",cat:"access",depth:3,name:"Inclusive Facilitation & Capacity Building",sub:"Service · Accessible Learning Labs",
-   body:"Facilitation understood as a professional stance shaped by how power, identity, and legitimate knowledge are held — and the building of others' capacity to facilitate inclusively. It is offered as a specific service.",
-   ground:"Power-aware facilitation; adult learning; equity",link:"acc_facil",status:"service",connects:["ac1","lx4","lx3","ac15"]},
+  /* ── ACCESSIBILITY · Accessible Learning Labs resources and engagements ── */
+  {id:"ac1",cat:"access",depth:3,name:"Accessibility Review",sub:"Four bodies of knowledge held in view at once",
+   body:"How to review a learning environment while holding four bodies of knowledge in view at once: conformance standards, Universal Design for Learning, disability studies, and the systems that decide what gets built. It sets out the stages of a review, the decisions it turns on, and why its findings reach further than a surface-level compliance check.",
+   ground:"WCAG; UDL; disability studies; systems knowledge",link:"acc_review",status:"built",connects:["c0","ud6","lx7","ac2","ac10"]},
+  {id:"ac2",cat:"access",depth:3,name:"Inclusive Course & Curriculum Design",sub:"Access built into the structure of a programme",
+   body:"How access is built into a course or curriculum from the start: outcomes, assessment, materials and platform, designed with Universal Design for Learning and backward design, and with the systems knowledge that lets a change outlast the people who made it. Written for faculty, designers and curriculum committees.",
+   ground:"UDL; backward design; assessment equity; systems knowledge",link:"acc_curric",status:"built",connects:["ac1","ud6","lx8","ac6"]},
+  {id:"ac3",cat:"access",depth:3,name:"Inclusive Facilitation & Capacity Building",sub:"Facilitation as a professional stance",
+   body:"Facilitation understood as a professional stance shaped by how power, identity and legitimate knowledge are held, and how to build others' capacity to facilitate inclusively, so the practice continues inside an organisation after an outside facilitator has gone.",
+   ground:"Power-aware facilitation; adult learning; equity",link:"acc_facil",status:"built",connects:["ac1","lx4","lx3","ac15"]},
+  {id:"ac46",cat:"access",depth:3,name:"Assessment Access and Validity Review",sub:"Service · Accessible Learning Labs",
+   body:"For programmes, testing centres and credentialing bodies. Assessments are examined for construct-irrelevant variance: the time limits, formats and conditions that measure something other than the outcome. Redesigning those reduces how often individual accommodation is needed, without treating accommodation as lesser, and leaves the assessment more valid for everyone who takes it.",
+   ground:"Educational measurement; validity theory; Universal Design for Learning; accommodation law",link:"acc_services",status:"service",connects:["ud7","ac6","ac4"]},
 
 
   /* ── EPISTEMOLOGY ──────────────────────────────────────────────────────
@@ -1435,6 +1440,7 @@ const TAGS_BY_ID = {
   sd4:["systems"], sd1:["research","systems"], sd2:["change","systems"], sd3:["evaluation","equity"],
   sd5:["experiential","capacity"], sd6:["journey","alignment"], sd8:["wellbeing","equity"], sd9:["complexity","systems"],
   ac1:["access","evaluation"], ac2:["access","alignment"], ac3:["community","capacity","access"],
+  ac46:["assessment","access","accommodation"],
   // Accessibility, Disability & Accommodation \u2014 knowledge resources
   ac4:["accommodation","access","variability"], ac5:["accommodation","policy","access"],
   ac6:["accommodation","assessment","alignment"], ac7:["disability","equity","access"],
